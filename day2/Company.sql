@@ -1,10 +1,12 @@
-use Company;
+-- Remove deptName from EMP 
 
+
+use Company;
 
 CREATE TABLE ITEM (
     itemname VARCHAR(100) PRIMARY KEY,
     itemtype VARCHAR(50),
-    itemcolor VARCHAR(50)
+    itemcolor VARCHAR(50)x
 );
 
 CREATE TABLE DEPARTMENT (

@@ -1,0 +1,287 @@
+1) Print all the titles names
+SELECT title FROM titles;
+ 
+2) Print all the titles that have been published by 1389
+SELECT title 
+FROM titles 
+WHERE pub_id = '1389';
+ 
+3) Print the books that have price in range of 10 to 15
+SELECT title, price 
+FROM titles 
+WHERE price BETWEEN 10 AND 15;
+ 
+4) Print those books that have no price
+SELECT title 
+FROM titles 
+WHERE price IS NULL;
+ 
+5) Print the book names that starts with 'The'
+SELECT title 
+FROM titles 
+WHERE title LIKE 'The%';
+
+- SOUNDEX FUNCTION
+
+6) Print the book names that do not have 'v' in their name
+SELECT title 
+FROM titles 
+WHERE title NOT LIKE '%v%' AND title NOT LIKE '%V%';
+
+7) print the books sorted by the royalty
+SELECT title, royalty 
+FROM titles 
+ORDER BY royalty;
+
+8) print the books sorted by publisher in descending then by types in ascending then by price in descending
+SELECT title, pub_id, type, price 
+FROM titles 
+ORDER BY pub_id DESC, type ASC, price DESC;
+
+9) Print the average price of books in every type
+SELECT type, AVG(price) AS avg_price 
+FROM titles 
+GROUP BY type;
+ 
+10) print all the types in unique
+SELECT DISTINCT type 
+FROM titles;
+ 
+11) Print the first 2 costliest books
+SELECT TOP 2 title, price 
+FROM titles 
+ORDER BY price DESC;
+
+ 
+12) Print books that are of type business and have price less than 20 which also have advance greater than 7000
+SELECT title, type, price, advance 
+FROM titles 
+WHERE type = 'business' AND price < 20 AND advance > 7000;
+
+13) Select those publisher id and number of books which have price between 15 to 25 and have 'It' in its name. Print only those which have count greater than 2. Also sort the result in ascending order of count
+SELECT pub_id, COUNT(*) AS book_count 
+FROM titles 
+WHERE price BETWEEN 15 AND 25 AND title LIKE '%It%' 
+GROUP BY pub_id 
+HAVING COUNT(*) > 2 
+ORDER BY book_count ASC;
+
+14) Print the Authors who are from 'CA'
+SELECT au_fname, au_lname, state 
+FROM authors 
+WHERE state = 'CA';
+
+15) Print the count of authors from every state
+SELECT state, COUNT(*) AS author_count 
+FROM authors 
+GROUP BY state;
+
+----------------------------------------------------------------------------------------------------
+
+Design the database for a shop which sells products
+Points for consideration
+  1) One product can be supplied by many suppliers
+  2) One supplier can supply many products
+  3) All customers details have to present
+  4) A customer can buy more than one product in every purchase
+  5) Bill for every purchase has to be stored
+  6) These are just details of one shop
+
+Product 
+product_id, name, price, description, quantity
+
+Country
+id, name
+
+State 
+id, name, country_id
+
+City
+id, name, state_id
+
+Area 
+id, name, zipcode, city_id
+
+Supplier
+supplier_id, name, address, 
+
+Product_Supplier 
+product_id, supplier_id
+
+Customer
+customer_id, name, email, phone, address
+
+Bill 
+bill_id, customer_id, total_price, purchase_date
+
+Bill_Item 
+bill_id, product_id, quantity, unit_price
+
+-------------------------------------------------------------------------------------------------------
+DDL
+
+CREATE TABLE Product (
+    product_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    description TEXT,
+    quantity INT NOT NULL
+);
+
+
+CREATE TABLE Supplier (
+    supplier_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address TEXT
+);
+
+
+CREATE TABLE Product_Supplier (
+    product_id INT,
+    supplier_id INT,
+    PRIMARY KEY (product_id, supplier_id),
+    FOREIGN KEY (product_id) REFERENCES Product(product_id),
+    FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id)
+);
+
+
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    address TEXT
+);
+
+CREATE TABLE Bill (
+    bill_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    purchase_date DATETIME NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+);
+
+
+CREATE TABLE Bill_Item (
+    bill_id INT,
+    product_id INT,
+    supplier_id INT
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (bill_id, product_id),
+    FOREIGN KEY (bill_id) REFERENCES Bill(bill_id),
+    FOREIGN KEY (product_id) REFERENCES Product(product_id)
+    FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id)
+);
+
+Notes: 
+- dont encourage the composite key 
+- composite -> two primary key as the primary key to single Tables
+
+- unit price in product as well as in bill_item -> product price will change..
+
+
+--------------------------------------------------------------------------------------------
+
+CREATE DATABASE shopdb;
+
+USE shopdb;
+
+CREATE TABLE Categories (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    status BOOLEAN NOT NULL
+);
+
+CREATE TABLE Country (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE State (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    country_id INT NOT NULL,
+    FOREIGN KEY (country_id) REFERENCES Country(id)
+);
+
+CREATE TABLE City (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    state_id INT NOT NULL,
+    FOREIGN KEY (state_id) REFERENCES State(id)
+);
+
+CREATE TABLE Area (
+    zipcode VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    city_id INT NOT NULL,
+    FOREIGN KEY (city_id) REFERENCES City(id)
+);
+
+CREATE TABLE Address (
+    id INT PRIMARY KEY,
+    door_number VARCHAR(20),
+    addressline1 VARCHAR(200),
+    zipcode VARCHAR(10) NOT NULL,
+    FOREIGN KEY (zipcode) REFERENCES Area(zipcode)
+);
+
+CREATE TABLE Supplier (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    contact_person VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    address_id INT NOT NULL,
+    status BOOLEAN NOT NULL,
+    FOREIGN KEY (address_id) REFERENCES Address(id)
+);
+
+CREATE TABLE Product (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    quantity INT NOT NULL,
+    description TEXT,
+    image VARCHAR(255)
+);
+
+CREATE TABLE Product_Supplier (
+    transaction_id INT PRIMARY KEY,
+    product_id INT NOT NULL,
+    supplier_id INT NOT NULL,
+    date_of_supply DATE NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES Product(id),
+    FOREIGN KEY (supplier_id) REFERENCES Supplier(id)
+);
+
+CREATE TABLE Customer (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    age INT,
+    address_id INT NOT NULL,
+    FOREIGN KEY (address_id) REFERENCES Address(id)
+);
+
+CREATE TABLE Orders (
+    order_number INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    date_of_order DATE NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    order_status VARCHAR(50),
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+);
+
+CREATE TABLE Order_Details (
+    id INT PRIMARY KEY,
+    order_number INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_number) REFERENCES Orders(order_number),
+    FOREIGN KEY (product_id) REFERENCES Product(id)
+);
+
