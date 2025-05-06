@@ -1,0 +1,226 @@
+1) https://www.hackerrank.com/challenges/plus-minus/problem?isFullScreen=true
+
+void plusMinus(vector<int> arr) {
+    int positiveCount = 0;
+    int negativeCount = 0;
+    int zeroCount = 0;
+    int total = arr.size();
+
+    for (int num : arr) {
+        if (num > 0)
+            positiveCount++;
+        else if (num < 0)
+            negativeCount++;
+        else
+            zeroCount++;
+    }
+    cout << fixed << setprecision(6) << (double)positiveCount / total << endl;
+    cout << fixed << setprecision(6) << (double)negativeCount / total << endl;
+    cout << fixed << setprecision(6) << (double)zeroCount / total << endl;
+}
+
+2) https://www.hackerrank.com/challenges/staircase/problem?isFullScreen=true
+
+void staircase(int n) {
+    for (int i = 0 ; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (j >= n - i - 1)
+                cout << "#";
+            else
+                cout << " ";
+        }
+        cout << endl;  
+    }
+}
+
+3) https://www.hackerrank.com/challenges/mini-max-sum/problem?isFullScreen=true
+
+ public static void miniMaxSum(List<int> arr)
+    {
+        List<long> longArr = arr.Select(x => (long)x).ToList();
+
+        long totalSum = longArr.Sum();
+        long minVal = longArr.Min();
+        long maxVal = longArr.Max();
+
+        long minSum = totalSum - maxVal;
+        long maxSum = totalSum - minVal;
+
+        Console.WriteLine($"{minSum} {maxSum}");
+    }
+
+4) https://www.hackerrank.com/challenges/birthday-cake-candles/problem?isFullScreen=true
+
+
+    public static int birthdayCakeCandles(List<int> candles)
+    {
+        int max = candles.Max();
+        int count = candles.Count(candle => candle == max); 
+    return count;
+    }
+
+5) https://www.hackerrank.com/challenges/time-conversion/problem?isFullScreen=true
+
+ public static string timeConversion(string s)
+    {
+        string period = s.Substring(8, 2);
+        int hour = int.Parse(s.Substring(0, 2));
+        string minutesSeconds = s.Substring(2, 6);
+        
+        if(period=="AM")
+        {
+            if(hour == 12)
+            {
+                hour =0;
+            }
+            
+        }
+        else
+        {
+            if (hour != 12) 
+        {
+            hour += 12;
+        }
+        }
+        return hour.ToString("D2") + minutesSeconds;
+    }
+
+
+6) https://www.hackerrank.com/challenges/grading/problem?isFullScreen=true
+
+public static List<int> gradingStudents(List<int> grades)
+{
+    List<int> result = new List<int>();
+
+    foreach (int grade in grades)
+    {
+        if (grade < 38)
+        {
+            result.Add(grade);
+        }
+        else
+        {
+            int nextMultipleOf5 = ((grade / 5) + 1) * 5;
+            if (nextMultipleOf5 - grade < 3)
+            {
+                result.Add(nextMultipleOf5); 
+            }
+            else
+            {
+                result.Add(grade);
+            }
+        }
+    }
+
+7) https://www.hackerrank.com/challenges/apple-and-orange/problem?isFullScreen=true
+
+    public static void countApplesAndOranges(int s, int t, int a, int b, List<int> apples, List<int> oranges)
+    {
+
+    int appleCount = apples.Select(d => a + d).Count(pos => pos >= s && pos <= t);
+    int orangeCount = oranges.Select(d => b + d).Count(pos => pos >= s && pos <= t);
+
+    Console.WriteLine(appleCount);
+    Console.WriteLine(orangeCount);
+}
+
+8) https://www.hackerrank.com/challenges/kangaroo/problem?isFullScreen=true
+
+public static string kangaroo(int x1, int v1, int x2, int v2)
+    {
+       
+    if (v1 == v2)
+    {
+        return x1 == x2 ? "YES" : "NO";
+    }
+
+    int diff = x2 - x1;
+    int velocityDiff = v1 - v2;
+
+    
+    if (velocityDiff != 0 && diff % velocityDiff == 0 && (diff / velocityDiff) >= 0)
+    {
+        return "YES";
+    }
+
+    return "NO";
+
+}
+}
+
+9) https://www.hackerrank.com/challenges/between-two-sets/problem?isFullScreen=true
+
+      public static int GCD(int a, int b)
+    {
+        while (b != 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    public static int LCM(int a, int b)
+    {
+        return (a * b) / GCD(a, b);
+    }
+    
+
+    public static int getTotalX(List<int> a, List<int> b)
+    {
+int lcm = a.Aggregate(LCM);
+        int gcd = b.Aggregate(GCD);
+        int count = 0;
+        for (int x = lcm; x <= gcd; x += lcm)
+        {
+            if (gcd % x == 0)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    }
+
+10) https://www.hackerrank.com/challenges/breaking-best-and-worst-records/problem?isFullScreen=true
+
+public static List<int> breakingRecords(List<int> scores)
+{
+    int minScore = scores[0];
+    int maxScore = scores[0];
+    int minCount = 0;
+    int maxCount = 0;
+
+    for (int i = 1; i < scores.Count; i++)
+    {
+        if (scores[i] > maxScore)
+        {
+            maxScore = scores[i];
+            maxCount++;
+        }
+        else if (scores[i] < minScore)
+        {
+            minScore = scores[i];
+            minCount++;
+        }
+    }
+
+    return new List<int> { maxCount, minCount };
+}
+
+
+
+13. https://www.hackerrank.com/challenges/plus-minus/problem?isFullScreen=true  
+
+  public static int migratoryBirds(List<int> arr)
+    {
+var birdCount = arr.GroupBy(bird => bird)
+                           .Select(group => new { BirdType = group.Key, Count = group.Count() })
+                           .OrderByDescending(bird => bird.Count)
+                           .ThenBy(bird => bird.BirdType)
+                           .First();
+
+        return birdCount.BirdType;
+    }
+
