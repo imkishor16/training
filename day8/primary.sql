@@ -6,7 +6,7 @@ server started
 
 C:\Program Files\PostgreSQL\17\bin>psql -p 5433 -d postgres
 psql (17.4)
-postgres=# select * from pg_stat_replication;
+postgres=# select * from pg_stat_replicat   ion;
   pid  | usesysid |  usename   | application_name | client_addr | client_hostname | client_port |          backend_start           | backend_xmin |   state   | sent_lsn  | write_lsn | flush_lsn | replay_lsn | write_lag | flush_lag | replay_lag | sync_priority | sync_state |            reply_time
 -------+----------+------------+------------------+-------------+-----------------+-------------+----------------------------------+--------------+-----------+-----------+-----------+-----------+------------+-----------+-----------+------------+---------------+------------+----------------------------------
  16520 |    16388 | replicator | walreceiver      | 127.0.0.1   |                 |       49855 | 2025-05-14 17:45:51.835796+05:30 |              | streaming | 0/5000168 | 0/5000168 | 0/5000168 | 0/5000168  |           |           |            |             0 | async      | 2025-05-14 17:48:02.522348+05:30
