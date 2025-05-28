@@ -1,0 +1,170 @@
+You have been hired to build the backend for a Twitter-like application using .NET 8, Entity Framework Core (EF Core) with PostgreSQL as the database. The application supports basic social media features such as user registration, posting tweets, liking tweets, using hashtags, and following users.
+Your goal is to model and implement the database layer only using EF Core with code-first approach, focusing on data design, relationships,  migrations, and PostgreSQL-specific features.
+
+-------------------------------
+
+dotnet tool install --global dotnet-ef
+dotnetef
+
+dotnet add package Microsoft.EntityFrameworkCore.Design --version 9.0.5
+
+dotnet ef migrations add init
+--------------------------------
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "User ID=postgres;Password=P@ssw0rd;Host=localhost;Port=5433;Database=myDataBase;"
+  },
+  "AllowedHosts": "*"
+}
+---------------------------
+using FirstAPI.Contexts;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<ClinicContext>(opts =>
+{
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
+app.MapControllers();
+
+app.Run();
+
+
+
+------------------------
+using FirstAPI.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace FirstAPI.Contexts
+{
+    public class ClinicContext : DbContext
+    {
+      
+        public ClinicContext(DbContextOptions options) :base(options)
+        {
+            
+        }
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Appointmnet> Appointmnets { get; set; }
+        public DbSet<Speciality> Specialities { get; set; }
+        public DbSet<DoctorSpeciality> DoctorSpecialities { get; set; }
+
+    }
+}
+
+
+using FirstAPI.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace FirstAPI.Contexts
+{
+    public class ClinicContext : DbContext
+    {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql("User ID=postgres;Password=P@ssw0rd;Host=localhost;Port=5433;Database=myDataBase;");
+        }
+        public DbSet<Patient> Patients { get; set; }
+    }
+}
+----------------------------------
+
+Add models for patient, appointmnet
+Create repositories and service for handling apppointment
+-------------
+namespace FirstAPI.Models
+{
+    public class Patient
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public ICollection<Appointmnet>? Appointmnets { get; set; }
+    }
+   
+}
+-------------------------------
+namespace FirstAPI.Models
+{
+    public class Appointmnet
+    {
+        public string AppointmnetNumber { get; set; } = string.Empty;
+        public int PatientId { get; set; }
+        public int DoctorId { get; set; }
+        public DateTime AppointmnetDateTime { get; set; }
+
+        public string Status { get; set; } = string.Empty;
+        public Doctor? Doctor { get; set; }
+        public Patient? Patient { get; set; }
+    }
+}
+----------------------------
+namespace FirstAPI.Models
+{
+
+
+    public class Doctor
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public float YearsOfExperience { get; set; }
+        public ICollection<DoctorSpeciality>? DoctorSpecialities { get; set; }
+         public ICollection<Appointmnet>? Appointmnets { get; set; }
+
+    }
+}
+-----------------
+namespace FirstAPI.Models
+{
+    public class Speciality
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+
+        public string Status { get; set; } = string.Empty;
+
+        public ICollection<DoctorSpeciality>? DoctorSpecialities { get; set; }
+    }
+}
+-------------------------
+namespace FirstAPI.Models
+{
+    public class DoctorSpeciality
+    {
+        public int SerialNumber { get; set; }
+        public int DoctorId { get; set; }
+        public int SpecialityId { get; set; }
+
+        public Speciality? Speciality { get; set; }
+        public Doctor? Doctor { get; set; }
+    }
+}
+-------------------------------------
