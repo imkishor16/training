@@ -1,0 +1,328 @@
+OAuth authentication - Simple integration with our API 
+Knowledge - ocelot for Gateway
+--------------------------------------
+Unit testing for the doctor and patient service, repo and whole API.
+Explore Unit testing for Controllers
+------------------------------------------
+Explore - Watchdog for logging, Serilog package
+-----------------------------------
+
+dotnet add package Microsoft.Extensions.Logging.Log4Net.AspNetCore --version 8.0.0
+
+
+<log4net>
+	<root>
+		<level value="ALL" />
+		<appender-ref ref="RollingFile" />
+	</root>
+
+	<appender name="RollingFile" type="log4net.Appender.FileAppender">
+		<file value="main.log" />
+	
+		<layout type="log4net.Layout.PatternLayout">
+			<conversionPattern value="%date [%thread] %level %logger - %message%newline" />
+		</layout>
+	</appender>
+</log4net>
+-----------------
+namespace FirstAPI.Models.DTOs.DoctorSpecialities
+{
+    public class ErrorObjectDTO
+    {
+        public int ErrorNumber { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+}
+----------------------
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+
+namespace FirstAPI.Misc
+{
+    public class CustomExceptionFilter : ExceptionFilterAttribute
+    {
+        public override void OnException(ExceptionContext context)
+        {
+              context.Result = new BadRequestObjectResult(new ErrorObjectDTO
+            {
+                ErrorNumber = 500,
+                ErrorMessage = context.Exception.Message
+            });
+        }
+    }
+}
+-----------------------------------
+using System.Text;
+using FirstAPI.Contexts;
+using FirstAPI.Interfaces;
+using FirstAPI.Misc;
+using FirstAPI.Models;
+using FirstAPI.Repositories;
+using FirstAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Npgsql.Replication.PgOutput.Messages;
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Clinic API", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+builder.Services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    opts.JsonSerializerOptions.WriteIndented = true;
+                });
+
+builder.Logging.AddLog4Net();
+
+
+builder.Services.AddDbContext<ClinicContext>(opts =>
+{
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+#region  Repositories
+builder.Services.AddTransient<IRepository<int, Doctor>, DoctorRepository>();
+builder.Services.AddTransient<IRepository<int, Patient>, PatinetRepository>();
+builder.Services.AddTransient<IRepository<int, Speciality>, SpecialityRepository>();
+builder.Services.AddTransient<IRepository<string, Appointmnet>, AppointmnetRepository>();
+builder.Services.AddTransient<IRepository<int, DoctorSpeciality>, DoctorSpecialityRepository>();
+builder.Services.AddTransient<IRepository<string, User>, UserRepository>();
+#endregion
+
+#region Services
+builder.Services.AddTransient<IDoctorService, DoctorService>();
+builder.Services.AddTransient<IOtherContextFunctionities, OtherFuncinalitiesImplementation>();
+builder.Services.AddTransient<IEncryptionService, EncryptionService>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+#endregion
+
+#region AuthenticationFilter
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Keys:JwtTokenKey"]))
+                    };
+                });
+#endregion
+
+#region  Misc
+builder.Services.AddAutoMapper(typeof(User));
+builder.Services.AddScoped<CustomExceptionFilter>();
+#endregion
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+
+
+------------------
+
+using FirstAPI.Interfaces;
+using FirstAPI.Models.DTOs.DoctorSpecialities;
+using Microsoft.AspNetCore.Mvc;
+using FirstAPI.Misc;
+
+namespace FirstAPI.Controllers
+{
+
+
+    [ApiController]
+    [Route("/api/[controller]")]
+    public class AuthenticationController : ControllerBase
+    {
+        private readonly Interfaces.IAuthenticationService _authenticationService;
+        private readonly ILogger<AuthenticationController> _logger;
+
+        public AuthenticationController(IAuthenticationService authenticationService, ILogger<AuthenticationController> logger)
+        {
+            _authenticationService = authenticationService;
+            _logger = logger;
+        }
+        [HttpPost]
+        [CustomExceptionFilter]
+        public async Task<ActionResult<UserLoginResponse>> UserLogin(UserLoginRequest loginRequest)
+        {
+            /* try
+             {
+                 var result = await _authenticationService.Login(loginRequest);
+                 return Ok(result);
+             }
+             catch (Exception e)
+             {
+                 _logger.LogError(e.Message);
+                 return Unauthorized(e.Message);
+             }*/
+            var result = await _authenticationService.Login(loginRequest);
+            return Ok(result);
+        }
+    }
+}
+----------------
+using System.Text;
+using FirstAPI.Contexts;
+using FirstAPI.Interfaces;
+using FirstAPI.Misc;
+using FirstAPI.Models;
+using FirstAPI.Repositories;
+using FirstAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Npgsql.Replication.PgOutput.Messages;
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Clinic API", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+builder.Services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    opts.JsonSerializerOptions.WriteIndented = true;
+                });
+
+builder.Logging.AddLog4Net();
+
+
+builder.Services.AddDbContext<ClinicContext>(opts =>
+{
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+#region  Repositories
+builder.Services.AddTransient<IRepository<int, Doctor>, DoctorRepository>();
+builder.Services.AddTransient<IRepository<int, Patient>, PatinetRepository>();
+builder.Services.AddTransient<IRepository<int, Speciality>, SpecialityRepository>();
+builder.Services.AddTransient<IRepository<string, Appointmnet>, AppointmnetRepository>();
+builder.Services.AddTransient<IRepository<int, DoctorSpeciality>, DoctorSpecialityRepository>();
+builder.Services.AddTransient<IRepository<string, User>, UserRepository>();
+#endregion
+
+#region Services
+builder.Services.AddTransient<IDoctorService, DoctorService>();
+builder.Services.AddTransient<IOtherContextFunctionities, OtherFuncinalitiesImplementation>();
+builder.Services.AddTransient<IEncryptionService, EncryptionService>();
+builder.Services.AddTransient<ITokenService, TokenService>();
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+#endregion
+
+#region AuthenticationFilter
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Keys:JwtTokenKey"]))
+                    };
+                });
+#endregion
+
+#region  Misc
+builder.Services.AddAutoMapper(typeof(User));
+builder.Services.AddScoped<CustomExceptionFilter>();
+#endregion
+
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+
+
+
+

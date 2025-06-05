@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7zsZdrCC+xU=",
+  "dgSpecHash": "baT7lvIocD8=",
   "success": true,
-  "projectFilePath": "/Users/presidio/Desktop/training/18-28_5/FirstAPI/FirstAPI.csproj",
+  "projectFilePath": "/Users/presidio/Desktop/training/19-29_5/FirstAPI/FirstAPI.csproj",
   "expectedPackageFiles": [
     "/Users/presidio/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/presidio/.nuget/packages/microsoft.aspnetcore.openapi/8.0.16/microsoft.aspnetcore.openapi.8.0.16.nupkg.sha512",

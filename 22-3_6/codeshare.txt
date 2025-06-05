@@ -1,0 +1,9 @@
+dotnet new nunit -n FirstAPI.Test
+
+cd FirstAPI.Test
+
+dotnet add reference ../FirstAPI.csproj
+
+https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-9.0
+
+Please ensure the appointmnet can be cancelled only be doctor who are 3+ years experienced

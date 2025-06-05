@@ -51,12 +51,16 @@ namespace FirstAPI.Services
             var doctor = new Doctor
             {
                 Name = doctorDto.Name,
-                status="Acitve",
+                Status="Acitve",
                 YearsOfExperience = doctorDto.YearsOfExperience
             };
             var addedDoctor = await _doctorRepository.Add(doctor);
             var specialities = doctorDto.Specialities;
-            specialities.ForEach(s =>
+            if (specialities == null || !specialities.Any())
+            {
+                return addedDoctor; 
+            }
+            foreach (var s in specialities)
             {
                 var speciality = new Speciality
                 {
@@ -69,12 +73,11 @@ namespace FirstAPI.Services
                     DoctorId = addedDoctor.Id,
                     SpecialityId = addSpeciality.Id
                 };
-                _doctorSpecialityRepository.Add(doctorSpeciality);
-            });
+                await _doctorSpecialityRepository.Add(doctorSpeciality);
+            };
 
-            await _doctorRepository.SaveChangesAsync();
-            await _specialityRepository.SaveChangesAsync();
-            await _doctorSpecialityRepository.SaveChangesAsync();
+
+            
 
             return addedDoctor;
         }

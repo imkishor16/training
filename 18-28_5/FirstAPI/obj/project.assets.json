@@ -3365,11 +3365,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/presidio/Desktop/training/18-28_5/FirstAPI/FirstAPI.csproj",
+      "projectUniqueName": "/Users/presidio/Desktop/training/19-29_5/FirstAPI/FirstAPI.csproj",
       "projectName": "FirstAPI",
-      "projectPath": "/Users/presidio/Desktop/training/18-28_5/FirstAPI/FirstAPI.csproj",
+      "projectPath": "/Users/presidio/Desktop/training/19-29_5/FirstAPI/FirstAPI.csproj",
       "packagesPath": "/Users/presidio/.nuget/packages/",
-      "outputPath": "/Users/presidio/Desktop/training/18-28_5/FirstAPI/obj/",
+      "outputPath": "/Users/presidio/Desktop/training/19-29_5/FirstAPI/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/presidio/.nuget/NuGet/NuGet.Config"
