@@ -1,0 +1,20 @@
+2025-06-04 12:25:06,370 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-04 12:25:06,385 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-04 12:25:42,535 [.NET Signal Handler] INFO Microsoft.Hosting.Lifetime - Application is shutting down...
+2025-06-04 12:54:11,198 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5001
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2025-06-04 12:54:11,213 [1] INFO Microsoft.Hosting.Lifetime - Content root path: /Users/gayathrimahadevan/Desktop/APIApps/Genspark2025/Day18/FirstAPI
+2025-06-04 12:54:24,590 [.NET TP Worker] INFO Microsoft.EntityFrameworkCore.Database.Command - Executed DbCommand (25ms) [Parameters=[@__key_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT u."Username", u."HashKey", u."Password", u."Role"
+FROM "Users" AS u
+WHERE u."Username" = @__key_0
+LIMIT 2
+2025-06-04 12:54:33,053 [.NET TP Worker] INFO Microsoft.EntityFrameworkCore.Database.Command - Executed DbCommand (3ms) [Parameters=[@__key_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT u."Username", u."HashKey", u."Password", u."Role"
+FROM "Users" AS u
+WHERE u."Username" = @__key_0
+LIMIT 2
+2025-06-04 12:54:33,054 [.NET TP Worker] ERROR FirstAPI.Services.AuthenticationService - Invalid login attempt

@@ -1,0 +1,8 @@
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.csproj.AssemblyReference.cache
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.GeneratedMSBuildEditorConfig.editorconfig
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.AssemblyInfoInputs.cache
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.AssemblyInfo.cs
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.csproj.CoreCompileInputs.cache
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.MvcApplicationPartsAssemblyInfo.cs
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.MvcApplicationPartsAssemblyInfo.cache
+/Users/presidio/Desktop/training/24-5_6/FileUpload/obj/Debug/net8.0/FileUpload.sourcelink.json

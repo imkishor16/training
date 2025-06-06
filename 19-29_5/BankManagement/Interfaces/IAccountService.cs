@@ -6,11 +6,13 @@ namespace BankingAPI.Interfaces
 {
     
 
-    public interface ITransactionService
+    public interface IAccountService
     {
-        Task<Transaction> DepositAsync(int accountId, decimal amount);
-        Task<Transaction> WithdrawAsync(int accountId, decimal amount);
-        Task<Transaction> TransferAsync(int fromAccountId, int toAccountId, decimal amount);
-        Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(int accountId);
+        Task<Account> CreateAccountAsync(int customerId, string accountNumber, string accountType);
+        Task<Account?> GetAccountByIdAsync(int accountId);
+        Task<IEnumerable<Account>> GetAccountsByCustomerIdAsync(int customerId);
+        Task<IEnumerable<Account>> GetAllAccountsAsync();
     }
+
+   
 }
