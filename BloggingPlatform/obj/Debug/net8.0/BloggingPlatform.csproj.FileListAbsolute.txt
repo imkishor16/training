@@ -1,0 +1,6 @@
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.csproj.AssemblyReference.cache
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.GeneratedMSBuildEditorConfig.editorconfig
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.AssemblyInfoInputs.cache
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.AssemblyInfo.cs
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.csproj.CoreCompileInputs.cache
+/Users/presidio/Desktop/training/BloggingPlatform/obj/Debug/net8.0/BloggingPlatform.sourcelink.json

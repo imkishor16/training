@@ -1,23 +1,24 @@
-using System.Text;
-using FirstAPI.Contexts;
-using FirstAPI.Interfaces;
-using FirstAPI.Misc;
-using FirstAPI.Models;
-using FirstAPI.Repositories;
-using FirstAPI.Services;
+﻿using System.Text;
+using BloggingPlatform.Data;
+using BloggingPlatform.Interfaces;
+using BloggingPlatform.Misc;
+using BloggingPlatform.Models;
+using BloggingPlatform.Repositories;
+using BloggingPlatform.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql.Replication.PgOutput.Messages;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Clinic API", Version = "v1" });
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Blogging API", Version = "v1" });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -38,7 +39,7 @@ builder.Services.AddSwaggerGen(opt =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
@@ -51,18 +52,12 @@ builder.Services.AddControllers()
 
 builder.Logging.AddLog4Net();
 
+builder.Services.AddDbContext<BlogDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<ClinicContext>(opts =>
-{
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 #region  Repositories
-builder.Services.AddTransient<IRepository<int, Doctor>, DoctorRepository>();
-builder.Services.AddTransient<IRepository<int, Patient>, PatinetRepository>();
-builder.Services.AddTransient<IRepository<int, Speciality>, SpecialityRepository>();
-builder.Services.AddTransient<IRepository<string, Appointmnet>, AppointmnetRepository>();
-builder.Services.AddTransient<IRepository<int, DoctorSpeciality>, DoctorSpecialityRepository>();
-builder.Services.AddTransient<IRepository<string, User>, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 #endregion
 
 #region Services
@@ -79,11 +74,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = false,
                         ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Keys:JwtTokenKey"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found in configuration"))
+                        )
                     };
                 });
 #endregion
@@ -92,7 +89,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAutoMapper(typeof(User));
 builder.Services.AddScoped<CustomExceptionFilter>();
 #endregion
-
 
 var app = builder.Build();
 
@@ -103,6 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
