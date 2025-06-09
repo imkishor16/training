@@ -19,13 +19,12 @@
                     </svg>
                     Doctor's Clinic
                 </a>
-                <button class="menu-btn" aria-label="Toggle menu">
-                    <svg class="icon" viewBox="0 0 24 24">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                <input type="checkbox" id="menu-toggle" class="menu-toggle">
+                <label for="menu-toggle" class="menu-btn" aria-label="Toggle menu">
+                    <svg class="icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
-                </button>
+                </label>
                 <nav class="nav">
                     <ul class="nav-list">
                         <li><a href="#home">Home</a></li>
@@ -36,15 +35,15 @@
                         <a href="#" class="btn outline">Register</a>
                     </div>
                 </nav>
-            </div>
-            <div class="mobile-menu">
-                <ul class="nav-list">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                </ul>
-                <div class="btn-group">
-                    <a href="#" class="btn primary">Log In</a>
-                    <a href="#" class="btn outline">Register</a>
+                <div class="mobile-menu">
+                    <ul class="nav-list">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                    </ul>
+                    <div class="btn-group">
+                        <a href="#" class="btn primary">Log In</a>
+                        <a href="#" class="btn outline">Register</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -131,35 +130,5 @@
             </div>
         </div>
     </section>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.querySelector('.menu-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-
-            // Toggle mobile menu
-            menuBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('active');
-                menuBtn.classList.toggle('active');
-            });
-
-            // Close mobile menu when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
-                    mobileMenu.classList.remove('active');
-                    menuBtn.classList.remove('active');
-                }
-            });
-
-            // Close mobile menu when clicking on a link
-            const mobileLinks = document.querySelectorAll('.mobile-menu a');
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    menuBtn.classList.remove('active');
-                });
-            });
-        });
-    </script>
 </body>
 </html>

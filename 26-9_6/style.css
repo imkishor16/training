@@ -22,6 +22,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 32px;
+    position: relative;
 }
 
 .grid-2 {
@@ -121,56 +122,12 @@ body {
     height: 24px;
 }
 
-.menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    transition: transform 0.3s ease;
-}
-
-.menu-btn.active {
-    transform: rotate(90deg);
-}
-
-.mobile-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    padding: 16px 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-top: 1px solid #E0E0E0;
-}
-
-.mobile-menu.active {
-    display: block;
-}
-
-.mobile-menu .nav-list {
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.mobile-menu .btn-group {
-    flex-direction: column;
-    gap: 12px;
-}
-
-.mobile-menu .btn {
-    width: 100%;
-    text-align: center;
-}
-
-/* Header */
+/* Header and Navigation */
 header {
     background: #fff;
     padding: 24px 0;
     border-bottom: 1px solid #E0E0E0;
+    position: relative;
 }
 
 .logo {
@@ -276,20 +233,53 @@ header {
         padding: 0 20px;
     }
 
+    .flex-between {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
     .menu-btn {
+        display: block !important;
+        background: none;
+        border: none;
+        z-index: 1001;
+        position: relative;
+    }
+    .menu-btn .icon {
         display: block;
+        width: 32px;
+        height: 32px;
+        color: #333;
     }
 
     .nav {
+        display: none !important;
+    }
+
+    .mobile-menu {
         display: none;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 16px 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-top: 1px solid #E0E0E0;
+        z-index: 1000;
     }
 
-    .flex-between {
-        flex-wrap: wrap;
-    }
-
-    .mobile-menu.active {
+    #menu-toggle:checked ~ .mobile-menu {
         display: block;
+    }
+
+    #menu-toggle:checked + .menu-btn {
+        transform: rotate(90deg);
+    }
+
+    #menu-toggle:checked + .menu-btn .icon {
+        color: #4A90E2;
     }
 
     .grid-2 {
@@ -330,5 +320,71 @@ header {
     .card {
         padding: 24px 20px;
     }
+}
+
+/* Menu Toggle and Button */
+.menu-toggle {
+    display: none;
+}
+
+.menu-btn {
+    display: none;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.3s ease;
+    background: none;
+    border: none;
+}
+
+.menu-btn .icon {
+    width: 24px;
+    height: 24px;
+    color: #333;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 16px 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #E0E0E0;
+    z-index: 1000;
+}
+
+/* Show menu when checkbox is checked */
+#menu-toggle:checked ~ .mobile-menu {
+    display: block;
+}
+
+#menu-toggle:checked + .menu-btn {
+    transform: rotate(90deg);
+}
+
+#menu-toggle:checked + .menu-btn .icon {
+    color: #4A90E2;
+}
+
+.mobile-menu .nav-list {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.mobile-menu .btn-group {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mobile-menu .btn {
+    width: 100%;
+    text-align: center;
 }
 
