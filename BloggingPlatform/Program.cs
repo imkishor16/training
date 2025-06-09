@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using BloggingPlatform.Data;
 using BloggingPlatform.Interfaces;
-using BloggingPlatform.Misc;
 using BloggingPlatform.Models;
 using BloggingPlatform.Repositories;
 using BloggingPlatform.Services;

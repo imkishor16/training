@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Clinic - Quality Care for Your Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="flex-between">
+                <a href="#" class="logo">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    Doctor's Clinic
+                </a>
+                <button class="menu-btn" aria-label="Toggle menu">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                    </ul>
+                    <div class="btn-group">
+                        <a href="#" class="btn primary">Log In</a>
+                        <a href="#" class="btn outline">Register</a>
+                    </div>
+                </nav>
+            </div>
+            <div class="mobile-menu">
+                <ul class="nav-list">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                </ul>
+                <div class="btn-group">
+                    <a href="#" class="btn primary">Log In</a>
+                    <a href="#" class="btn outline">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section bg-light" id="home">
+        <div class="container">
+            <div class="grid-2">
+                <div class="content">
+                    <h1>Quality Care<br>for Your Health</h1>
+                    <p>Our clinic provides the best medical services for you and your family.</p>
+                    <div>
+                        <a href="#" class="btn primary">Book Appointment</a>
+                    </div>
+                </div>
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1887&auto=format&fit=crop" alt="Doctor" class="img-cover" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                        <line x1="16" x2="16" y1="2" y2="6"/>
+                        <line x1="8" x2="8" y1="2" y2="6"/>
+                        <line x1="3" x2="21" y1="10" y2="10"/>
+                    </svg>
+                    <h3>Primary Care</h3>
+                    <p>Provide doctor early care or cutlanes.</p>
+                </div>
+                <div class="card">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <h3>Pediatrics</h3>
+                    <p>Provide carecare with kids in-names.</p>
+                </div>
+                <div class="card">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    <h3>Specialty Care</h3>
+                    <p>Provide accarecare and curisel-car.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">What Our Patients Are Saying</h2>
+            <div class="card testimonial">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+                    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+                </svg>
+                <p>Excellent service and wonderful staff. I always feel well taken care of.</p>
+                <p class="author">John D.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="hours">
+                <h2 class="section-title">Clinic Hours</h2>
+                <div class="schedule">
+                    <div class="time-slot">
+                        <span>Monday - Friday</span>
+                        <span>8:00 AM - 6:00 PM</span>
+                    </div>
+                    <div class="time-slot">
+                        <span>Saturday</span>
+                        <span>9:00 AM - 1:00 PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+</body>
+</html>
