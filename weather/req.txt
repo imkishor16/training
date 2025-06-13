@@ -1,0 +1,41 @@
+
+Build a Weather Dashboard that fetches real-time weather data using an open API (like OpenWeatherMap) and displays it using Angular components. Use RxJS Observables, async pipe, and HTTPClient to handle API calls and data flow.
+⸻
+Requirements
+1. Setup & Structure
+• Use Angular 17 or later.
+• Create at least the following components:
+• WeatherDashboardComponent
+• CitySearchComponent
+• WeatherCardComponent
+• Create a service: WeatherService that uses HttpClient.
+⸻
+2. Functional Requirements
+Search City Weather
+• The user enters a city name in a search box.
+• On clicking “Search”, fetch current weather data from OpenWeatherMap API (or use dummy/mock JSON if needed).
+• Display temperature, weather condition (cloudy, sunny, etc.), humidity, wind speed.
+Live Data Stream Using Observable
+• Use RxJS Observables to handle:
+• API response stream.
+• Component interaction (i.e., use a BehaviorSubject in WeatherService to communicate between CitySearchComponent and WeatherDashboardComponent).
+• Optional: A timer (interval()) to refresh the weather data every 5 minutes.
+Error Handling
+• Show a user-friendly error message when:
+• City not found
+• API error occurs
+⸻
+UI Expectations
+• Simple and clean layout using Angular Material (optional).
+• Weather Card:
+• City Name
+• Weather Icon
+• Temperature
+• Conditions (e.g., Clear Sky)
+• Humidity
+• Wind Speed
+⸻
+Optional if Time Permits
+• Add a history section showing last 5 searched cities.
+• Store history in localStorage and show clickable buttons to re-fetch weather.
+• Use ReplaySubject to maintain the search history observable.

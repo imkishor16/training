@@ -1,0 +1,25 @@
+<div class="controls">
+  <button (click)="clearRecipes()" class="clear-button">Clear Recipes</button>
+</div>
+
+<div class="recipe-list">
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading recipes...</p>
+    </div>
+  } @else if (recipes().length === 0) {
+    <p class="no-recipes">No recipes found</p>
+  } @else {
+    @for (recipe of recipes(); track recipe.id) {
+      <div class="recipe-card">
+        <h2>{{ recipe.name }}</h2>
+        <div class="recipe-details">
+          <p><strong>Cuisine:</strong> {{ recipe.cuisine }}</p>
+          <p><strong>Cooking Time:</strong> {{ recipe.cookTimeMinutes }} minutes</p>
+          <p><strong>Ingredients:</strong> {{ recipe.ingredients.join(', ') }}</p>
+        </div>
+      </div>
+    }
+  }
+</div> 

@@ -122,7 +122,6 @@ body {
     height: 24px;
 }
 
-/* Header and Navigation */
 header {
     background: #fff;
     padding: 24px 0;
@@ -205,7 +204,6 @@ header {
     color: #666;
 }
 
-/* Hours */
 .schedule {
     max-width: 400px;
     margin: 0 auto;
@@ -322,7 +320,6 @@ header {
     }
 }
 
-/* Menu Toggle and Button */
 .menu-toggle {
     display: none;
 }
@@ -345,7 +342,7 @@ header {
     fill: none;
 }
 
-/* Mobile Menu */
+/* mobile menu */
 .mobile-menu {
     display: none;
     position: absolute;
@@ -359,7 +356,6 @@ header {
     z-index: 1000;
 }
 
-/* Show menu when checkbox is checked */
 #menu-toggle:checked ~ .mobile-menu {
     display: block;
 }

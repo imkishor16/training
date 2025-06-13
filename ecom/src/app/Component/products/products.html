@@ -1,0 +1,48 @@
+<button type="button" class="btn btn-primary">
+  Notifications <span class="badge badge-light">{{cartCount}}</span>
+</button>
+<div>
+  @if (cartCount>0) {
+    @for (item of cartItems; track item.Id) {
+      <li>{{item.Id}} -- {{item.Count}}</li>
+    }
+  }
+</div>
+
+@if (products) {
+  <div class="products-container">
+    <div class="products-header">
+      <h2>Our Products</h2>
+      <div class="products-filter">
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search products..." class="search-input">
+        <select [(ngModel)]="selectedCategory" class="category-select">
+          <option value="">All Categories</option>
+          <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="products-grid">
+      <div *ngFor="let product of filteredProducts" class="product-card" (click)="viewProduct(product.id)">
+        <div class="product-image">
+          <img [src]="product.image" [alt]="product.name">
+        </div>
+        <div class="product-info">
+          <h3>{{product.name}}</h3>
+          <p class="product-description">{{product.description}}</p>
+          <div class="product-meta">
+            <span class="product-price">${{product.price}}</span>
+            <span class="product-category">{{product.category}}</span>
+          </div>
+          <button class="view-details-btn">View Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div>
+    <div class="spinner-border text-success" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+} 

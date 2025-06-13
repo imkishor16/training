@@ -1,0 +1,14 @@
+<div class="cart-container">
+  <div class="cart-icon" (click)="toggleCart()">
+    <i class="bi bi-cart3"></i>
+    <span class="cart-badge" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+  </div>
+
+  <div class="cart-popup" *ngIf="showCart">
+    <h3>Cart Items</h3>
+    <div *ngIf="cartItems.length === 0">No items in cart</div>
+    <ul *ngIf="cartItems.length > 0">
+      <li *ngFor="let item of cartItems">{{ item.name }}</li>
+    </ul>
+  </div>
+</div>
