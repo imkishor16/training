@@ -1,70 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using BloggingPlatform.Models;
-using BloggingPlatform.Interfaces;
 using BloggingPlatform.Contexts;
+using BloggingPlatform.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace BloggingPlatform.Repositories;
-
-public class CommentRepository : ICommentRepository
+namespace BloggingPlatform.Repositories
 {
-    private readonly BloggingPlatformContext _context;
-
-    public CommentRepository(BloggingPlatformContext context)
+    public class CommentRepository : Repository<Guid, Comment>
     {
-        _context = context;
-    }
+        public CommentRepository(BloggingPlatformContext context) : base(context)
+        {
+        }
 
-    public async Task<Comment> GetByIdAsync(Guid id)
-    {
-        return await _context.Comments
-            .Include(c => c.Author)
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
-    }
+        public override async Task<Comment> Get(Guid key)
+        {
+            var comments = await _Context.Comments.SingleOrDefaultAsync(p => p.Id == key);
 
-    public async Task<IEnumerable<Comment>> GetByPostIdAsync(Guid postId)
-    {
-        return await _context.Comments
-            .Include(c => c.Author)
-            .Where(c => c.PostId == postId && !c.IsDeleted)
-            .OrderByDescending(c => c.CreatedAt)
-            .ToListAsync();
-    }
+            return comments ?? throw new Exception("No Commetns with the given ID");
+        }
 
-    public async Task<IEnumerable<Comment>> GetByAuthorIdAsync(Guid authorId)
-    {
-        return await _context.Comments
-            .Include(c => c.Post)
-            .Where(c => c.AuthorId == authorId && !c.IsDeleted)
-            .OrderByDescending(c => c.CreatedAt)
-            .ToListAsync();
+        public override async Task<IEnumerable<Comment>> GetAll()
+        {
+            var comments = await _Context.Comments.Where(i => !i.IsDeleted).ToListAsync();
+            return comments;
+        }
     }
-
-    public async Task<Comment> CreateAsync(Comment comment)
-    {
-        await _context.Comments.AddAsync(comment);
-        await _context.SaveChangesAsync();
-        return comment;
-    }
-
-    public async Task<Comment> UpdateAsync(Comment comment)
-    {
-        comment.UpdatedAt = DateTime.UtcNow;
-        _context.Comments.Update(comment);
-        await _context.SaveChangesAsync();
-        return comment;
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        var comment = await GetByIdAsync(id);
-        if (comment == null) return false;
-
-        comment.IsDeleted = true;
-        comment.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
-        return true;
-    }
-} 
+}

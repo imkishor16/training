@@ -1,14 +1,11 @@
-using System.Threading.Tasks;
+
 using BloggingPlatform.Dto.User;
-using BloggingPlatform.Models;
+using BloggingPlatform.Models.DTOs;
 
 namespace BloggingPlatform.Interfaces
 {
-    public interface IAuthService
+    public interface IAuthenticationService
     {
-        Task<UserLoginResponse> LoginAsync(string email, string password);
-        Task<UserLoginResponse> RegisterAsync(User user);
-        Task<UserLoginResponse> RefreshTokenAsync(string accessToken, string refreshToken);
-        Task<bool> RevokeTokenAsync(string refreshToken);
+        public Task<UserLoginResponse> Login(UserLoginRequest user);
     }
-} 
+}

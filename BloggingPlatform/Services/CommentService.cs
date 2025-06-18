@@ -1,91 +1,102 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using BloggingPlatform.Models;
 using BloggingPlatform.Interfaces;
-using BloggingPlatform.Dto.Comment;
+using BloggingPlatform.Models;
+using Microsoft.OpenApi.Extensions;
+using System.Text.Json;
 
-namespace BloggingPlatform.Services;
-
-public class CommentService : ICommentService
+namespace BloggingPlatform.Services
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IPostRepository _postRepository;
-    private readonly ILogger<CommentService> _logger;
-
-    public CommentService(
-        ICommentRepository commentRepository,
-        IPostRepository postRepository,
-        ILogger<CommentService> logger)
+    public class CommentService : ICommentService
     {
-        _commentRepository = commentRepository;
-        _postRepository = postRepository;
-        _logger = logger;
-    }
+        private readonly IRepository<Guid, Comment> _commentRepo;
+        private readonly IUserValidationService _userValidationService;
 
-    public async Task<CommentResponseDto> GetByIdAsync(Guid id)
-    {
-        var comment = await _commentRepository.GetByIdAsync(id);
-        return comment?.ToResponseDto();
-    }
-
-    public async Task<IEnumerable<CommentResponseDto>> GetByPostIdAsync(Guid postId)
-    {
-        var comments = await _commentRepository.GetByPostIdAsync(postId);
-        return comments.Select(c => c.ToResponseDto());
-    }
-
-    public async Task<IEnumerable<CommentResponseDto>> GetByAuthorIdAsync(Guid authorId)
-    {
-        var comments = await _commentRepository.GetByAuthorIdAsync(authorId);
-        return comments.Select(c => c.ToResponseDto());
-    }
-
-    public async Task<CommentResponseDto> CreateAsync(Guid authorId, CommentRequestDto commentDto)
-    {
-        if (!await IsPostActiveAsync(commentDto.PostId))
-            throw new InvalidOperationException("Cannot comment on inactive post");
-
-        var comment = new Comment
+        public CommentService(IRepository<Guid, Comment> commentRepo, IUserValidationService userValidationService)
         {
-            Content = commentDto.Content,
-            AuthorId = authorId,
-            PostId = commentDto.PostId
-        };
+            _commentRepo = commentRepo;
+            _userValidationService = userValidationService;
+                    }
 
-        var createdComment = await _commentRepository.CreateAsync(comment);
-        return createdComment.ToResponseDto();
+        public async Task<Comment> AddComment(Comment comment, Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+            var added = await _commentRepo.Add(comment);
+            return added;
+        }
+        public async Task<Comment> GetCommentById(Guid id)
+        {
+            var comment = await _commentRepo.Get(id);
+
+            if (comment == null || comment.IsDeleted)
+                throw new Exception("Comment not found");
+
+            return comment;
+        }
+
+
+        public async Task<Comment> UpdateComment(Guid id, Comment comment, Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+
+            var existing = await _commentRepo.Get(id);
+
+            existing.Content = comment.Content;
+            existing.Status = comment.Status;
+            var updated = await _commentRepo.Update(id, existing);
+
+            
+
+            return updated;
+        }
+
+        public async Task<Comment> DeleteComment(Guid id, Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+
+            var comment = await _commentRepo.Get(id);
+
+            if (comment == null)
+                throw new Exception("Comment not found");
+
+            if (comment.IsDeleted ==true)
+                return comment;
+
+            comment.Status = "Rejected";
+            comment.IsDeleted = true;
+            await _commentRepo.Update(id, comment);
+
+            return comment;
+        }
+        public async Task<IEnumerable<Comment>> GetFilteredComments(Guid? postId,Guid? userId, string? status, string? sortOrder, int? pageNumber, int? pageSize)
+                {
+
+                    var comments = await _commentRepo.GetAll();
+
+                    var query = comments
+                        .Where(c => !c.IsDeleted)
+                        .AsQueryable();
+                        if (postId.HasValue)
+                            query = query.Where(c => c.PostId == postId.Value);
+
+                    if (userId.HasValue && userId != Guid.Empty)
+                    {
+                        await _userValidationService.ValidateUser(userId.Value);
+                        query = query.Where(c => c.UserId == userId.Value);
+                    }
+                    if (!string.IsNullOrWhiteSpace(status))
+                    {
+                        query = query.Where(c => !string.IsNullOrEmpty(c.Status) &&
+                                                c.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    query = sortOrder?.ToLower() == "desc"
+                        ? query.OrderByDescending(c => c.CreatedAt)
+                        : query.OrderBy(c => c.CreatedAt);
+
+                    if (pageNumber.HasValue && pageSize.HasValue)
+                        query = query.Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value);
+
+                    return query.ToList();
+                }
+
     }
-
-    public async Task<CommentResponseDto> UpdateAsync(Guid id, CommentRequestDto commentDto)
-    {
-        var comment = await _commentRepository.GetByIdAsync(id);
-        if (comment == null)
-            throw new InvalidOperationException("Comment not found");
-
-        comment.Content = commentDto.Content;
-        comment.UpdatedAt = DateTime.UtcNow;
-
-        var updatedComment = await _commentRepository.UpdateAsync(comment);
-        return updatedComment.ToResponseDto();
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        return await _commentRepository.DeleteAsync(id);
-    }
-
-    public async Task<bool> IsAuthorAsync(Guid commentId, Guid userId)
-    {
-        var comment = await _commentRepository.GetByIdAsync(commentId);
-        return comment?.AuthorId == userId;
-    }
-
-    public async Task<bool> IsPostActiveAsync(Guid postId)
-    {
-        var post = await _postRepository.GetByIdAsync(postId);
-        return post != null && !post.IsDeleted && post.Status == PostStatus.Published;
-    }
-} 
+}

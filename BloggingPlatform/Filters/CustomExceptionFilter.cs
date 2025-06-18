@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using BloggingPlatform.Models;
 using System.Net;
+using BloggingPlatform.Models.Misc;
 
 namespace BloggingPlatform.Filters
 {
@@ -21,10 +22,8 @@ namespace BloggingPlatform.Filters
 
             var errorResponse = new ErrorResponseDto
             {
-                Message = "An error occurred while processing your request.",
-                Details = exception.Message,
-                ErrorCode = GetErrorCode(exception),
-                Timestamp = DateTime.UtcNow
+                Title = "An error occurred while processing your request.",
+                Detail = exception.Message+GetErrorCode(exception)
             };
 
             context.Result = new ObjectResult(errorResponse)

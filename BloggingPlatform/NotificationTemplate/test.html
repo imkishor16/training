@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Posts</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .post { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+    .post h3 { margin: 0 0 5px; }
+  </style>
+</head>
+<body>
+  <h1>Live Blog Posts</h1>
+  <div id="postContainer"></div>
+
+  <script>
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5147/hubs/posts") // change if hosted differently
+  .configureLogging(signalR.LogLevel.Debug)
+      .build();
+
+    connection.on("ReceivePost", (post) => {
+      console.log("Received post:", post);
+      displayPost(post);
+    });
+
+    connection.onclose(error => {
+      console.error("SignalR connection closed:", error);
+    });
+
+    async function startConnection() {
+      try {
+        await connection.start();
+        console.log("Connected to SignalR.");
+      } catch (err) {
+        console.error("Connection error:", err);
+        setTimeout(startConnection, 3000);
+      }
+    }
+
+    function displayPost(post) {
+      const container = document.getElementById("postContainer");
+
+      const div = document.createElement("div");
+      div.className = "post";
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p><strong>Author:</strong> ${post.userEmail}</p>
+        <p><strong>Content:</strong> ${post.content}</p>
+        <p><strong>Status:</strong> ${post.status}</p>
+        <p><strong>Slug:</strong> ${post.slug}</p>
+      `;
+      container.prepend(div); // latest on top
+    }
+
+    startConnection();
+  </script>
+</body>
+</html>

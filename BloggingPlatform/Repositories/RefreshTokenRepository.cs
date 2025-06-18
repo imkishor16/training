@@ -1,5 +1,6 @@
-using BloggingPlatform.Contexts;
 using BloggingPlatform.Interfaces;
+using BloggingPlatform.Models;
+using BloggingPlatform.Contexts;
 using BloggingPlatform.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;

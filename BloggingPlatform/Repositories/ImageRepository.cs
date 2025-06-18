@@ -1,65 +1,28 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using BloggingPlatform.Models;
 using BloggingPlatform.Contexts;
-using BloggingPlatform.Interfaces;
 using BloggingPlatform.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BloggingPlatform.Repositories
 {
-    public class ImageRepository : IImageRepository
+    public class ImageRepository : Repository<Guid,Image>
     {
-        private readonly BloggingPlatformContext _context;
 
-        public ImageRepository(BloggingPlatformContext context)
+        public ImageRepository(BloggingPlatformContext context) : base(context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<Image> GetByIdAsync(Guid id)
+        public override async Task<Image> Get(Guid id)
         {
-            var image = await _context.Images
-                .SingleOrDefaultAsync(i => i.Id == id && !i.IsDeleted);
-            
-            return image ?? throw new InvalidOperationException($"Image with ID {id} not found");
+            var image = await _Context.Images.SingleOrDefaultAsync(i => i.Id == id && !i.IsDeleted);
+            return image ?? throw new Exception("Image not found");
         }
 
-        public async Task<IEnumerable<Image>> GetByPostIdAsync(Guid postId)
+        public override async Task<IEnumerable<Image>> GetAll()
         {
-            return await _context.Images
-                .Where(i => i.PostId == postId && !i.IsDeleted)
+            return await _Context.Images
+                .Where(i => !i.IsDeleted)
                 .ToListAsync();
-        }
-
-        public async Task<Image> CreateAsync(Image image)
-        {
-            if (image == null)
-                throw new ArgumentNullException(nameof(image));
-
-            await _context.Images.AddAsync(image);
-            await _context.SaveChangesAsync();
-            return image;
-        }
-
-        public async Task<Image> UpdateAsync(Image image)
-        {
-            if (image == null)
-                throw new ArgumentNullException(nameof(image));
-
-            var existingImage = await GetByIdAsync(image.Id);
-            _context.Entry(existingImage).CurrentValues.SetValues(image);
-            await _context.SaveChangesAsync();
-            return image;
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            var image = await GetByIdAsync(id);
-            image.IsDeleted = true;
-            image.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

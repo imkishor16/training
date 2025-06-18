@@ -1,31 +1,20 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BloggingPlatform.Models
 {
     public class RefreshToken
     {
         [Key]
-        public Guid Id { get; set; }
-
+        public Guid Id { get; set; } = Guid.NewGuid();
+        [Required]
+        public string Token { get; set; } = null!;
         [Required]
         public Guid UserId { get; set; }
 
         [Required]
-        [StringLength(500)]
-        public string Token { get; set; }
+        public string UserEmail { get; set; } = null!;
 
-        [Required]
-        public DateTime ExpiryDate { get; set; }
-
+        public DateTime Expires { get; set; }
         public bool IsRevoked { get; set; } = false;
-
-        public bool IsUsed { get; set; } = false;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; }
     }
 }

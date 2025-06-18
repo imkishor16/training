@@ -4,6 +4,6 @@ namespace BloggingPlatform.Interfaces
 {
     public interface IUserValidationService
     {
-        Task ValidateUserEmail(string email);
+        Task ValidateUser(Guid userId);
     }
 }

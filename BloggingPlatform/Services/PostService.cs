@@ -1,106 +1,160 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using BloggingPlatform.Models;
+using BloggingPlatform.Contexts;
 using BloggingPlatform.Interfaces;
-using BloggingPlatform.Dto.Post;
+using BloggingPlatform.Models;
+using Microsoft.AspNetCore.SignalR;
+using BloggingPlatform.Hubs;
+using System.Text.Json;
+using Microsoft.OpenApi.Extensions;
 
-namespace BloggingPlatform.Services;
-
-public class PostService : IPostService
+namespace BloggingPlatform.Services
 {
-    private readonly IPostRepository _postRepository;
-    private readonly ILogger<PostService> _logger;
-
-    public PostService(IPostRepository postRepository, ILogger<PostService> logger)
+    public class PostService : IPostService
     {
-        _postRepository = postRepository;
-        _logger = logger;
-    }
+        private readonly IRepository<Guid, Post> _postRepository;
+        private readonly IRepository<Guid, Comment> _commentRepository;
 
-    public async Task<PostResponseDto> GetByIdAsync(Guid id)
-    {
-        var post = await _postRepository.GetByIdAsync(id);
-        return post?.ToResponseDto();
-    }
+        private readonly IRepository<Guid, Image> _imagerepository;
+        private readonly IImageService _imageService;
+        private readonly BloggingPlatformContext _context;
+        private readonly IRepository<Guid, User> _userRepository;
+        private readonly IUserValidationService _userValidationService;
 
-    public async Task<IEnumerable<PostResponseDto>> GetByAuthorIdAsync(Guid authorId)
-    {
-        var posts = await _postRepository.GetByAuthorIdAsync(authorId);
-        return posts.Select(p => p.ToResponseDto());
-    }
 
-    public async Task<PostResponseDto> CreateAsync(Guid authorId, PostRequestDto postDto)
-    {
-        var post = new Post
+
+        public PostService(IRepository<Guid, Post> postRepo, IRepository<Guid, Comment> commentRepository
+        , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository,
+IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService)
         {
-            Title = postDto.Title,
-            Content = postDto.Content,
-            AuthorId = authorId,
-            Status = PostStatus.Draft,
-            ModerationStatus = ModerationStatus.Pending
-        };
+            _postRepository = postRepo;
+            _commentRepository = commentRepository;
+            _imagerepository = imagerepository;
+            _imageService = imageService;
+            _context = context;
+            _userRepository = userRepository;
+                _userValidationService = userValidationService;
 
-        var createdPost = await _postRepository.CreateAsync(post);
-        return createdPost.ToResponseDto();
+        }
+
+
+        public async Task<Post> AddPost(Post post, Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+            await _userValidationService.ValidateUser(post.UserId);
+
+            var created = await _postRepository.Add(post);
+            return created;
+        }
+
+        public async Task<Post> UpdatePost(Guid id, Guid userId, Post updatedPost, List<IFormFile> newImages)
+        {
+            await _userValidationService.ValidateUser(userId);
+
+            var old = await _postRepository.Get(id);
+            if (old == null)
+                throw new Exception("Post not found.");
+
+            if (!string.IsNullOrWhiteSpace(updatedPost.Title))
+                old.Title = updatedPost.Title;
+
+            if (!string.IsNullOrWhiteSpace(updatedPost.Content))
+                old.Content = updatedPost.Content;
+
+            if (!string.IsNullOrWhiteSpace(updatedPost.Slug))
+                old.Slug = updatedPost.Slug;
+            if (!string.IsNullOrWhiteSpace(updatedPost.PostStatus))
+                old.PostStatus = updatedPost.PostStatus;
+
+
+            await _context.SaveChangesAsync(); 
+
+            // Update images only if provided
+            if (newImages != null && newImages.Count > 0)
+            {
+                old.Images = await _imageService.UpdateImagesAsync(newImages, id, userId);
+            }
+
+            return old;
+        }
+
+        public async Task<Post> DeletePost(Guid id, Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+
+            var post = await _postRepository.Get(id);
+
+            if (post == null)
+                throw new Exception("No post found with the given ID.");
+
+            if (post.IsDeleted)
+                throw new Exception("Post is already deleted.");
+
+            post.IsDeleted = true;
+            await _imageService.DeleteImagesByPostIdAsync(id, userId);
+
+            await _postRepository.Update(id, post);
+
+            return post;
+        }
+
+        public async Task<Post> GetPostByID(Guid id) => await _postRepository.Get(id);
+
+        public async Task<IEnumerable<Comment>> GetCommentSByPost(Guid id)
+        {
+            var comments = await _commentRepository.GetAll();
+            var final = comments.Where(c => c.PostId == id).ToList();
+            return final;
+        }
+        public async Task<List<Image>> GetImagesByPostId(Guid id)
+        {
+            var images = await _imagerepository.GetAll();
+            var final = images.Where(c => c.PostId == id).ToList();
+            return final;
+        }
+        public async Task<IEnumerable<Post>> GetFilteredPosts(
+            Guid? userId,
+            string? status,
+            string? searchTerm,
+            string? sortOrder,
+            int? pageNumber,
+            int? pageSize)
+        {
+            var posts = await _postRepository.GetAll(); // consider using IQueryable from repo if possible
+
+            var query = posts
+                .Where(p => !p.IsDeleted)
+                .AsQueryable();
+
+            if (userId.HasValue && userId.Value != Guid.Empty)
+            {
+                await _userValidationService.ValidateUser(userId.Value);
+                query = query.Where(p => p.UserId == userId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(p =>
+                    !string.IsNullOrEmpty(p.PostStatus) &&
+                    p.PostStatus.Equals(status, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p =>
+                    (!string.IsNullOrEmpty(p.Title) && p.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(p.Content) && p.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            query = sortOrder?.ToLower() == "desc"
+                ? query.OrderByDescending(p => p.Id)
+                : query.OrderBy(p => p.Id);
+
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            }
+
+            return query.ToList();
+        }
+
     }
-
-    public async Task<PostResponseDto> UpdateAsync(Guid id, PostRequestDto postDto)
-    {
-        var post = await _postRepository.GetByIdAsync(id);
-        if (post == null)
-            throw new InvalidOperationException("Post not found");
-
-        post.Title = postDto.Title;
-        post.Content = postDto.Content;
-        post.UpdatedAt = DateTime.UtcNow;
-
-        var updatedPost = await _postRepository.UpdateAsync(post);
-        return updatedPost.ToResponseDto();
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        return await _postRepository.DeleteAsync(id);
-    }
-
-    public async Task<bool> UpdateStatusAsync(Guid id, PostStatus status)
-    {
-        return await _postRepository.UpdateStatusAsync(id, status);
-    }
-
-    public async Task<bool> UpdateModerationStatusAsync(Guid id, ModerationStatus status)
-    {
-        return await _postRepository.UpdateModerationStatusAsync(id, status);
-    }
-
-    public async Task<IEnumerable<PostResponseDto>> GetPublishedPostsAsync(int page, int pageSize)
-    {
-        var posts = await _postRepository.GetPublishedPostsAsync(page, pageSize);
-        return posts.Select(p => p.ToResponseDto());
-    }
-
-    public async Task<bool> IsAuthorAsync(Guid postId, Guid userId)
-    {
-        var post = await _postRepository.GetByIdAsync(postId);
-        return post?.AuthorId == userId;
-    }
-
-    public async Task<bool> PublishPostAsync(Guid id)
-    {
-        var post = await _postRepository.GetByIdAsync(id);
-        if (post == null) return false;
-
-        if (post.ModerationStatus != ModerationStatus.Approved)
-            throw new InvalidOperationException("Post must be approved before publishing");
-
-        return await _postRepository.UpdateStatusAsync(id, PostStatus.Published);
-    }
-
-    public async Task<bool> UnpublishPostAsync(Guid id)
-    {
-        return await _postRepository.UpdateStatusAsync(id, PostStatus.Draft);
-    }
-} 
+}

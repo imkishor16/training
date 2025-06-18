@@ -1,127 +1,104 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using BloggingPlatform.Models;
+using BloggingPlatform.Contexts;
 using BloggingPlatform.Interfaces;
-using BloggingPlatform.Dto.User;
+using BloggingPlatform.Models;
+using BloggingPlatform.Repositories;
+using Microsoft.OpenApi.Extensions;
 
-namespace BloggingPlatform.Services;
 
-public class UserService : IUserService
+namespace BloggingPlatform.Services
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ILogger<UserService> _logger;
-
-    public UserService(IUserRepository userRepository, ILogger<UserService> logger)
+    public class UserService : IUserService
     {
-        _userRepository = userRepository;
-        _logger = logger;
-    }
+        private readonly BloggingPlatformContext _context;
+        private readonly IRepository<Guid, User> _userrepository;
+        private readonly IRepository<Guid, Post> _postrepository;
+        private readonly IUserValidationService _userValidationService;
 
-    public async Task<UserResponseDto> GetByIdAsync(Guid id)
-    {
-        var user = await _userRepository.GetByIdAsync(id);
-        return user?.ToResponseDto();
-    }
 
-    public async Task<UserResponseDto> GetByEmailAsync(string email)
-    {
-        var user = await _userRepository.GetByEmailAsync(email);
-        return user?.ToResponseDto();
-    }
 
-    public async Task<UserResponseDto> GetByUsernameAsync(string username)
-    {
-        var user = await _userRepository.GetByUsernameAsync(username);
-        return user?.ToResponseDto();
-    }
-
-    public async Task<UserResponseDto> CreateAsync(UserRequestDto userDto)
-    {
-        if (!await _userRepository.IsEmailUniqueAsync(userDto.Email))
-            throw new InvalidOperationException("Email is already in use");
-
-        if (!await _userRepository.IsUsernameUniqueAsync(userDto.Username))
-            throw new InvalidOperationException("Username is already in use");
-
-        var user = new User
+        public UserService(BloggingPlatformContext context, IRepository<Guid, User> userrepository, IRepository<Guid, Post> postrepository,IUserValidationService userValidationService)
         {
-            Username = userDto.Username,
-            Email = userDto.Email,
-            Password = PasswordHasher.HashPassword(userDto.Password),
-            FirstName = userDto.FirstName,
-            LastName = userDto.LastName,
-            Bio = userDto.Bio,
-            Role = UserRole.User,
-            Status = UserStatus.Active
-        };
+            _context = context;
+            _userrepository = userrepository;
+            _postrepository = postrepository;
+            _userValidationService = userValidationService;
 
-        var createdUser = await _userRepository.CreateAsync(user);
-        return createdUser.ToResponseDto();
+
+        }
+        public async Task<User> AddUser(User user)
+        {
+            var createdUser = await _userrepository.Add(user);
+            return createdUser;
+        }
+        public async Task<User> Get(Guid userId)
+        {
+            return await _userrepository.Get(userId);
+        }
+        public async Task<User> GetByEmail(string email)
+        {
+           return await ((UserRepository)_userrepository).GetByEmail(email);
+        }
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            return await _userrepository.GetAll();
+        }
+        public async Task<User> UpdateUser(Guid userId,User user)
+        {
+            var existingUser = await _userrepository.Get(userId);
+            var _user = await _userrepository.Update(userId, user);
+            return user;
+        }
+        public async Task<User> DeleteUser(Guid userId)
+        {
+            User user = await _userrepository.Get(userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            if (user.IsDeleted)
+                return user;
+
+            user.IsDeleted = true;
+            await _userrepository.Update(userId, user);
+
+            return user;
+        }
+
+        public async Task<IEnumerable<Post>> GetPostByUser(Guid userId)
+        {
+   
+            var posts = await _postrepository.GetAll();
+            var final = posts.Where(p => p.UserId == userId).ToList();
+            return final;
+
+        }
+        public async Task<IEnumerable<User>> GetAllFiltereduser(string? role, string? status, string? sortOrder, int? pageNumber, int? pageSize)
+        {
+            var query = await _userrepository.GetAll();
+
+            // Filter
+            if (!string.IsNullOrEmpty(role))
+                query = query.Where(u => u.Role.ToLower() == role.ToLower());
+
+            if (!string.IsNullOrEmpty(status))
+                query = query.Where(u => u.Status.ToLower() == status.ToLower());
+
+            // Sort
+            if (sortOrder?.ToLower() == "desc")
+                query = query.OrderByDescending(u => u.CreatedAt);
+            else
+                query = query.OrderBy(u => u.CreatedAt);
+
+            // Pagination
+            if (pageNumber.HasValue && pageSize.HasValue && pageNumber > 0 && pageSize > 0)
+                query = query.Skip((pageNumber.Value - 1) * pageSize.Value).Take(pageSize.Value);
+
+            return query.ToList();
+        }
+            
+
+
+
     }
-
-    public async Task<UserResponseDto> UpdateAsync(Guid id, UserRequestDto userDto)
-    {
-        var user = await _userRepository.GetByIdAsync(id);
-        if (user == null)
-            throw new InvalidOperationException("User not found");
-
-        if (user.Email != userDto.Email && !await _userRepository.IsEmailUniqueAsync(userDto.Email))
-            throw new InvalidOperationException("Email is already in use");
-
-        if (user.Username != userDto.Username && !await _userRepository.IsUsernameUniqueAsync(userDto.Username))
-            throw new InvalidOperationException("Username is already in use");
-
-        user.Username = userDto.Username;
-        user.Email = userDto.Email;
-        user.FirstName = userDto.FirstName;
-        user.LastName = userDto.LastName;
-        user.Bio = userDto.Bio;
-        user.UpdatedAt = DateTime.UtcNow;
-
-        var updatedUser = await _userRepository.UpdateAsync(user);
-        return updatedUser.ToResponseDto();
-    }
-
-    public async Task<bool> DeleteAsync(Guid id)
-    {
-        return await _userRepository.DeleteAsync(id);
-    }
-
-    public async Task<bool> UpdateLastLoginAsync(Guid userId)
-    {
-        return await _userRepository.UpdateLastLoginAsync(userId);
-    }
-
-    public async Task<bool> IsEmailUniqueAsync(string email)
-    {
-        return await _userRepository.IsEmailUniqueAsync(email);
-    }
-
-    public async Task<bool> IsUsernameUniqueAsync(string username)
-    {
-        return await _userRepository.IsUsernameUniqueAsync(username);
-    }
-
-    public async Task<bool> ValidateCredentialsAsync(string email, string password)
-    {
-        var user = await _userRepository.GetByEmailAsync(email);
-        if (user == null) return false;
-
-        return PasswordHasher.VerifyPassword(password, user.Password);
-    }
-
-    public async Task<bool> UpdatePasswordAsync(Guid userId, string currentPassword, string newPassword)
-    {
-        var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null) return false;
-
-        if (!PasswordHasher.VerifyPassword(currentPassword, user.Password))
-            return false;
-
-        user.Password = PasswordHasher.HashPassword(newPassword);
-        user.UpdatedAt = DateTime.UtcNow;
-        await _userRepository.UpdateAsync(user);
-        return true;
-    }
-} 
+    
+}
