@@ -46,7 +46,6 @@ namespace BloggingPlatform.Services
                 throw new Exception("Invalid credentials");
             }
 
-
             var token = await _tokenService.GenerateToken(dbUser);
                 var refreshToken = _refreshTokenService.GenerateToken();
 

@@ -178,11 +178,6 @@ builder.Services.AddRateLimiter(options =>
 
 
 
-
-
-
-
-
 var app = builder.Build();
 // app.UseMiddleware<ExceptionMiddleware>();
 
@@ -222,16 +217,16 @@ app.Use(async (context, next) =>
             context.Request.Method,
             context.Request.Path,
             context.User.Identity?.Name ?? "Anonymous");
-        throw; // rethrow so the exception still returns 500
+        throw; 
     }
 });
-app.UseSerilogRequestLogging(); // Logs: HTTP GET /api/posts responded 200 in 44.2 ms
+app.UseSerilogRequestLogging(); 
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<PostHub>("/hubs/posts"); // Add this line
+app.MapHub<PostHub>("/hubs/posts");
 
 
 

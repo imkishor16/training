@@ -24,8 +24,9 @@ const mockActivatedRoute = {
       }
     }
   }
-
 }
+
+
 @Component({
   standalone:true,
   imports:[Product],

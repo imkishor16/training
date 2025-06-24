@@ -16,13 +16,16 @@
 
   <script>
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5147/hubs/posts") // change if hosted differently
-  .configureLogging(signalR.LogLevel.Debug)
+      .withUrl("/hubs/posts")
       .build();
 
-    connection.on("ReceivePost", (post) => {
-      console.log("Received post:", post);
+    connection.on("ReceiveNewPost", (post) => {
+      console.log("New post received:", post);
       displayPost(post);
+    });
+
+    connection.on("ReceiveNewComment", (comment) => {
+      console.log("New comment received:", comment);
     });
 
     connection.onclose(error => {
@@ -51,7 +54,7 @@
         <p><strong>Status:</strong> ${post.status}</p>
         <p><strong>Slug:</strong> ${post.slug}</p>
       `;
-      container.prepend(div); // latest on top
+      container.prepend(div); 
     }
 
     startConnection();
