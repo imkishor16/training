@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'posts', component: PostsListComponent },
-  { path: 'post/create', component: PostCreateComponent },
+  { path: 'posts/create', component: PostCreateComponent },
   { path: 'posts/edit/:id', component: PostEditComponent },
   { path: 'post/:id', component: PostComponent },
   { path: 'dashboard', component: HomeComponent } // Using HomeComponent as dashboard for now
