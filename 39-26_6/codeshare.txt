@@ -1,0 +1,126 @@
+Codeshare logo
+ ShareSign UpLog In
+1
+Linux: OS, open source, 1991, multi-user
+2
+Unix: OS, 1970, licensed
+3
+Linus + Unix = Linux
+4
+Linux VS Unix
+5
+Linux is not an OS.
+6
+Linux is an open-source Kernel.
+7
+Linux Kernel (Engine)
+8
+Ubuntu (Beginner), CentOS (Enterprise systems), Debian (super stable), Redhat, Kali Linux (Hacking), Fedora (heavy dev) : Linux Distributions / Distros
+9
+Key Features
+10
+Basic Linux Commands:
+11
+1. ls
+12
+2. pwd
+13
+3. cd
+14
+4. mkdir
+15
+5. rmdir
+16
+6. cp
+17
+esc : wq => Save and Exit
+18
+esc : q! => Discard and Exit
+19
+cp -r [source-directory]/ /home/user/backups
+20
+/home/user/backups
+21
+7. mv
+22
+8. rm
+23
+rm | rmdir
+24
+Removes files and non-empty directories| Remove empty directories only
+25
+rm file.txt //Delete
+26
+rm -r myfolder //Delete folder + content
+27
+rm -rf myfolder //Force delete
+28
+9. touch
+29
+10. cat
+30
+11. man
+31
+12. top, htop
+32
+File Permissions
+33
+1. Read (r)
+34
+2. Write (w)
+35
+3. Execute (x)
+36
+Ownerships
+37
+1. Owner
+38
+2. Group
+39
+3. Others
+40
+1. chmod
+41
+ls -lart
+42
+-l : Show file details
+43
+-a : Show hidden files too
+44
+-r : Reverse the sort order (oldest to newest)
+45
+-t : Sort by time (most recently modified files first unless reversed)
+46
+drwxr-xr-x
+47
+d : File Type
+48
+rwx : Owner Permissions
+49
+r-x : Group Permissions
+50
+r-x : Others Permissions
+51
+​
+52
+- : Regular file
+53
+d : Dir
+54
+l : Symbolic link
+55
+​
+56
+2. chown
+57
+1. chown swati hello.js  //Changes the owner of hello.js to the user swati  => chown user file
+58
+2. chown swati:devs hello.js  //Changes owner to swati and the group to devs  => chown user:group file
+
+
+
+
+Auth0
+Our Auth0 plans just got a major boost! Enjoy Custom Domain, Passwordless, and up to 25,000 MAUs.
+px
+Hide Ads

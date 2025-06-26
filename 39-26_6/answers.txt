@@ -1,0 +1,57 @@
+1. You have a file with permissions -rw-r--r--, and you run chmod +x file.sh. What happens?
+The +x adds execute permission for owner, group, and others.
+
+-rw-r--r-- (read/write for owner, read-only for group and others)
+After chmod +x: -rwxr-xr-x
+Now, the file is executable by everyone.
+
+2. What is the difference between chmod 744 file.txt and chmod u=rwx,go=r file.txt?
+
+Owner: rwx (7)
+
+Group: r (4)
+
+Others: r (4)
+
+Permissions: -rwxr--r--
+
+744 is numeric (octal) notation
+
+u=rwx,go=r is symbolic notation
+
+so same result.
+
+3. What is the sticky bit, and when should you use it?
+The sticky bit (t) allows only the owner of a file (or root) to delete or rename it within a shared directory, even if others have write permissions to the directory.
+
+Command: chmod +t /shared-dir
+
+Permissions: drwxrwxrwt
+Use sticky bit for shared writable directories to prevent users from deleting each other's files.
+
+4. You are told to give the owner full access, group only execute, and others no permissions. What symbolic command achieves this?
+
+chmod u=rwx,g=x,o= file
+u=rwx → owner: read, write, execute
+
+g=x → group: execute only
+
+o= → others: no permissions
+
+5. What is umask, and why is it important?
+umask defines the default permission "mask" when files or directories are created.
+It removes permissions from the system default (666 for files, 777 for directories).
+
+
+6. If the umask is 022, what are the default permissions for a new file and a new directory?
+File default: 666 - 022 = 644 → -rw-r--r--
+
+Directory default: 777 - 022 = 755 → drwxr-xr-x
+
+
+7. Why is umask often set to 002 in development environments but 027 or 077 in production?
+002 (dev): Allows group write (rw-rw-r--)
+
+027 (prod): Restricts group (rw-r-----)
+
+077 (high-security prod): Only owner can read/write — rw------- 
