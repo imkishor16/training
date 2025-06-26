@@ -1,9 +1,12 @@
 export interface User {
-  id?: string;
+  id: string;
   username: string;
   email: string;
-  token?: string;
+  name?: string;
+  role: UserRole;
 }
+
+export type UserRole = 'Admin' | 'User';
 
 export interface SignUpRequest {
   username: string;
@@ -17,6 +20,18 @@ export interface SignInRequest {
 }
 
 export interface AuthResponse {
-  user: User;
   token: string;
+  user: User;
+}
+
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+  name?: string;
 } 

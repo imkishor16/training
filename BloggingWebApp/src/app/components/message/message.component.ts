@@ -1,13 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { MessageService } from '../../services/message.service';
 import { AppMessage, MessageType } from '../../models/error.model';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { FormsModule } from '@angular/forms';
+import { Comment } from '../../models/post.model';
+import { AuthService } from '../../services/auth.service';
+import { CommentService } from '../../services/comment.service';
 
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div 
       *ngIf="currentMessage" 
@@ -85,15 +90,30 @@ import { AppMessage, MessageType } from '../../models/error.model';
     }
   `],
   animations: [
-    // You can add animations here if needed
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'translateX(100%)', opacity: 0 }))
+      ])
+    ])
   ]
 })
 export class MessageComponent implements OnInit, OnDestroy {
   currentMessage: AppMessage | null = null;
   MessageType = MessageType;
   private subscription: Subscription = new Subscription();
+  @Input() comment!: Comment;
+  @Output() commentUpdated = new EventEmitter<Comment>();
+  @Output() commentDeleted = new EventEmitter<string>();
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private authService: AuthService,
+    private commentService: CommentService
+  ) {}
 
   ngOnInit(): void {
     this.subscription = this.messageService.message$.subscribe(
@@ -159,6 +179,57 @@ export class MessageComponent implements OnInit, OnDestroy {
         return 'text-blue-700';
       default:
         return 'text-gray-700';
+    }
+  }
+
+  get canModify(): boolean {
+    return this.isAdmin || this.comment.userId === this.authService.getCurrentUserId();
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getCurrentUserRole() === 'Admin';
+  }
+
+  startEditing(): void {
+    this.comment.isEditing = true;
+    this.comment.editContent = this.comment.content;
+  }
+
+  cancelEditing(): void {
+    this.comment.isEditing = false;
+    this.comment.editContent = undefined;
+  }
+
+  saveEdit(): void {
+    if (this.comment.editContent && this.comment.editContent !== this.comment.content) {
+      this.commentService.updateComment(this.comment.id, {
+        content: this.comment.editContent
+      }).subscribe({
+        next: (updatedComment) => {
+          this.comment.isEditing = false;
+          this.commentUpdated.emit(updatedComment);
+          this.messageService.showSuccess('Success', 'Comment updated successfully');
+        },
+        error: (error) => {
+          this.messageService.showHttpError(error);
+        }
+      });
+    } else {
+      this.cancelEditing();
+    }
+  }
+
+  onDelete(): void {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.commentService.deleteComment(this.comment.id).subscribe({
+        next: () => {
+          this.commentDeleted.emit(this.comment.id);
+          this.messageService.showSuccess('Success', 'Comment deleted successfully');
+        },
+        error: (error) => {
+          this.messageService.showHttpError(error);
+        }
+      });
     }
   }
 } 

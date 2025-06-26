@@ -158,4 +158,4 @@ D:\training\BloggingPlatform\obj\Debug\net9.0\refint\BloggingPlatform.dll
 D:\training\BloggingPlatform\obj\Debug\net9.0\BloggingPlatform.pdb
 D:\training\BloggingPlatform\obj\Debug\net9.0\BloggingPlatform.genruntimeconfig.cache
 D:\training\BloggingPlatform\obj\Debug\net9.0\ref\BloggingPlatform.dll
-D:\training\BloggingPlatform\obj\Debug\net9.0\Blogging.91C12D71.Up2Date
+D:\training\BloggingPlatform\obj\Debug\net9.0\blogging.6CF37532.Up2Date

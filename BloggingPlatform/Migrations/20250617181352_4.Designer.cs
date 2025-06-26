@@ -107,9 +107,7 @@ namespace bloggingplatform.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    
 
                     b.Property<string>("Title")
                         .IsRequired()

@@ -105,9 +105,7 @@ namespace bloggingplatform.Migrations
                     b.Property<int>("PostStatus")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    
 
                     b.Property<string>("Title")
                         .IsRequired()

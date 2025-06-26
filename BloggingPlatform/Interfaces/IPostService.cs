@@ -11,6 +11,8 @@ namespace BloggingPlatform.Interfaces
         public Task<Post> DeletePost(Guid id, Guid userId);
         public Task<List<Image>> GetImagesByPostId(Guid id);
         public Task<IEnumerable<Post>> GetFilteredPosts(Guid? userId, string? status, string? searchTerm, string? sortOrder, int? pageNumber, int? pageSize);
+        public Task<IEnumerable<Post>> GetAllPosts();
+        public Task<IEnumerable<Like>> GetLikesByPostId(Guid id);
 
     }
 }

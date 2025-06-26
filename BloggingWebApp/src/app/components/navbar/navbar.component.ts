@@ -8,6 +8,7 @@ import { AppState } from '../../store/app.state';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { logout } from '../../store/auth/auth.actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -88,7 +89,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {
     this.isAuthenticated$ = new Observable<boolean>();
   }
@@ -105,6 +107,5 @@ export class NavbarComponent implements OnInit {
 
   onLogout(): void {
     this.store.dispatch(logout());
-    this.messageService.showSuccessMessage('LOGOUT');
   }
 } 

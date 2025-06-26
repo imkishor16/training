@@ -33,6 +33,7 @@ private readonly IHubContext<PostHub> _hubContext;
     {
         try
         {
+            Console.WriteLine($"dto { dto} " );
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
                 Console.WriteLine($"{idClaim},{role},{dto.UserId}");
@@ -67,7 +68,8 @@ private readonly IHubContext<PostHub> _hubContext;
             var post = await _postService.GetPostByID(id);
             var images = await _postService.GetImagesByPostId(post.Id);
             post.Images = images.ToList();
-            
+            var likes = await _postService.GetLikesByPostId(post.Id);
+            post.Likes = likes.ToList();
             if (post == null || post.IsDeleted)
                     return NotFound("Post not found");
 
@@ -77,6 +79,12 @@ private readonly IHubContext<PostHub> _hubContext;
         {
             return BadRequest(new { message = ex.Message });
         }
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetAllPosts()
+    {
+        var posts = await _postService.GetAllPosts();
+        return Ok(posts);
     }
     [Authorize]
     [HttpPut("{id}")]
@@ -189,6 +197,20 @@ private readonly IHubContext<PostHub> _hubContext;
                 return NotFound("No posts found.");
 
             return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id}/likes")]
+    public async Task<IActionResult> GetLikesByPostId(Guid id)
+    {
+        try
+        {
+            var likes = await _postService.GetLikesByPostId(id);
+            return Ok(likes);
         }
         catch (Exception ex)
         {

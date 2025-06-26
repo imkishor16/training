@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { map, mergeMap, catchError, tap } from 'rxjs/operators';
+import { map, mergeMap, catchError, tap, exhaustMap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import * as AuthActions from './auth.actions';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.state';
+import { MessageService } from '../../services/message.service';
 
 @Injectable()
 export class AuthEffects {
@@ -14,7 +15,8 @@ export class AuthEffects {
     private actions$: Actions,
     private authService: AuthService,
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private messageService: MessageService
   ) {}
 
   signUp$ = createEffect(() => {
@@ -73,10 +75,20 @@ export class AuthEffects {
     }
     return this.actions$.pipe(
       ofType(AuthActions.logout),
-      tap(() => {
-        this.authService.logout();
-        this.router.navigate(['/login']);
-      })
+      exhaustMap(() => 
+        this.authService.logout().pipe(
+          tap(() => {
+            this.messageService.showSuccessMessage('LOGOUT');
+            this.router.navigate(['/auth']);
+          }),
+          catchError(error => {
+            this.messageService.showHttpError(error);
+            // Still navigate and clear local state even if API call fails
+            this.router.navigate(['/auth']);
+            return of(error);
+          })
+        )
+      )
     );
   }, { dispatch: false });
 } 

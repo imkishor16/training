@@ -16,6 +16,7 @@ namespace BloggingPlatform.Contexts
         public DbSet<Post> Posts { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Like> Likes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
@@ -73,6 +74,12 @@ namespace BloggingPlatform.Contexts
                 .OnDelete(DeleteBehavior.Cascade);
 
 
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Likes)
+                .WithOne(l => l.Post)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // IMAGE
             modelBuilder.Entity<Image>()
                 .HasKey(i => i.Id);
@@ -88,7 +95,24 @@ namespace BloggingPlatform.Contexts
             modelBuilder.Entity<Comment>()
                 .Property(c => c.UserId)
                 .IsRequired();
-            //REFRESH TOKEN
+
+            // LIKE
+            modelBuilder.Entity<Like>()
+                .HasKey(l => l.Id);
+
+            modelBuilder.Entity<Like>()
+                .Property(l => l.UserId)
+                .IsRequired();
+
+            modelBuilder.Entity<Like>()
+                .Property(l => l.PostId)
+                .IsRequired();
+
+            modelBuilder.Entity<Like>()
+                .Property(l => l.IsLiked)
+                .IsRequired();
+
+            //REFRESH TOKEN 
                 modelBuilder.Entity<RefreshToken>()
                 .HasIndex(r => r.Token)
                 .IsUnique();

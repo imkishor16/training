@@ -7,11 +7,9 @@ namespace BloggingPlatform.Models.DTOs
     {
         public string? Title { get; set; }
 
-        public string? Slug { get; set; }
-
         public string? Content { get; set; }
 
-        public string? Status { get; set; } = "Published";
+        public string? PostStatus { get; set; } = "Published"; // deleted
 
         public List<IFormFile> Images { get; set; } = new();
 

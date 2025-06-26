@@ -12,7 +12,7 @@ namespace BloggingPlatform.Services
     {
         private readonly IRepository<Guid, Post> _postRepository;
         private readonly IRepository<Guid, Comment> _commentRepository;
-
+        private readonly IRepository<Guid, Like> _likeRepository;
         private readonly IRepository<Guid, Image> _imagerepository;
         private readonly IImageService _imageService;
         private readonly BloggingPlatformContext _context;
@@ -22,11 +22,12 @@ namespace BloggingPlatform.Services
 
 
         public PostService(IRepository<Guid, Post> postRepo, IRepository<Guid, Comment> commentRepository
-        , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository,
+        , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository, IRepository<Guid, Like> likeRepository,
 IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService)
         {
             _postRepository = postRepo;
             _commentRepository = commentRepository;
+            _likeRepository = likeRepository;
             _imagerepository = imagerepository;
             _imageService = imageService;
             _context = context;
@@ -39,8 +40,8 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
         public async Task<Post> AddPost(Post post, Guid userId)
         {
             await _userValidationService.ValidateUser(userId);
+            post.UserId = userId;
             await _userValidationService.ValidateUser(post.UserId);
-
             var created = await _postRepository.Add(post);
             return created;
         }
@@ -59,8 +60,7 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             if (!string.IsNullOrWhiteSpace(updatedPost.Content))
                 old.Content = updatedPost.Content;
 
-            if (!string.IsNullOrWhiteSpace(updatedPost.Slug))
-                old.Slug = updatedPost.Slug;
+            
             if (!string.IsNullOrWhiteSpace(updatedPost.PostStatus))
                 old.PostStatus = updatedPost.PostStatus;
 
@@ -97,6 +97,12 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
         }
 
         public async Task<Post> GetPostByID(Guid id) => await _postRepository.Get(id);
+        public async Task<IEnumerable<Post>> GetAllPosts()
+        {
+            var posts = await _postRepository.GetAll();
+            var final = posts.Where(p => !p.IsDeleted).ToList();
+            return final;
+        }
 
         public async Task<IEnumerable<Comment>> GetCommentSByPost(Guid id)
         {
@@ -154,6 +160,13 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             }
 
             return query.ToList();
+        }
+
+        public async Task<IEnumerable<Like>> GetLikesByPostId(Guid id)
+        {
+            var likes = await _likeRepository.GetAll();
+            var final = likes.Where(l => l.PostId == id).ToList();
+            return final;
         }
 
     }

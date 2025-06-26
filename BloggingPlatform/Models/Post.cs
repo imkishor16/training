@@ -16,8 +16,6 @@ namespace BloggingPlatform.Models
         [Required]
         public string Title { get; set; }
 
-        [Required]
-        public string Slug { get; set; }
 
         [Required]
         public string Content { get; set; }
@@ -28,5 +26,6 @@ namespace BloggingPlatform.Models
         public User User { get; set; }
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Image> Images { get; set; } = new List<Image>();
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
     }
 }

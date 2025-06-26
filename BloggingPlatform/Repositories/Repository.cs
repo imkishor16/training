@@ -42,8 +42,7 @@ namespace BloggingPlatform.Repositories
             if (myItem != null)
             {
                 _Context.Entry(myItem).CurrentValues.SetValues(item);
-                 _Context.Entry(myItem).Property("IsDeleted").IsModified = true;
-
+                // _Context.Entry(myItem).Property("IsDeleted").IsModified = false;
 
                 await _Context.SaveChangesAsync();
                 return item;

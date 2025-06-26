@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { MessageService } from '../../services/message.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-post-create',
@@ -58,7 +59,8 @@ export class PostCreateComponent {
     private fb: FormBuilder,
     private postService: PostService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.postForm = this.fb.group({
       title: ['', Validators.required],
@@ -89,8 +91,8 @@ export class PostCreateComponent {
     this.loading = true;
     const formData = new FormData();
     formData.append('title', this.postForm.value.title);
-    formData.append('slug', this.postForm.value.slug);
     formData.append('content', this.postForm.value.content);
+    formData.append('userId', this.authService.getUserIdFromToken() || '');
     for (const img of this.images) {
       formData.append('images', img);
     }

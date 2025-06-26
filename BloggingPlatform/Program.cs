@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using BloggingPlatform.Contexts;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -68,7 +68,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5147", "https://localhost:5147", "http://127.0.0.1:55100")
+        policy.WithOrigins("http://localhost:5147", "https://localhost:5147", "http://localhost:4200")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();
@@ -131,6 +131,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(PostProfile));
 builder.Services.AddAutoMapper(typeof(CommentProfile));
+builder.Services.AddAutoMapper(typeof(LikeProfile));
 
 
 //repositories
@@ -139,6 +140,7 @@ builder.Services.AddScoped<IRepository<Guid, Comment>, CommentRepository>();
 builder.Services.AddScoped<IRepository<Guid, Post>, PostRepository>();
 builder.Services.AddScoped<IRepository<Guid, Image>, ImageRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IRepository<Guid, Like>, LikeRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 
@@ -147,6 +149,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserValidationService, UserValidationService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

@@ -1,4 +1,3 @@
-
 using BloggingPlatform.Dto.User;
 using BloggingPlatform.Interfaces;
 using BloggingPlatform.Models;
@@ -58,6 +57,27 @@ namespace BloggingPlatform.Services
                 RefreshToken = refreshToken
 
             };
+        }
+
+        public async Task<bool> Logout(string refreshToken)
+        {
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                _logger.LogWarning("Logout attempt with empty refresh token");
+                return false;
+            }
+
+            try
+            {
+                await _refreshTokenService.Revoke(refreshToken);
+                _logger.LogInformation("User logged out successfully");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during logout");
+                return false;
+            }
         }
     }
 }

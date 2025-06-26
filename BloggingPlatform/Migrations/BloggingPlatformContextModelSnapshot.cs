@@ -87,6 +87,30 @@ namespace bloggingplatform.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("BloggingPlatform.Models.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsLiked")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("BloggingPlatform.Models.Post", b =>
                 {
                     b.Property<Guid>("Id")
@@ -101,10 +125,6 @@ namespace bloggingplatform.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("PostStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -233,6 +253,25 @@ namespace bloggingplatform.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("BloggingPlatform.Models.Like", b =>
+                {
+                    b.HasOne("BloggingPlatform.Models.Post", "Post")
+                        .WithMany("Likes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BloggingPlatform.Models.User", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BloggingPlatform.Models.Post", b =>
                 {
                     b.HasOne("BloggingPlatform.Models.User", "User")
@@ -249,11 +288,15 @@ namespace bloggingplatform.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Images");
+
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("BloggingPlatform.Models.User", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Likes");
 
                     b.Navigation("Posts");
                 });
