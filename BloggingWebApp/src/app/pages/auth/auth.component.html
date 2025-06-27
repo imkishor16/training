@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <div class="px-4 py-6 sm:px-0">
       <div class="bg-white rounded-lg shadow">
-        
+
 
         <div class="flex justify-center space-x-4 mb-8">
           <button
@@ -12,7 +12,7 @@
             class="px-4 py-2 font-medium text-sm border-b-2"
             [class.border-transparent]="activeTab !== 'signin'"
             [class.text-gray-500]="activeTab !== 'signin'"
-          >
+            >
             Sign In
           </button>
           <button
@@ -22,16 +22,22 @@
             class="px-4 py-2 font-medium text-sm border-b-2"
             [class.border-transparent]="activeTab !== 'signup'"
             [class.text-gray-500]="activeTab !== 'signup'"
-          >
+            >
             Sign Up
           </button>
         </div>
 
-        <div [ngSwitch]="activeTab">
-          <app-signin *ngSwitchCase="'signin'"></app-signin>
-          <app-signup *ngSwitchCase="'signup'"></app-signup>
+        <div>
+          @switch (activeTab) {
+            @case ('signin') {
+              <app-signin></app-signin>
+            }
+            @case ('signup') {
+              <app-signup></app-signup>
+            }
+          }
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>

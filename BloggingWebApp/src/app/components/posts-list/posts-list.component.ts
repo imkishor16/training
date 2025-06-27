@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,7 +17,6 @@ import { PostCardComponent } from '../post-card/post-card.component';
   selector: 'app-posts-list',
   standalone: true,
   imports: [
-    CommonModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -25,44 +24,52 @@ import { PostCardComponent } from '../post-card/post-card.component';
     MatTooltipModule,
     MatProgressSpinnerModule,
     PostCardComponent
-  ],
+],
   template: `
     <div class="max-w-7xl mx-auto p-4">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Posts</h1>
-        <button 
-          *ngIf="isLoggedIn"
-          mat-raised-button 
-          color="primary"
-          (click)="createPost()"
-        >
-          <mat-icon>add</mat-icon>
-          Create Post
-        </button>
+        @if (isLoggedIn) {
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="createPost()"
+            >
+            <mat-icon>add</mat-icon>
+            Create Post
+          </button>
+        }
       </div>
-
-      <div *ngIf="loading" class="flex justify-center items-center py-8">
-        <mat-spinner diameter="40"></mat-spinner>
-      </div>
-
-      <div *ngIf="!loading && posts.length === 0" class="text-center py-8">
-        <p class="text-gray-600">No posts found</p>
-      </div>
-
-      <div *ngIf="!loading && posts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <app-post-card
-          *ngFor="let post of posts"
-          [post]="post"
-          [isLoggedIn]="isLoggedIn"
-          [isAdmin]="isAdmin"
-          (likeToggled)="toggleLike($event)"
-          (statusChanged)="changeStatus($event.post, $event.status)"
-          (deletePost)="deletePost($event)"
-          (viewPost)="viewPost($event)"
-        ></app-post-card>
-      </div>
+    
+      @if (loading) {
+        <div class="flex justify-center items-center py-8">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+    
+      @if (!loading && posts.length === 0) {
+        <div class="text-center py-8">
+          <p class="text-gray-600">No posts found</p>
+        </div>
+      }
+    
+      @if (!loading && posts.length > 0) {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (post of posts; track post) {
+            <app-post-card
+              [post]="post"
+              [isLoggedIn]="isLoggedIn"
+              [isAdmin]="isAdmin"
+              (likeToggled)="toggleLike($event)"
+              (statusChanged)="changeStatus($event.post, $event.status)"
+              (deletePost)="deletePost($event)"
+              (viewPost)="viewPost($event)"
+            ></app-post-card>
+          }
+        </div>
+      }
     </div>
-  `
+    `
 })
 export class PostsListComponent implements OnInit {
   posts: Post[] = [];

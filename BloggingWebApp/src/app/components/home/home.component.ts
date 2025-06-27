@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="bg-white shadow rounded-lg p-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to Blogging Platform</h1>

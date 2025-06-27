@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <div class="bg-white shadow rounded-lg p-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-4">User Profile</h1>

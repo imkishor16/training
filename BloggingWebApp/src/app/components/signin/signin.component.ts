@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { signInSuccess, signInFailure } from '../../store/auth/auth.actions';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppState } from '../../store/app.state';
 import { AuthService } from '../../services/auth.service';
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   selector: 'app-signin',
   templateUrl: './signin.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [ReactiveFormsModule]
 })
 export class SigninComponent {
   signinForm: FormGroup;

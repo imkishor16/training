@@ -1,0 +1,566 @@
+2025-06-27 12:47:37.250 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - null null
+2025-06-27 12:47:37.376 +05:30 [INF] CORS policy execution failed.
+2025-06-27 12:47:37.384 +05:30 [INF] Request origin http://localhost:56000 does not have permission to access the resource.
+2025-06-27 12:47:37.386 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - 204 null null 139.2026ms
+2025-06-27 12:47:48.215 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - null null
+2025-06-27 12:47:48.219 +05:30 [INF] CORS policy execution failed.
+2025-06-27 12:47:48.221 +05:30 [INF] Request origin http://localhost:56000 does not have permission to access the resource.
+2025-06-27 12:47:48.225 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - 204 null null 10.3996ms
+2025-06-27 12:48:29.639 +05:30 [INF] Application is shutting down...
+2025-06-27 12:48:44.662 +05:30 [INF] User profile is available. Using 'C:\Users\imkis\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-27 12:48:44.812 +05:30 [INF] Now listening on: http://localhost:5147
+2025-06-27 12:48:44.819 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-27 12:48:44.821 +05:30 [INF] Hosting environment: Development
+2025-06-27 12:48:44.823 +05:30 [INF] Content root path: D:\training\BloggingPlatform
+2025-06-27 12:51:05.222 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - null null
+2025-06-27 12:51:05.283 +05:30 [WRN] Failed to determine the https port for redirect.
+2025-06-27 12:51:05.286 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:05.300 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - 204 null null 78.7949ms
+2025-06-27 12:51:05.317 +05:30 [INF] Request starting HTTP/1.1 POST http://localhost:5147/api/v1/login - application/json 50
+2025-06-27 12:51:05.326 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:05.378 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:05.418 +05:30 [INF] Route matched with {action = "UserLogin", controller = "Authentication"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BloggingPlatform.Dto.User.UserLoginResponse]] UserLogin(BloggingPlatform.Models.DTOs.UserLoginRequest) on controller BloggingPlatform.Controllers.AuthenticationController (bloggingplatform).
+2025-06-27 12:51:07.234 +05:30 [INF] Executed DbCommand (47ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+FROM "Users" AS u
+WHERE u."Email" = @__email_0 AND NOT (u."IsDeleted") AND NOT (u."IsSuspended")
+LIMIT 1
+2025-06-27 12:51:07.264 +05:30 [FTL] User not found
+2025-06-27 12:51:07.268 +05:30 [ERR] No such user
+2025-06-27 12:51:07.277 +05:30 [INF] Executing UnauthorizedObjectResult, writing value of type 'System.String'.
+2025-06-27 12:51:07.286 +05:30 [INF] Executed action BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform) in 1863.0359ms
+2025-06-27 12:51:07.290 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:07.295 +05:30 [INF] HTTP POST /api/v1/login responded 401 in 1959.4953 ms
+2025-06-27 12:51:07.301 +05:30 [INF] HTTP POST /api/v1/login responded 401 in 1966ms - User: Anonymous
+2025-06-27 12:51:07.320 +05:30 [INF] Request finished HTTP/1.1 POST http://localhost:5147/api/v1/login - 401 null text/plain; charset=utf-8 2002.9222ms
+2025-06-27 12:51:22.425 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - null null
+2025-06-27 12:51:22.434 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:22.437 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - 204 null null 11.5996ms
+2025-06-27 12:51:22.442 +05:30 [INF] Request starting HTTP/1.1 POST http://localhost:5147/api/v1/login - application/json 46
+2025-06-27 12:51:22.446 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:22.449 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:22.452 +05:30 [INF] Route matched with {action = "UserLogin", controller = "Authentication"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BloggingPlatform.Dto.User.UserLoginResponse]] UserLogin(BloggingPlatform.Models.DTOs.UserLoginRequest) on controller BloggingPlatform.Controllers.AuthenticationController (bloggingplatform).
+2025-06-27 12:51:22.488 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+FROM "Users" AS u
+WHERE u."Email" = @__email_0 AND NOT (u."IsDeleted") AND NOT (u."IsSuspended")
+LIMIT 1
+2025-06-27 12:51:22.492 +05:30 [FTL] User not found
+2025-06-27 12:51:22.493 +05:30 [ERR] No such user
+2025-06-27 12:51:22.495 +05:30 [INF] Executing UnauthorizedObjectResult, writing value of type 'System.String'.
+2025-06-27 12:51:22.499 +05:30 [INF] Executed action BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform) in 44.9536ms
+2025-06-27 12:51:22.501 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:22.502 +05:30 [INF] HTTP POST /api/v1/login responded 401 in 55.2836 ms
+2025-06-27 12:51:22.505 +05:30 [INF] HTTP POST /api/v1/login responded 401 in 58ms - User: Anonymous
+2025-06-27 12:51:22.508 +05:30 [INF] Request finished HTTP/1.1 POST http://localhost:5147/api/v1/login - 401 null text/plain; charset=utf-8 65.7768ms
+2025-06-27 12:51:30.939 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - null null
+2025-06-27 12:51:30.952 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:30.955 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/login - 204 null null 20.5562ms
+2025-06-27 12:51:30.960 +05:30 [INF] Request starting HTTP/1.1 POST http://localhost:5147/api/v1/login - application/json 47
+2025-06-27 12:51:30.963 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:31.015 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:31.016 +05:30 [INF] Route matched with {action = "UserLogin", controller = "Authentication"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BloggingPlatform.Dto.User.UserLoginResponse]] UserLogin(BloggingPlatform.Models.DTOs.UserLoginRequest) on controller BloggingPlatform.Controllers.AuthenticationController (bloggingplatform).
+2025-06-27 12:51:31.152 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[@__email_0='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+FROM "Users" AS u
+WHERE u."Email" = @__email_0 AND NOT (u."IsDeleted") AND NOT (u."IsSuspended")
+LIMIT 1
+2025-06-27 12:51:31.695 +05:30 [INF] Login attempt: kishore@gmail.com
+2025-06-27 12:51:31.696 +05:30 [INF] User found: True
+2025-06-27 12:51:31.697 +05:30 [INF] Password valid: True
+2025-06-27 12:51:31.898 +05:30 [INF] Executed DbCommand (13ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = DateTime), @p2='?' (DbType = Boolean), @p3='?', @p4='?', @p5='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "RefreshTokens" ("Id", "Expires", "IsRevoked", "Token", "UserEmail", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5);
+2025-06-27 12:51:31.912 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Dto.User.UserLoginResponse'.
+2025-06-27 12:51:31.932 +05:30 [INF] Executed action BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform) in 914.4208ms
+2025-06-27 12:51:31.934 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.AuthenticationController.UserLogin (bloggingplatform)'
+2025-06-27 12:51:31.937 +05:30 [INF] HTTP POST /api/v1/login responded 200 in 970.0473 ms
+2025-06-27 12:51:31.939 +05:30 [INF] HTTP POST /api/v1/login responded 200 in 972ms - User: Anonymous
+2025-06-27 12:51:31.942 +05:30 [INF] Request finished HTTP/1.1 POST http://localhost:5147/api/v1/login - 200 null application/json; charset=utf-8 982.122ms
+2025-06-27 12:51:35.667 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:51:35.671 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:35.673 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.6361ms
+2025-06-27 12:51:35.679 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:51:35.684 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:35.740 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:51:35.754 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:51:36.061 +05:30 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-06-27 12:51:36.165 +05:30 [INF] Executed DbCommand (42ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-27 12:51:36.340 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:51:37.297 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 1539.6069ms
+2025-06-27 12:51:37.298 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:51:37.301 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 1615.8349 ms
+2025-06-27 12:51:37.304 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 1618ms - User: kishore
+2025-06-27 12:51:37.307 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 1627.4291ms
+2025-06-27 12:51:46.151 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:51:46.156 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:46.157 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.7469ms
+2025-06-27 12:51:46.166 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:51:46.217 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:51:46.221 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:51:46.223 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:51:46.270 +05:30 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-27 12:51:46.314 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:51:47.065 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 829.7438ms
+2025-06-27 12:51:47.074 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:51:47.081 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 862.9726 ms
+2025-06-27 12:51:47.084 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 865ms - User: kishore
+2025-06-27 12:51:47.087 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 920.7926ms
+2025-06-27 12:52:04.077 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 - null null
+2025-06-27 12:52:04.079 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.081 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 - 204 null null 4.0696ms
+2025-06-27 12:52:04.085 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 - null null
+2025-06-27 12:52:04.095 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.097 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:52:04.109 +05:30 [INF] Route matched with {action = "GetPostById", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetPostById(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:04.140 +05:30 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-06-27 12:52:04.192 +05:30 [INF] Executed DbCommand (11ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:04.215 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:52:04.238 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:04.243 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Models.Post'.
+2025-06-27 12:52:04.329 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform) in 217.3559ms
+2025-06-27 12:52:04.331 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:52:04.332 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 responded 200 in 235.7135 ms
+2025-06-27 12:52:04.334 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 responded 200 in 237ms - User: kishore
+2025-06-27 12:52:04.335 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40 - 200 null application/json; charset=utf-8 250.3676ms
+2025-06-27 12:52:04.385 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments - null null
+2025-06-27 12:52:04.388 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.390 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments - 204 null null 4.8374ms
+2025-06-27 12:52:04.390 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images - null null
+2025-06-27 12:52:04.392 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes - null null
+2025-06-27 12:52:04.394 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments - null null
+2025-06-27 12:52:04.400 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.403 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.404 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.405 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images - 204 null null 15.0277ms
+2025-06-27 12:52:04.406 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes - 204 null null 14.5182ms
+2025-06-27 12:52:04.407 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:52:04.410 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes - null null
+2025-06-27 12:52:04.414 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images - null null
+2025-06-27 12:52:04.420 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.420 +05:30 [INF] Route matched with {action = "GetCommentsByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCommentsByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:04.423 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:04.424 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:52:04.444 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:52:04.446 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:04.449 +05:30 [INF] Route matched with {action = "GetLikesByPostId", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetLikesByPostId(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:04.452 +05:30 [INF] Route matched with {action = "GetImagesByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetImagesByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:04.460 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:04.465 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Like, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:04.466 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+FROM "Comments" AS c
+WHERE NOT (c."IsDeleted")
+2025-06-27 12:52:04.467 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform) in 14.5721ms
+2025-06-27 12:52:04.471 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Comment, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:04.472 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:52:04.475 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes responded 200 in 50.4850 ms
+2025-06-27 12:52:04.480 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes responded 200 in 55ms - User: kishore
+2025-06-27 12:52:04.482 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/likes - 200 null application/json; charset=utf-8 71.9391ms
+2025-06-27 12:52:04.488 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform) in 47.1006ms
+2025-06-27 12:52:04.494 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:52:04.496 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments responded 200 in 89.0815 ms
+2025-06-27 12:52:04.498 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments responded 200 in 90ms - User: kishore
+2025-06-27 12:52:04.501 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/comments - 200 null application/json; charset=utf-8 106.1733ms
+2025-06-27 12:52:04.560 +05:30 [INF] Executed DbCommand (21ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:04.571 +05:30 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:52:04.583 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Image, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:04.594 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform) in 133.2574ms
+2025-06-27 12:52:04.595 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:52:04.597 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images responded 200 in 153.6045 ms
+2025-06-27 12:52:04.602 +05:30 [INF] HTTP GET /api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images responded 200 in 157ms - User: kishore
+2025-06-27 12:52:04.606 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/94a587f1-e0b6-4fbb-80f2-256193019d40/images - 200 null application/json; charset=utf-8 191.9205ms
+2025-06-27 12:52:09.253 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/likes - null null
+2025-06-27 12:52:09.256 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:09.257 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/likes - 204 null null 3.6833ms
+2025-06-27 12:52:09.264 +05:30 [INF] Request starting HTTP/1.1 PUT http://localhost:5147/api/v1/likes - application/json 112
+2025-06-27 12:52:09.267 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:09.275 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform)'
+2025-06-27 12:52:09.281 +05:30 [INF] Route matched with {action = "ToggleLike", controller = "Like"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ToggleLike(BloggingPlatform.Dto.Like.CreateLikeDto) on controller BloggingPlatform.Controllers.LikeController (bloggingplatform).
+2025-06-27 12:52:09.306 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+FROM "Users" AS u
+WHERE u."Id" = @__userId_0 AND NOT (u."IsDeleted") AND NOT (u."IsSuspended")
+LIMIT 1
+2025-06-27 12:52:09.312 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:09.343 +05:30 [INF] Executed DbCommand (9ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Boolean), @p2='?' (DbType = Guid), @p3='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Likes" ("Id", "IsLiked", "PostId", "UserId")
+VALUES (@p0, @p1, @p2, @p3);
+2025-06-27 12:52:09.347 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Models.Like'.
+2025-06-27 12:52:09.348 +05:30 [INF] Executed action BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform) in 64.7306ms
+2025-06-27 12:52:09.349 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform)'
+2025-06-27 12:52:09.350 +05:30 [INF] HTTP PUT /api/v1/likes responded 200 in 81.8100 ms
+2025-06-27 12:52:09.353 +05:30 [INF] HTTP PUT /api/v1/likes responded 200 in 84ms - User: kishore
+2025-06-27 12:52:09.357 +05:30 [INF] Request finished HTTP/1.1 PUT http://localhost:5147/api/v1/likes - 200 null application/json; charset=utf-8 93.3542ms
+2025-06-27 12:52:10.732 +05:30 [INF] Request starting HTTP/1.1 PUT http://localhost:5147/api/v1/likes - application/json 113
+2025-06-27 12:52:10.743 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:10.749 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform)'
+2025-06-27 12:52:10.751 +05:30 [INF] Route matched with {action = "ToggleLike", controller = "Like"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ToggleLike(BloggingPlatform.Dto.Like.CreateLikeDto) on controller BloggingPlatform.Controllers.LikeController (bloggingplatform).
+2025-06-27 12:52:10.759 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+FROM "Users" AS u
+WHERE u."Id" = @__userId_0 AND NOT (u."IsDeleted") AND NOT (u."IsSuspended")
+LIMIT 1
+2025-06-27 12:52:10.764 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:10.780 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+WHERE l."Id" = @__key_0
+LIMIT 2
+2025-06-27 12:52:10.798 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?' (DbType = Boolean)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "Likes" SET "IsLiked" = @p0
+WHERE "Id" = @p1;
+2025-06-27 12:52:10.803 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Models.Like'.
+2025-06-27 12:52:10.806 +05:30 [INF] Executed action BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform) in 51.9174ms
+2025-06-27 12:52:10.808 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.LikeController.ToggleLike (bloggingplatform)'
+2025-06-27 12:52:10.810 +05:30 [INF] HTTP PUT /api/v1/likes responded 200 in 64.1509 ms
+2025-06-27 12:52:10.812 +05:30 [INF] HTTP PUT /api/v1/likes responded 200 in 66ms - User: kishore
+2025-06-27 12:52:10.814 +05:30 [INF] Request finished HTTP/1.1 PUT http://localhost:5147/api/v1/likes - 200 null application/json; charset=utf-8 82.3541ms
+2025-06-27 12:52:18.767 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:52:18.770 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:18.772 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.3116ms
+2025-06-27 12:52:18.780 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-27 12:52:18.784 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:18.787 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:52:18.788 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:18.800 +05:30 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-27 12:52:18.843 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:19.773 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 980.7434ms
+2025-06-27 12:52:19.774 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-27 12:52:19.775 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 988.5943 ms
+2025-06-27 12:52:19.777 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 990ms - User: kishore
+2025-06-27 12:52:19.785 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 1004.0081ms
+2025-06-27 12:52:26.354 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - null null
+2025-06-27 12:52:26.357 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.359 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - 204 null null 4.7136ms
+2025-06-27 12:52:26.362 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - null null
+2025-06-27 12:52:26.369 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.371 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:52:26.372 +05:30 [INF] Route matched with {action = "GetPostById", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetPostById(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:26.385 +05:30 [INF] Executed DbCommand (7ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:26.422 +05:30 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:52:26.439 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:26.443 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Models.Post'.
+2025-06-27 12:52:26.518 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform) in 142.8491ms
+2025-06-27 12:52:26.520 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:52:26.521 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d responded 200 in 150.7543 ms
+2025-06-27 12:52:26.523 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d responded 200 in 152ms - User: kishore
+2025-06-27 12:52:26.524 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - 200 null application/json; charset=utf-8 162.1112ms
+2025-06-27 12:52:26.556 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - null null
+2025-06-27 12:52:26.565 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - null null
+2025-06-27 12:52:26.565 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - null null
+2025-06-27 12:52:26.565 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.569 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.574 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.576 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - 204 null null 20.3484ms
+2025-06-27 12:52:26.578 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - 204 null null 13.0596ms
+2025-06-27 12:52:26.580 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - 204 null null 14.1572ms
+2025-06-27 12:52:26.583 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - null null
+2025-06-27 12:52:26.586 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - null null
+2025-06-27 12:52:26.588 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - null null
+2025-06-27 12:52:26.590 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.592 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.594 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:52:26.595 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:52:26.596 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:52:26.597 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:52:26.597 +05:30 [INF] Route matched with {action = "GetImagesByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetImagesByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:26.598 +05:30 [INF] Route matched with {action = "GetCommentsByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCommentsByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:26.599 +05:30 [INF] Route matched with {action = "GetLikesByPostId", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetLikesByPostId(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:52:26.617 +05:30 [INF] Executed DbCommand (6ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:26.617 +05:30 [INF] Executed DbCommand (9ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:52:26.623 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+FROM "Comments" AS c
+WHERE NOT (c."IsDeleted")
+2025-06-27 12:52:26.625 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Comment, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:26.626 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:52:26.680 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Image, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:26.702 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform) in 100.7462ms
+2025-06-27 12:52:26.704 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:52:26.708 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images responded 200 in 113.2750 ms
+2025-06-27 12:52:26.712 +05:30 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:52:26.714 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images responded 200 in 119ms - User: kishore
+2025-06-27 12:52:26.717 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Like, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:52:26.720 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - 200 null application/json; charset=utf-8 136.3399ms
+2025-06-27 12:52:26.723 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform) in 110.4273ms
+2025-06-27 12:52:26.739 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:52:26.748 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes responded 200 in 151.7284 ms
+2025-06-27 12:52:26.753 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes responded 200 in 156ms - User: kishore
+2025-06-27 12:52:26.762 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - 200 null application/json; charset=utf-8 173.934ms
+2025-06-27 12:52:26.883 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform) in 273.4826ms
+2025-06-27 12:52:26.885 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:52:26.887 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments responded 200 in 291.4035 ms
+2025-06-27 12:52:26.891 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments responded 200 in 295ms - User: kishore
+2025-06-27 12:52:26.896 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - 200 null application/json; charset=utf-8 309.6838ms
+2025-06-27 12:53:12.129 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - null null
+2025-06-27 12:53:12.138 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.139 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - 204 null null 10.6213ms
+2025-06-27 12:53:12.146 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - null null
+2025-06-27 12:53:12.149 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.151 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:53:12.152 +05:30 [INF] Route matched with {action = "GetPostById", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetPostById(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:53:12.198 +05:30 [INF] Executed DbCommand (41ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:53:12.232 +05:30 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:53:12.251 +05:30 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:53:12.256 +05:30 [INF] Executing OkObjectResult, writing value of type 'BloggingPlatform.Models.Post'.
+2025-06-27 12:53:12.328 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform) in 173.6214ms
+2025-06-27 12:53:12.336 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetPostById (bloggingplatform)'
+2025-06-27 12:53:12.340 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d responded 200 in 190.2533 ms
+2025-06-27 12:53:12.347 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d responded 200 in 197ms - User: kishore
+2025-06-27 12:53:12.352 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d - 200 null application/json; charset=utf-8 205.8397ms
+2025-06-27 12:53:12.454 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - null null
+2025-06-27 12:53:12.454 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - null null
+2025-06-27 12:53:12.454 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - null null
+2025-06-27 12:53:12.457 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.471 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.460 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.475 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - 204 null null 21.2184ms
+2025-06-27 12:53:12.476 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - 204 null null 21.3539ms
+2025-06-27 12:53:12.477 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - 204 null null 23.0117ms
+2025-06-27 12:53:12.483 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - null null
+2025-06-27 12:53:12.486 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - null null
+2025-06-27 12:53:12.493 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - null null
+2025-06-27 12:53:12.536 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.539 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.543 +05:30 [INF] CORS policy execution successful.
+2025-06-27 12:53:12.545 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:53:12.546 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:53:12.547 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:53:12.558 +05:30 [INF] Route matched with {action = "GetLikesByPostId", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetLikesByPostId(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:53:12.554 +05:30 [INF] Route matched with {action = "GetImagesByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetImagesByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:53:12.548 +05:30 [INF] Route matched with {action = "GetCommentsByPost", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCommentsByPost(System.Guid) on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-27 12:53:12.572 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT l."Id", l."IsLiked", l."PostId", l."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId"
+FROM "Likes" AS l
+INNER JOIN "Users" AS u ON l."UserId" = u."Id"
+INNER JOIN "Posts" AS p ON l."PostId" = p."Id"
+2025-06-27 12:53:12.575 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Like, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:53:12.578 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform) in 12.2261ms
+2025-06-27 12:53:12.579 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetLikesByPostId (bloggingplatform)'
+2025-06-27 12:53:12.581 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes responded 200 in 34.5338 ms
+2025-06-27 12:53:12.581 +05:30 [INF] Executed DbCommand (8ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:53:12.583 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes responded 200 in 36ms - User: kishore
+2025-06-27 12:53:12.589 +05:30 [INF] Executed DbCommand (16ms) [Parameters=[@__key_0='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='30']
+SELECT s."Id", s."Content", s."IsDeleted", s."PostStatus", s."Title", s."UserId", s."Id0", s."CreatedAt", s."Email", s."IsDeleted0", s."IsSuspended", s."Name", s."PasswordHash", s."Role", s."Status", s."SuspendedUntil", s."SuspensionReason", i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt", c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM (
+    SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id" AS "Id0", u."CreatedAt", u."Email", u."IsDeleted" AS "IsDeleted0", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason"
+    FROM "Posts" AS p
+    INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+    WHERE p."Id" = @__key_0
+    LIMIT 2
+) AS s
+LEFT JOIN "Images" AS i ON s."Id" = i."PostId"
+LEFT JOIN "Comments" AS c ON s."Id" = c."PostId"
+LEFT JOIN "Likes" AS l ON s."Id" = l."PostId"
+ORDER BY s."Id", s."Id0", i."Id", c."Id"
+2025-06-27 12:53:12.612 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/likes - 200 null application/json; charset=utf-8 122.6094ms
+2025-06-27 12:53:12.616 +05:30 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+FROM "Images" AS i
+WHERE NOT (i."IsDeleted")
+2025-06-27 12:53:12.633 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+FROM "Comments" AS c
+WHERE NOT (c."IsDeleted")
+2025-06-27 12:53:12.642 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Image, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:53:12.646 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Comment, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-27 12:53:12.652 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform) in 83.0662ms
+2025-06-27 12:53:12.656 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetImagesByPost (bloggingplatform)'
+2025-06-27 12:53:12.657 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images responded 200 in 111.7912 ms
+2025-06-27 12:53:12.664 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images responded 200 in 118ms - User: kishore
+2025-06-27 12:53:12.668 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/images - 200 null application/json; charset=utf-8 182.2013ms
+2025-06-27 12:53:12.901 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform) in 329.3926ms
+2025-06-27 12:53:12.904 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetCommentsByPost (bloggingplatform)'
+2025-06-27 12:53:12.908 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments responded 200 in 363.3771 ms
+2025-06-27 12:53:12.911 +05:30 [INF] HTTP GET /api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments responded 200 in 366ms - User: kishore
+2025-06-27 12:53:12.913 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts/28cffe50-cbf0-401f-8be3-7991e4c4880d/comments - 200 null application/json; charset=utf-8 430.2951ms

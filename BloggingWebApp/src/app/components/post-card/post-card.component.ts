@@ -20,9 +20,11 @@ import { Post, PostStatus } from '../../models/post.model';
   ],
   template: `
     <mat-card class="post-card">
-      <div *ngIf="post.images && post.images.length > 0" class="post-card-image-wrapper">
-        <img [src]="post.images[0].content" [alt]="post.images[0].name" class="post-card-image" />
-      </div>
+      @if (post.images && post.images.length > 0) {
+        <div class="post-card-image-wrapper">
+          <img [src]="post.images[0].content" [alt]="post.images[0].name" class="post-card-image" />
+        </div>
+      }
       <mat-card-header [class.pt-0]="post.images && post.images.length > 0">
         <div mat-card-avatar class="bg-indigo-100 flex items-center justify-center rounded-full">
           <mat-icon color="primary">person</mat-icon>
@@ -41,14 +43,15 @@ import { Post, PostStatus } from '../../models/post.model';
             }" class="text-xs font-medium ml-2">
               {{ post.postStatus }}
             </span>
-            <button 
-              *ngIf="isAdmin"
-              mat-icon-button 
-              [matMenuTriggerFor]="menu"
-              (click)="$event.stopPropagation()"
-            >
-              <mat-icon>more_vert</mat-icon>
-            </button>
+            @if (isAdmin) {
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                (click)="$event.stopPropagation()"
+                >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            }
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="statusChanged.emit({ post, status: 'Published' })">
                 <mat-icon color="primary">publish</mat-icon>
@@ -66,28 +69,29 @@ import { Post, PostStatus } from '../../models/post.model';
           </div>
         </mat-card-subtitle>
       </mat-card-header>
-
+    
       <mat-card-content (click)="viewPost.emit(post.id)" class="cursor-pointer post-card-content">
         <p class="line-clamp-3 text-gray-700 mb-2">{{ post.content }}</p>
       </mat-card-content>
-
+    
       <mat-card-actions class="flex justify-between items-center px-4 pb-2 pt-0">
         <div class="flex items-center space-x-4">
-          <button 
-            *ngIf="isLoggedIn"
-            mat-icon-button 
-            [color]="post.isLikedByCurrentUser ? 'warn' : ''"
-            (click)="likeToggled.emit(post)"
-            [matTooltip]="post.isLikedByCurrentUser ? 'Unlike' : 'Like'"
-          >
-            <mat-icon>{{ post.isLikedByCurrentUser ? 'favorite' : 'favorite_border' }}</mat-icon>
-            <span class="ml-1 text-sm">{{ post.likesCount || 0 }}</span>
-          </button>
+          @if (isLoggedIn) {
+            <button
+              mat-icon-button
+              [color]="post.isLikedByCurrentUser ? 'warn' : ''"
+              (click)="likeToggled.emit(post)"
+              [matTooltip]="post.isLikedByCurrentUser ? 'Unlike' : 'Like'"
+              >
+              <mat-icon>{{ post.isLikedByCurrentUser ? 'favorite' : 'favorite_border' }}</mat-icon>
+              <span class="ml-1 text-sm">{{ post.likesCount || 0 }}</span>
+            </button>
+          }
           <button
             mat-icon-button
             [matTooltip]="post.comments?.length + ' comments'"
             (click)="viewPost.emit(post.id)"
-          >
+            >
             <mat-icon>comment</mat-icon>
             <span class="ml-1 text-sm">{{ post.comments?.length || 0 }}</span>
           </button>
@@ -95,13 +99,15 @@ import { Post, PostStatus } from '../../models/post.model';
         <div class="flex items-center text-xs text-gray-500">
           <mat-icon class="text-base mr-1">schedule</mat-icon>
           {{ post.createdAt | date:'MMM d, y' }}
-          <span *ngIf="post.updatedAt" class="ml-2 italic">
-            (edited)
-          </span>
+          @if (post.updatedAt) {
+            <span class="ml-2 italic">
+              (edited)
+            </span>
+          }
         </div>
       </mat-card-actions>
     </mat-card>
-  `,
+    `,
   styles: [`
     .post-card {
       width: 100%;
