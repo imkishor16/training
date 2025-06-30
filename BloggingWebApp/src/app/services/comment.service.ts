@@ -20,24 +20,30 @@ export class CommentService {
       postId,
       userId,
       content,
-      status: 'Approved'
+      status: 'Approved' // Optional: ideally set by backend
     };
+
     return this.http.post<Comment>(API_ENDPOINTS.ADD_COMMENT, payload, {
       headers: {
-        'Authorization': `Bearer ${this.authService.getToken()}`
+        Authorization: `Bearer ${this.authService.getToken() ?? ''}`
       }
     }).pipe(catchError(this.handleError));
   }
 
   updateComment(commentId: string, updateData: UpdateCommentDto): Observable<Comment> {
-    updateData.status = 'Approved';
-    return this.http.put<Comment>(`${API_ENDPOINTS.UPDATE_COMMENT((commentId))}`, updateData, {
-      headers: {
-        'Authorization': `Bearer ${this.authService.getToken()}`
+    updateData.status = 'Approved'; // Optional: backend should validate
+    return this.http.put<Comment>(
+      API_ENDPOINTS.UPDATE_COMMENT(commentId),
+      updateData,
+      {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
       }
-    }).pipe(catchError(this.handleError));
+    ).pipe(catchError(this.handleError));
   }
-  
+
+  // Soft-delete: status → Deleted
   deleteComment(commentId: string): Observable<Comment> {
     const updateData: UpdateCommentDto = {
       status: 'Deleted'
@@ -54,4 +60,4 @@ export class CommentService {
     }
     return throwError(() => errorMessage);
   }
-} 
+}

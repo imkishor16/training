@@ -21,8 +21,6 @@ namespace BloggingPlatform.Controllers.v1
         private readonly IPostService _postService;
 
 
-
-
         public UsersController(IUserService userService, IMapper mapper, IPasswordHasher passwordHasher, IPostService postService)
         {
             _userService = userService;

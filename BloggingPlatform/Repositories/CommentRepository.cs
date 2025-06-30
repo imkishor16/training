@@ -1,6 +1,5 @@
 using BloggingPlatform.Models;
 using BloggingPlatform.Contexts;
-using BloggingPlatform.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BloggingPlatform.Repositories
@@ -13,14 +12,21 @@ namespace BloggingPlatform.Repositories
 
         public override async Task<Comment> Get(Guid key)
         {
-            var comments = await _Context.Comments.SingleOrDefaultAsync(p => p.Id == key);
+            var comment = await _Context.Comments
+                .Include(c => c.User)
+                .Include(c => c.Post)
+                .SingleOrDefaultAsync(c => c.Id == key);
 
-            return comments ?? throw new Exception("No Commetns with the given ID");
+            return comment ?? throw new Exception("No Comments with the given ID");
         }
 
         public override async Task<IEnumerable<Comment>> GetAll()
         {
-            var comments = await _Context.Comments.Where(i => !i.IsDeleted).ToListAsync();
+            var comments = await _Context.Comments
+                .Where(c => !c.IsDeleted)
+                .Include(c => c.User)
+                .Include(c => c.Post)
+                .ToListAsync();
             return comments;
         }
     }

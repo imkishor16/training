@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace BloggingPlatform.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/login")]
+    [Route("api/v{version:apiVersion}/auth")]
     [ApiVersion("1.0")]
     public class AuthenticationController : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace BloggingPlatform.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<ActionResult<UserLoginResponse>> UserLogin(UserLoginRequest loginRequest)
         {
             try
@@ -49,6 +49,7 @@ namespace BloggingPlatform.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto request)
         {
+
             try
             {
                 var result = await _authenticationService.Logout(request.RefreshToken);
@@ -61,9 +62,10 @@ namespace BloggingPlatform.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, "Error during logout");
-                return BadRequest(new { message = "An error occurred during logout" });
+                return StatusCode(500, new { message = "An error occurred during logout" });
             }
         }
+
 
         [HttpPost("refresh")]
         public async Task<ActionResult<UserLoginResponse>> RefreshToken([FromBody] RefreshTokenRequestDto request)

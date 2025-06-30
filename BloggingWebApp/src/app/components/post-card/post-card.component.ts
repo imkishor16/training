@@ -1,182 +1,285 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { Post, PostStatus } from '../../models/post.model';
+import { RouterModule, Router } from '@angular/router';
+import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
+import { Post } from '../../models/post.model';
+import { PostService } from '../../services/post.service';
+import { AuthService } from '../../services/auth.service';
+
+interface PostImage {
+  content: Blob | Uint8Array | string;
+  name?: string;
+  type?: string;
+}
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatButtonModule,
-    MatMenuModule,
-    MatTooltipModule
+    RouterModule
   ],
   template: `
-    <mat-card class="post-card">
-      @if (post.images && post.images.length > 0) {
-        <div class="post-card-image-wrapper">
-          <img [src]="post.images[0].content" [alt]="post.images[0].name" class="post-card-image" />
-        </div>
-      }
-      <mat-card-header [class.pt-0]="post.images && post.images.length > 0">
-        <div mat-card-avatar class="bg-indigo-100 flex items-center justify-center rounded-full">
-          <mat-icon color="primary">person</mat-icon>
-        </div>
-        <mat-card-title class="cursor-pointer truncate" (click)="viewPost.emit(post.id)">
-          {{ post.title }}
-        </mat-card-title>
-        <mat-card-subtitle class="flex items-center justify-between">
-          <span class="truncate max-w-[100px]">{{ post.user?.name || post.user?.username || 'Anonymous' }}</span>
-          <div class="flex items-center">
-            <span [ngClass]="{
-              'text-green-600': post.postStatus === 'Published',
-              'text-yellow-600': post.postStatus === 'Draft',
-              'text-red-600': post.postStatus === 'Deleted',
-              'text-blue-600': post.postStatus === 'Approved'
-            }" class="text-xs font-medium ml-2">
+    <article class="post-card" (click)="navigateToPost()">
+      <div [class]="'post-card-image ' + (hasValidImage ? '' : 'no-image')">
+        <img 
+          *ngIf="hasValidImage"
+          [src]="getPostImage()"
+          [alt]="post.title"
+        />
+      </div>
+
+      <div class="post-card-content">
+        <div class="post-card-author">
+          <div class="author-avatar">
+            {{ post.user?.username?.charAt(0) || 'U' }}
+          </div>
+          <div class="author-info">
+            <span class="author-name">{{ post.user?.username || 'Anonymous' }}</span>
+            <span class="post-status" [class]="getStatusClass(post.postStatus)">
               {{ post.postStatus }}
             </span>
-            @if (isAdmin) {
-              <button
-                mat-icon-button
-                [matMenuTriggerFor]="menu"
-                (click)="$event.stopPropagation()"
-                >
-                <mat-icon>more_vert</mat-icon>
-              </button>
-            }
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="statusChanged.emit({ post, status: 'Published' })">
-                <mat-icon color="primary">publish</mat-icon>
-                <span>Publish</span>
-              </button>
-              <button mat-menu-item (click)="statusChanged.emit({ post, status: 'Draft' })">
-                <mat-icon>drafts</mat-icon>
-                <span>Move to Draft</span>
-              </button>
-              <button mat-menu-item (click)="deletePost.emit(post)">
-                <mat-icon color="warn">delete</mat-icon>
-                <span>Delete</span>
-              </button>
-            </mat-menu>
           </div>
-        </mat-card-subtitle>
-      </mat-card-header>
-    
-      <mat-card-content (click)="viewPost.emit(post.id)" class="cursor-pointer post-card-content">
-        <p class="line-clamp-3 text-gray-700 mb-2">{{ post.content }}</p>
-      </mat-card-content>
-    
-      <mat-card-actions class="flex justify-between items-center px-4 pb-2 pt-0">
-        <div class="flex items-center space-x-4">
-          @if (isLoggedIn) {
-            <button
-              mat-icon-button
-              [color]="post.isLikedByCurrentUser ? 'warn' : ''"
-              (click)="likeToggled.emit(post)"
-              [matTooltip]="post.isLikedByCurrentUser ? 'Unlike' : 'Like'"
-              >
-              <mat-icon>{{ post.isLikedByCurrentUser ? 'favorite' : 'favorite_border' }}</mat-icon>
-              <span class="ml-1 text-sm">{{ post.likesCount || 0 }}</span>
-            </button>
-          }
-          <button
-            mat-icon-button
-            [matTooltip]="post.comments?.length + ' comments'"
-            (click)="viewPost.emit(post.id)"
+        </div>
+
+        <h2 class="post-card-title">{{ post.title }}</h2>
+        
+        <div class="post-card-excerpt" [innerHTML]="getProcessedContent()"></div>
+
+        <div class="post-card-footer">
+          <div class="post-stats">
+            <button 
+              class="like-button"
+              (click)="toggleLike($event)"
+              [class.liked]="isLiked"
+              [disabled]="!isAuthenticated"
             >
-            <mat-icon>comment</mat-icon>
-            <span class="ml-1 text-sm">{{ post.comments?.length || 0 }}</span>
-          </button>
-        </div>
-        <div class="flex items-center text-xs text-gray-500">
-          <mat-icon class="text-base mr-1">schedule</mat-icon>
-          {{ post.createdAt | date:'MMM d, y' }}
-          @if (post.updatedAt) {
-            <span class="ml-2 italic">
-              (edited)
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [style.fill]="isLiked ? 'currentColor' : 'none'">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              {{ getActiveLikesCount() }}
+            </button>
+            <span class="stat-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              {{ post.comments?.length || 0 }}
             </span>
-          }
+          </div>
         </div>
-      </mat-card-actions>
-    </mat-card>
-    `,
-  styles: [`
-    .post-card {
-      width: 100%;
-      max-width: 370px;
-      min-width: 270px;
-      height: 370px;
-      min-height: 370px;
-      max-height: 370px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin: auto;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-    .post-card-image-wrapper {
-      width: 100%;
-      height: 140px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f3f4f6;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-    }
-    .post-card-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-      display: block;
-    }
-    .post-card-content {
-      flex: 1 1 auto;
-      min-height: 60px;
-      max-height: 80px;
-      overflow: hidden;
-      margin-bottom: 0.5rem;
-    }
-    .line-clamp-3 {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: normal;
-      word-break: break-word;
-      max-height: 4.5em;
-    }
-    mat-card-title.truncate, .truncate {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: block;
-    }
-    img {
-      object-fit: cover;
-      border-radius: 0.5rem;
-    }
-  `]
+      </div>
+    </article>
+  `,
+  styleUrls: ['./post-card.component.css']
 })
 export class PostCardComponent {
   @Input() post!: Post;
-  @Input() isLoggedIn = false;
-  @Input() isAdmin = false;
-  @Output() likeToggled = new EventEmitter<Post>();
-  @Output() statusChanged = new EventEmitter<{ post: Post; status: PostStatus }>();
-  @Output() deletePost = new EventEmitter<Post>();
-  @Output() viewPost = new EventEmitter<string>();
+  isLiked = false;
+  isAuthenticated = false;
+  hasValidImage = false;
+  private currentUserId: string | null = null;
+
+  constructor(
+    private sanitizer: DomSanitizer,
+    private postService: PostService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.isAuthenticated = this.authService.isAuthenticated();
+    this.currentUserId = this.authService.getCurrentUserId();
+    this.checkIfLiked();
+    this.checkIfHasValidImage();
+  }
+
+  ngOnChanges() {
+    this.checkIfLiked();
+  }
+
+  checkIfHasValidImage(): void {
+    if (this.post.images && this.post.images.length > 0) {
+      const image = this.post.images[0] as PostImage;
+      this.hasValidImage = !!image.content;
+    } else {
+      this.hasValidImage = false;
+    }
+  }
+
+  getPostImage(): SafeUrl | string {
+    if (this.post.images && this.post.images.length > 0) {
+      const image = this.post.images[0] as PostImage;
+      
+      if (image.content instanceof Blob) {
+        return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(image.content));
+      } else if (image.content instanceof Uint8Array) {
+        const blob = new Blob([image.content], { type: 'image/jpeg' });
+        return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
+      } else if (typeof image.content === 'string') {
+        if (image.content.startsWith('data:image')) {
+          return this.sanitizer.bypassSecurityTrustUrl(image.content);
+        } else {
+          try {
+            const byteString = atob(image.content);
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            for (let i = 0; i < byteString.length; i++) {
+              uint8Array[i] = byteString.charCodeAt(i);
+            }
+            
+            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+            return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob));
+          } catch (e) {
+            console.error('Error converting image:', e);
+            return '';
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  getStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return 'status-success';
+      case 'draft':
+        return 'status-warning';
+      case 'deleted':
+        return 'status-danger';
+      default:
+        return 'status-info';
+    }
+  }
+
+  toggleLike(event: Event) {
+    event.stopPropagation();
+    if (!this.post || !this.isAuthenticated || !this.currentUserId) return;
+
+    if (this.isLiked) {
+      this.postService.unlikePost(this.post.id).subscribe({
+        next: () => {
+          if (this.post && this.post.likes) {
+            const existingLike = this.post.likes.find(like => like.userId === this.currentUserId);
+            if (existingLike) {
+              existingLike.isLiked = false;
+            }
+          }
+          this.isLiked = false;
+        },
+        error: (error) => {
+          console.error('Error unliking post:', error);
+        }
+      });
+    } else {
+      this.postService.likePost(this.post.id).subscribe({
+        next: (like) => {
+          if (this.post && this.currentUserId) {
+            if (!this.post.likes) {
+              this.post.likes = [];
+            }
+            const existingLike = this.post.likes.find(l => l.userId === this.currentUserId);
+            if (existingLike) {
+              existingLike.isLiked = true;
+            } else {
+              this.post.likes.push({
+                id: like.id || '',
+                postId: this.post.id,
+                userId: this.currentUserId,
+                isLiked: true,
+                user: this.authService.getCurrentUser() || undefined
+              });
+            }
+          }
+          this.isLiked = true;
+        },
+        error: (error) => {
+          console.error('Error liking post:', error);
+        }
+      });
+    }
+  }
+
+  navigateToPost() {
+    this.router.navigate(['/posts', this.post.id]);
+  }
+
+  getActiveLikesCount(): number {
+    return this.post?.likes?.filter(like => like.isLiked)?.length || 0;
+  }
+
+  private checkIfLiked() {
+    if (!this.post || !this.isAuthenticated || !this.currentUserId) {
+      this.isLiked = false;
+      return;
+    }
+
+    this.isLiked = this.post.likes?.some(like => like.userId === this.currentUserId && like.isLiked) || false;
+  }
+
+  getProcessedContent(): SafeHtml {
+    if (!this.post.content) return this.sanitizer.bypassSecurityTrustHtml('');
+
+    let processedContent = this.post.content;
+    
+    // Replace image placeholders with actual images
+    if (this.post.images) {
+      // Create a map of images excluding the cover image
+      const contentImages = this.post.images.slice(1); // Skip cover image
+      let currentImageIndex = 0;
+      
+      // Replace all placeholders with actual images
+      processedContent = processedContent.replace(
+        /\[IMAGE_PLACEHOLDER:image_[0-9_]+\]/g,
+        (match) => {
+          if (currentImageIndex < contentImages.length) {
+            const image = contentImages[currentImageIndex];
+            const imageUrl = this.getImageUrl(image);
+            currentImageIndex++;
+            return `<img src="${imageUrl}" alt="Post image ${currentImageIndex}" class="content-image">`;
+          }
+          return ''; // If no more images, remove the placeholder
+        }
+      );
+    }
+
+    // Create a preview by truncating the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = processedContent;
+    let textContent = tempDiv.textContent || tempDiv.innerText;
+    textContent = textContent.substring(0, 200) + (textContent.length > 200 ? '...' : '');
+
+    return this.sanitizer.bypassSecurityTrustHtml(textContent);
+  }
+
+  private getImageUrl(image: PostImage): string {
+    if (image.content instanceof Blob) {
+      return URL.createObjectURL(image.content);
+    } else if (image.content instanceof Uint8Array) {
+      const blob = new Blob([image.content], { type: 'image/jpeg' });
+      return URL.createObjectURL(blob);
+    } else if (typeof image.content === 'string') {
+      if (image.content.startsWith('data:image')) {
+        return image.content;
+      } else {
+        try {
+          const byteString = atob(image.content);
+          const arrayBuffer = new ArrayBuffer(byteString.length);
+          const uint8Array = new Uint8Array(arrayBuffer);
+          
+          for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+          }
+          
+          const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+          return URL.createObjectURL(blob);
+        } catch (e) {
+          console.error('Error converting image:', e);
+          return '';
+        }
+      }
+    }
+    return '';
+  } 
 } 

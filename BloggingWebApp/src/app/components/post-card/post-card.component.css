@@ -1,0 +1,249 @@
+.post-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.post-card-image {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+  background: #f3f4f6;
+}
+
+.post-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.post-card-image.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e7eb;
+}
+
+.post-card-image.no-image::after {
+  content: '📷';
+  font-size: 3rem;
+  color: #9ca3af;
+}
+
+.post-card:hover .post-card-image img {
+  transform: scale(1.05);
+}
+
+.post-card-content {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card-author {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.post-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.status-success { background-color: #dcfce7; color: #166534; }
+.status-warning { background-color: #fef3c7; color: #92400e; }
+.status-danger { background-color: #fee2e2; color: #991b1b; }
+.status-info { background-color: #dbeafe; color: #1e40af; }
+
+.post-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0.5rem 0;
+  line-height: 1.3;
+}
+
+.post-card-excerpt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.post-card-excerpt img.content-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+}
+
+/* Ensure proper spacing for HTML content */
+.post-card-excerpt p {
+  margin: 0.5rem 0;
+}
+
+.post-card-excerpt h1,
+.post-card-excerpt h2,
+.post-card-excerpt h3,
+.post-card-excerpt h4,
+.post-card-excerpt h5,
+.post-card-excerpt h6 {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.post-card-excerpt ul,
+.post-card-excerpt ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.post-card-excerpt blockquote {
+  margin: 1rem 0;
+  padding-left: 1rem;
+  border-left: 4px solid #e2e8f0;
+  color: #718096;
+}
+
+.post-card-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.post-stats {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.like-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover:not(:disabled) {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.like-button.liked {
+  color: #ef4444;
+}
+
+.like-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .post-card-image {
+    height: 180px;
+  }
+
+  .post-card-content {
+    padding: 1rem;
+  }
+
+  .post-card-title {
+    font-size: 1.125rem;
+  }
+
+  .author-avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-card-image {
+    height: 160px;
+  }
+
+  .post-card-excerpt {
+    -webkit-line-clamp: 2;
+  }
+
+  .post-stats {
+    gap: 1rem;
+  }
+}
+
+.read-more-link {
+  color: #6366f1;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+}
+
+.read-more-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+} 

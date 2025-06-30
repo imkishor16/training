@@ -1,0 +1,737 @@
+2025-06-29 03:10:09.262 +05:30 [INF] User profile is available. Using 'C:\Users\imkis\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-29 03:10:09.361 +05:30 [INF] Now listening on: http://localhost:5147
+2025-06-29 03:10:09.363 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-29 03:10:09.364 +05:30 [INF] Hosting environment: Development
+2025-06-29 03:10:09.365 +05:30 [INF] Content root path: D:\training\BloggingPlatform
+2025-06-29 03:12:21.337 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:12:21.389 +05:30 [WRN] Failed to determine the https port for redirect.
+2025-06-29 03:12:21.393 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:12:21.402 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 67.4137ms
+2025-06-29 03:12:21.417 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:12:21.427 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:12:22.321 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:12:22.336 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:12:23.690 +05:30 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-06-29 03:12:24.038 +05:30 [INF] Executed DbCommand (42ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:12:24.194 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:12:24.788 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 2447.3429ms
+2025-06-29 03:12:24.790 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:12:24.793 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 3362.2354 ms
+2025-06-29 03:12:24.797 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 3366ms - User: Anonymous
+2025-06-29 03:12:24.811 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 3393.2607ms
+2025-06-29 03:18:21.431 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:18:21.435 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:18:21.436 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.5057ms
+2025-06-29 03:18:21.440 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:18:21.444 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:18:21.446 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:18:21.449 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:18:21.516 +05:30 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:18:21.527 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:18:22.014 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 563.1643ms
+2025-06-29 03:18:22.016 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:18:22.018 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 573.0509 ms
+2025-06-29 03:18:22.019 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 574ms - User: Anonymous
+2025-06-29 03:18:22.023 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 583.1374ms
+2025-06-29 03:27:17.013 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:27:17.015 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:27:17.017 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 3.8358ms
+2025-06-29 03:27:17.022 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:27:17.025 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:27:17.029 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:17.031 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:27:17.155 +05:30 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:27:17.164 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:27:17.652 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 619.269ms
+2025-06-29 03:27:17.653 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:17.654 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 628.4283 ms
+2025-06-29 03:27:17.655 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 629ms - User: Anonymous
+2025-06-29 03:27:17.657 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 634.9957ms
+2025-06-29 03:27:20.670 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:27:20.672 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:27:20.674 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:20.675 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:27:20.685 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:27:20.717 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:27:21.269 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 590.8974ms
+2025-06-29 03:27:21.271 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:21.272 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 598.0103 ms
+2025-06-29 03:27:21.273 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 599ms - User: Anonymous
+2025-06-29 03:27:21.276 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 605.7995ms
+2025-06-29 03:27:36.777 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:27:36.781 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:27:36.782 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.5192ms
+2025-06-29 03:27:36.787 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:27:36.797 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:27:36.802 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:36.803 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:27:36.815 +05:30 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:27:36.826 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:27:37.380 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 571.6037ms
+2025-06-29 03:27:37.384 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:27:37.387 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 585.4319 ms
+2025-06-29 03:27:37.391 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 589ms - User: Anonymous
+2025-06-29 03:27:37.395 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 607.656ms
+2025-06-29 03:37:36.944 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:37:36.947 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:37:36.948 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.4166ms
+2025-06-29 03:37:36.951 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:37:36.954 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:37:36.955 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:37:36.956 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:37:37.033 +05:30 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:37:37.045 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:37:37.627 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 666.6179ms
+2025-06-29 03:37:37.629 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:37:37.630 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 674.8732 ms
+2025-06-29 03:37:37.632 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 677ms - User: Anonymous
+2025-06-29 03:37:37.634 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 682.5829ms
+2025-06-29 03:37:45.829 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:37:45.831 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:37:45.832 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 3.4238ms
+2025-06-29 03:37:45.836 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 03:37:45.839 +05:30 [INF] CORS policy execution successful.
+2025-06-29 03:37:45.840 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:37:45.840 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 03:37:45.845 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 03:37:45.864 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 03:37:46.397 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 555.6581ms
+2025-06-29 03:37:46.398 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 03:37:46.400 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 560.1222 ms
+2025-06-29 03:37:46.402 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 562ms - User: Anonymous
+2025-06-29 03:37:46.404 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 568.2416ms
+2025-06-29 04:28:14.602 +05:30 [INF] Application is shutting down...
+2025-06-29 04:38:31.067 +05:30 [INF] User profile is available. Using 'C:\Users\imkis\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-06-29 04:38:31.146 +05:30 [INF] Now listening on: http://localhost:5147
+2025-06-29 04:38:31.149 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2025-06-29 04:38:31.150 +05:30 [INF] Hosting environment: Development
+2025-06-29 04:38:31.151 +05:30 [INF] Content root path: D:\training\BloggingPlatform
+2025-06-29 21:49:30.623 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:49:30.730 +05:30 [WRN] Failed to determine the https port for redirect.
+2025-06-29 21:49:30.734 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:49:30.791 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 171.8987ms
+2025-06-29 21:49:30.813 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:49:30.826 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:49:32.180 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:32'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:49:32.212 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:32'.
+2025-06-29 21:49:32.219 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:32.273 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:49:34.577 +05:30 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-06-29 21:49:34.901 +05:30 [INF] Executed DbCommand (34ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:49:35.134 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:49:35.238 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:49:35.249 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:49:35.254 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:35'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:49:35.269 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:35'.
+2025-06-29 21:49:35.273 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:35.276 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:49:35.307 +05:30 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:49:35.328 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:49:35.819 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 3539.4266ms
+2025-06-29 21:49:35.823 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:35.828 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 4994.1297 ms
+2025-06-29 21:49:35.833 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 5002ms - User: Anonymous
+2025-06-29 21:49:35.846 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 5034.1562ms
+2025-06-29 21:49:36.058 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 779.4544ms
+2025-06-29 21:49:36.060 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:36.062 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 809.7931 ms
+2025-06-29 21:49:36.066 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 813ms - User: Anonymous
+2025-06-29 21:49:36.069 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 830.4922ms
+2025-06-29 21:49:38.926 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:49:38.929 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:49:38.931 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.1988ms
+2025-06-29 21:49:38.935 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:49:38.938 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:49:38.941 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:38'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:49:38.948 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:19:38'.
+2025-06-29 21:49:38.950 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:38.952 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:49:39.032 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:49:39.056 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:49:39.555 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 599.8976ms
+2025-06-29 21:49:39.557 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:49:39.559 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 619.5597 ms
+2025-06-29 21:49:39.561 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 622ms - User: Anonymous
+2025-06-29 21:49:39.563 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 627.9179ms
+2025-06-29 21:50:15.190 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:50:15.194 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:50:15.195 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.5511ms
+2025-06-29 21:50:15.199 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:50:15.202 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:50:15.203 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:20:15'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:50:15.207 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:20:15'.
+2025-06-29 21:50:15.208 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:50:15.210 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:50:15.230 +05:30 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:50:15.268 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:50:15.838 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 624.5845ms
+2025-06-29 21:50:15.843 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:50:15.847 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 644.5969 ms
+2025-06-29 21:50:15.852 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 649ms - User: Anonymous
+2025-06-29 21:50:15.855 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 655.7815ms
+2025-06-29 21:51:30.382 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:30.386 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:30.387 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.6394ms
+2025-06-29 21:51:30.391 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:30.395 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:30.397 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:30'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:51:30.401 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:30'.
+2025-06-29 21:51:30.402 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:30.404 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:51:30.415 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:51:30.427 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:51:30.859 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 451.8416ms
+2025-06-29 21:51:30.861 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:30.869 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 472.4491 ms
+2025-06-29 21:51:30.873 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 477ms - User: Anonymous
+2025-06-29 21:51:30.877 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 485.3643ms
+2025-06-29 21:51:39.630 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:39.634 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:39.636 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.2642ms
+2025-06-29 21:51:39.640 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:39.643 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:39.644 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:39'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:51:39.649 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:39'.
+2025-06-29 21:51:39.650 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:39.652 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:51:39.678 +05:30 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:51:39.711 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:51:40.311 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 656.6688ms
+2025-06-29 21:51:40.314 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:40.315 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 671.4660 ms
+2025-06-29 21:51:40.317 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 673ms - User: Anonymous
+2025-06-29 21:51:40.321 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 680.7839ms
+2025-06-29 21:51:54.995 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:55.002 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:55.004 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 8.8293ms
+2025-06-29 21:51:55.008 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:51:55.011 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:51:55.013 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:55'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:51:55.016 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:21:55'.
+2025-06-29 21:51:55.017 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:55.019 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:51:55.036 +05:30 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:51:55.045 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:51:55.639 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 617.6177ms
+2025-06-29 21:51:55.641 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:51:55.642 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 629.7294 ms
+2025-06-29 21:51:55.643 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 631ms - User: Anonymous
+2025-06-29 21:51:55.645 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 637.3244ms
+2025-06-29 21:52:06.813 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:52:06.825 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:52:06.834 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 20.7529ms
+2025-06-29 21:52:06.846 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:52:06.850 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:52:06.866 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:22:06'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:52:06.875 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:22:06'.
+2025-06-29 21:52:06.878 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:52:06.880 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:52:06.889 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:52:06.913 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:52:07.502 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 619.6235ms
+2025-06-29 21:52:07.504 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:52:07.506 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 639.4309 ms
+2025-06-29 21:52:07.507 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 641ms - User: Anonymous
+2025-06-29 21:52:07.510 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 664.1051ms
+2025-06-29 21:52:12.284 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:52:12.288 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:52:12.289 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 5.1397ms
+2025-06-29 21:52:12.297 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:52:12.299 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:52:12.301 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:22:12'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:52:12.305 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:22:12'.
+2025-06-29 21:52:12.306 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:52:12.307 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:52:12.313 +05:30 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:52:12.328 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:52:13.171 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 862.3767ms
+2025-06-29 21:52:13.174 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:52:13.180 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 878.8117 ms
+2025-06-29 21:52:13.183 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 882ms - User: Anonymous
+2025-06-29 21:52:13.187 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 890.2632ms
+2025-06-29 21:54:35.274 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:54:35.277 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:54:35.278 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 3.1787ms
+2025-06-29 21:54:35.280 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:54:35.282 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:54:35.283 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:24:35'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:54:35.285 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:24:35'.
+2025-06-29 21:54:35.286 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:54:35.287 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:54:35.366 +05:30 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:54:35.375 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:54:36.185 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 896.3994ms
+2025-06-29 21:54:36.187 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:54:36.188 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 905.4327 ms
+2025-06-29 21:54:36.190 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 907ms - User: Anonymous
+2025-06-29 21:54:36.192 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 911.9585ms
+2025-06-29 21:55:02.924 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:02.926 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:02.927 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 3.4049ms
+2025-06-29 21:55:02.929 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:02.932 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:02.933 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:02'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:55:02.936 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:02'.
+2025-06-29 21:55:02.937 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:02.939 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:55:02.946 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:55:02.988 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:55:03.820 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 879.702ms
+2025-06-29 21:55:03.822 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:03.823 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 890.9798 ms
+2025-06-29 21:55:03.825 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 893ms - User: Anonymous
+2025-06-29 21:55:03.829 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 899.2297ms
+2025-06-29 21:55:13.413 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:13.416 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:13.418 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 4.2879ms
+2025-06-29 21:55:13.422 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:13.425 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:13.426 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:13'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:55:13.428 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:13'.
+2025-06-29 21:55:13.429 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:13.430 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:55:13.438 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:55:13.447 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:55:15.299 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 1866.903ms
+2025-06-29 21:55:15.301 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:15.302 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 1876.5179 ms
+2025-06-29 21:55:15.304 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 1878ms - User: Anonymous
+2025-06-29 21:55:15.306 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 1883.1818ms
+2025-06-29 21:55:32.957 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:32.963 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:32.964 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 7.2526ms
+2025-06-29 21:55:32.970 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:32.975 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:32.979 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:32'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:55:32.985 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:32'.
+2025-06-29 21:55:32.987 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:32.989 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:55:33.018 +05:30 [INF] Executed DbCommand (24ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:55:33.049 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:55:33.716 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 724.2722ms
+2025-06-29 21:55:33.718 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:33.720 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 740.8321 ms
+2025-06-29 21:55:33.722 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 743ms - User: Anonymous
+2025-06-29 21:55:33.726 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 756.1158ms
+2025-06-29 21:55:47.098 +05:30 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:47.104 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:47.106 +05:30 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5147/api/v1/posts - 204 null null 8.1156ms
+2025-06-29 21:55:47.110 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5147/api/v1/posts - null null
+2025-06-29 21:55:47.114 +05:30 [INF] CORS policy execution successful.
+2025-06-29 21:55:47.115 +05:30 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:47'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2025-06-29 21:55:47.119 +05:30 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '26-06-2025 19:40:32', Current time (UTC): '29-06-2025 16:25:47'.
+2025-06-29 21:55:47.121 +05:30 [INF] Executing endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:47.122 +05:30 [INF] Route matched with {action = "GetAllPosts", controller = "Post"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllPosts() on controller BloggingPlatform.Controllers.v1.PostController (bloggingplatform).
+2025-06-29 21:55:47.131 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT p."Id", p."Content", p."IsDeleted", p."PostStatus", p."Title", p."UserId", u."Id", u."CreatedAt", u."Email", u."IsDeleted", u."IsSuspended", u."Name", u."PasswordHash", u."Role", u."Status", u."SuspendedUntil", u."SuspensionReason", i0."Id", i0."Content", i0."IsDeleted", i0."Name", i0."PostId", i0."UploadedAt", c0."Id", c0."Content", c0."CreatedAt", c0."IsDeleted", c0."PostId", c0."Status", c0."UserId", l."Id", l."IsLiked", l."PostId", l."UserId"
+FROM "Posts" AS p
+INNER JOIN "Users" AS u ON p."UserId" = u."Id"
+LEFT JOIN (
+    SELECT i."Id", i."Content", i."IsDeleted", i."Name", i."PostId", i."UploadedAt"
+    FROM "Images" AS i
+    WHERE NOT (i."IsDeleted")
+) AS i0 ON p."Id" = i0."PostId"
+LEFT JOIN (
+    SELECT c."Id", c."Content", c."CreatedAt", c."IsDeleted", c."PostId", c."Status", c."UserId"
+    FROM "Comments" AS c
+    WHERE NOT (c."IsDeleted")
+) AS c0 ON p."Id" = c0."PostId"
+LEFT JOIN "Likes" AS l ON p."Id" = l."PostId"
+WHERE NOT (p."IsDeleted")
+ORDER BY p."Id", u."Id", i0."Id", c0."Id"
+2025-06-29 21:55:47.148 +05:30 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BloggingPlatform.Models.Post, bloggingplatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-06-29 21:55:47.888 +05:30 [INF] Executed action BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform) in 763.3999ms
+2025-06-29 21:55:47.890 +05:30 [INF] Executed endpoint 'BloggingPlatform.Controllers.v1.PostController.GetAllPosts (bloggingplatform)'
+2025-06-29 21:55:47.892 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 776.8673 ms
+2025-06-29 21:55:47.894 +05:30 [INF] HTTP GET /api/v1/posts responded 200 in 779ms - User: Anonymous
+2025-06-29 21:55:47.897 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5147/api/v1/posts - 200 null application/json; charset=utf-8 786.9789ms

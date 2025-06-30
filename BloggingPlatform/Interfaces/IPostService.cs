@@ -13,6 +13,8 @@ namespace BloggingPlatform.Interfaces
         public Task<IEnumerable<Post>> GetFilteredPosts(Guid? userId, string? status, string? searchTerm, string? sortOrder, int? pageNumber, int? pageSize);
         public Task<IEnumerable<Post>> GetAllPosts();
         public Task<IEnumerable<Like>> GetLikesByPostId(Guid id);
-
+        public Task<IEnumerable<Post>> GetPostsByUserId(Guid userId);
+        public Task<IEnumerable<Post>> GetUserLikedPosts(Guid userId);
+        public Task<IEnumerable<Post>> GetUserCommentedPosts(Guid userId);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using BloggingPlatform.Hubs;
 using System.Text.Json;
 using Microsoft.OpenApi.Extensions;
+using BloggingPlatform.Repositories;
 
 namespace BloggingPlatform.Services
 {
@@ -169,5 +170,22 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             return final;
         }
 
+        public async Task<IEnumerable<Post>> GetPostsByUserId(Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+            return await ((PostRepository)_postRepository).GetPostsByUserId(userId);
+        }
+
+        public async Task<IEnumerable<Post>> GetUserLikedPosts(Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+            return await ((PostRepository)_postRepository).GetUserLikedPosts(userId);
+        }
+
+        public async Task<IEnumerable<Post>> GetUserCommentedPosts(Guid userId)
+        {
+            await _userValidationService.ValidateUser(userId);
+            return await ((PostRepository)_postRepository).GetUserCommentedPosts(userId);
+        }
     }
 }

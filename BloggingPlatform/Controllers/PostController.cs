@@ -218,5 +218,52 @@ private readonly IHubContext<PostHub> _hubContext;
         }
     }
 
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetPostsByUserId(Guid userId)
+    {
+        try
+        {
+            var posts = await _postService.GetPostsByUserId(userId);
+            if (!posts.Any())
+                return NotFound("No posts found for this user.");
+            return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
+
+    [HttpGet("user/{userId}/liked")]
+    public async Task<IActionResult> GetUserLikedPosts(Guid userId)
+    {
+        try
+        {
+            var posts = await _postService.GetUserLikedPosts(userId);
+            if (!posts.Any())
+                return NotFound("No liked posts found for this user.");
+            return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("user/{userId}/commented")]
+    public async Task<IActionResult> GetUserCommentedPosts(Guid userId)
+    {
+        try
+        {
+            var posts = await _postService.GetUserCommentedPosts(userId);
+            if (!posts.Any())
+                return NotFound("No commented posts found for this user.");
+            return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+}
 }

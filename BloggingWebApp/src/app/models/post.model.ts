@@ -1,31 +1,25 @@
-export interface User {
-  id: string;
-  username?: string;
-  email: string;
-  name?: string;
-}
+import { User } from './auth.model';
 
 export interface Comment {
   id: string;
-  content: string;
-  userId: string;
   postId: string;
-  status: PostStatus;
+  userId: string;
   createdAt: Date;
-  user?: {
-    username: string;
-    role?: string;
-  };
-  isEditing?: boolean;
-  editContent?: string;
+  content: string;
+  status: string;
+  isDeleted: boolean;
+  post?: Post;
+  user?: User;
 }
 
 export interface Image {
   id: string;
-  name: string;
-  content: string;
   postId: string;
-  createdAt: Date;
+  name: string;
+  content: Blob;
+  isDeleted: boolean;
+  uploadedAt: Date;
+  post?: Post;
 }
 
 export interface Like {
@@ -33,42 +27,56 @@ export interface Like {
   postId: string;
   userId: string;
   isLiked: boolean;
-  createdAt: Date;
+  user?: User;
+  post?: Post;
 }
 
 export interface Post {
   id: string;
+  userId: string;
   title: string;
   content: string;
-  userId: string;
-  postStatus: PostStatus;
+  postStatus: string;
+  isDeleted: boolean;
   createdAt: Date;
-  updatedAt?: Date;
-  user?: {
-    username: string;
-    name?: string;
-    role?: string;
-  };
+  user?: User;
   comments?: Comment[];
   images?: Image[];
-  likesCount: number;
-  isLikedByCurrentUser: boolean;
+  likes?: Like[];
 }
 
-export type PostStatus = 'Published' | 'Draft' | 'Deleted' | 'Approved';
+export interface RefreshToken {
+  id: string;
+  token: string;
+  userId: string;
+  userEmail: string;
+  expires: Date;
+  isRevoked: boolean;
+}
 
 export interface UpdatePostDto {
   title?: string;
   content?: string;
-  postStatus?: PostStatus;
-  images?: File[];
+  postStatus?: string;
+  images?: File[] | FormData;
+}
+
+export interface CreatePostDto {
+  title?: string;
+  content?: string;
+  postStatus?: string;
+  images?: File[] | FormData;
 }
 
 export interface UpdateCommentDto {
   content?: string;
-  status?: PostStatus;
+  status?: string;
 }
 
 export type PostListResponse = Post[];
-
 export type PostResponse = Post;
+
+// Add custom File interface to support imageName
+export interface CustomFile extends File {
+  imageName?: string;
+}

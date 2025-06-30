@@ -8,9 +8,9 @@ export const getApiUrl = (): string => {
 };
 
 export const API_ENDPOINTS = {
-  LOGIN: `${getApiUrl()}/v1/login`,
+  LOGIN: `${getApiUrl()}/v1/auth/login`,
   SIGNUP: `${getApiUrl()}/v1/Users`,
-  LOGOUT: `${getApiUrl()}/v1/logout`,
+  LOGOUT: `${getApiUrl()}/v1/auth/logout`,
   PROFILE: `${getApiUrl()}/v1/profile`,
   DASHBOARD: `${getApiUrl()}/v1/dashboard`,
 
@@ -21,6 +21,9 @@ export const API_ENDPOINTS = {
   GET_POST_IMAGES: (id: string) => `${getApiUrl()}/v1/posts/${id}/images`,
   LIKE_POST: `${getApiUrl()}/v1/likes`,
   GET_POST_LIKES: (id: string) => `${getApiUrl()}/v1/posts/${id}/likes`,
+  CREATE_POST: `${getApiUrl()}/v1/posts`,
+  UPDATE_POST: (id: string) => `${getApiUrl()}/v1/posts/${id}`,
+  DELETE_POST: (id: string) => `${getApiUrl()}/v1/posts/${id}`,
 
   //comments
   GET_COMMENTS_FILTER: `${getApiUrl()}/v1/comments/filter`,
