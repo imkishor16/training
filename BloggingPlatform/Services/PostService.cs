@@ -6,6 +6,9 @@ using BloggingPlatform.Hubs;
 using System.Text.Json;
 using Microsoft.OpenApi.Extensions;
 using BloggingPlatform.Repositories;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using BloggingPlatform.Dto.Post;
 
 namespace BloggingPlatform.Services
 {
@@ -19,12 +22,11 @@ namespace BloggingPlatform.Services
         private readonly BloggingPlatformContext _context;
         private readonly IRepository<Guid, User> _userRepository;
         private readonly IUserValidationService _userValidationService;
-
-
+        private readonly IMapper _mapper;
 
         public PostService(IRepository<Guid, Post> postRepo, IRepository<Guid, Comment> commentRepository
         , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository, IRepository<Guid, Like> likeRepository,
-IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService)
+IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService, IMapper mapper)
         {
             _postRepository = postRepo;
             _commentRepository = commentRepository;
@@ -33,10 +35,9 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             _imageService = imageService;
             _context = context;
             _userRepository = userRepository;
-                _userValidationService = userValidationService;
-
+            _userValidationService = userValidationService;
+            _mapper = mapper;
         }
-
 
         public async Task<Post> AddPost(Post post, Guid userId)
         {
@@ -186,6 +187,39 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
         {
             await _userValidationService.ValidateUser(userId);
             return await ((PostRepository)_postRepository).GetUserCommentedPosts(userId);
+        }
+
+        public async Task<PostResponseDto> GetPostById(Guid postId, Guid? currentUserId = null)
+        {
+            var post = await _postRepository.Get(postId);
+            if (post == null)
+                throw new Exception("Post not found");
+
+            var postDto = _mapper.Map<PostResponseDto>(post);
+            
+            if (currentUserId.HasValue)
+            {
+                postDto.UserHasLiked = post.Likes?.Any(l => l.UserId == currentUserId && l.IsLiked) ?? false;
+            }
+
+            return postDto;
+        }
+
+        public async Task<IEnumerable<PostResponseDto>> GetAllPosts(Guid? currentUserId = null)
+        {
+            var posts = await _postRepository.GetAll();
+            var postDtos = _mapper.Map<IEnumerable<PostResponseDto>>(posts);
+
+            if (currentUserId.HasValue)
+            {
+                foreach (var postDto in postDtos)
+                {
+                    var post = posts.First(p => p.Id == postDto.Id);
+                    postDto.UserHasLiked = post.Likes?.Any(l => l.UserId == currentUserId && l.IsLiked) ?? false;
+                }
+            }
+
+            return postDtos;
         }
     }
 }

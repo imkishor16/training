@@ -6,6 +6,7 @@ using BloggingPlatform.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.OpenApi.Extensions;
+using BloggingPlatform.Dto.User;
 
 
 namespace BloggingPlatform.Controllers.v1
@@ -46,12 +47,15 @@ namespace BloggingPlatform.Controllers.v1
         public async Task<IActionResult> Get(Guid userId)
         {
             var user = await _userService.Get(userId);
-                if (user== null|| user.IsDeleted)
+
+            if (user == null || user.IsDeleted)
             {
-                return NotFound($"User not found.");
+                return NotFound("User not found.");
             }
 
-            return Ok(user);
+            var userResponseDto = _mapper.Map<UserResponseDto>(user);
+
+            return Ok(userResponseDto);
         }
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)

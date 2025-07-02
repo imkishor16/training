@@ -2,8 +2,9 @@ using BloggingPlatform.Contexts;
 using BloggingPlatform.Interfaces;
 using BloggingPlatform.Models;
 using BloggingPlatform.Repositories;
+using BloggingPlatform.Dto.User;
 using Microsoft.OpenApi.Extensions;
-
+using AutoMapper;
 
 namespace BloggingPlatform.Services
 {
@@ -13,17 +14,14 @@ namespace BloggingPlatform.Services
         private readonly IRepository<Guid, User> _userrepository;
         private readonly IRepository<Guid, Post> _postrepository;
         private readonly IUserValidationService _userValidationService;
-
-
-
-        public UserService(BloggingPlatformContext context, IRepository<Guid, User> userrepository, IRepository<Guid, Post> postrepository,IUserValidationService userValidationService)
+        private readonly IMapper _mapper;
+        public UserService(BloggingPlatformContext context, IRepository<Guid, User> userrepository, IRepository<Guid, Post> postrepository,IUserValidationService userValidationService,IMapper mapper)
         {
             _context = context;
             _userrepository = userrepository;
             _postrepository = postrepository;
             _userValidationService = userValidationService;
-
-
+            _mapper = mapper;
         }
         public async Task<User> AddUser(User user)
         {
@@ -32,7 +30,10 @@ namespace BloggingPlatform.Services
         }
         public async Task<User> Get(Guid userId)
         {
-            return await _userrepository.Get(userId);
+            var user = await _userrepository.Get(userId);
+            if (user == null)
+                throw new Exception("User not found");
+            return user;
         }
         public async Task<User> GetByEmail(string email)
         {

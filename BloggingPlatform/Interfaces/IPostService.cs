@@ -1,4 +1,5 @@
 using BloggingPlatform.Models;
+using BloggingPlatform.Dto.Post;
 
 namespace BloggingPlatform.Interfaces
 {
@@ -16,5 +17,9 @@ namespace BloggingPlatform.Interfaces
         public Task<IEnumerable<Post>> GetPostsByUserId(Guid userId);
         public Task<IEnumerable<Post>> GetUserLikedPosts(Guid userId);
         public Task<IEnumerable<Post>> GetUserCommentedPosts(Guid userId);
+        
+        // New methods for DTO responses
+        public Task<PostResponseDto> GetPostById(Guid postId, Guid? currentUserId = null);
+        public Task<IEnumerable<PostResponseDto>> GetAllPosts(Guid? currentUserId = null);
     }
 }
