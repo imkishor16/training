@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
 import { Post, Comment } from '../../models/post.model';
 import { PostService } from '../../services/post.service';
 import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/auth.model';
 
 @Component({
   selector: 'app-post',
@@ -20,9 +21,9 @@ import { AuthService } from '../../services/auth.service';
       <article class="post-content">
         <!-- Author Info -->
         <div class="post-author">
-          <div class="author-avatar">{{ post.user?.username?.charAt(0) || 'U' }}</div>
+          <div class="author-avatar">{{ post.user?.name?.charAt(0) || 'U' }}</div>
           <div class="author-info">
-            <span class="author-name">{{ post.user?.username || 'Anonymous' }}</span>
+            <span class="author-name">{{ post.user?.name || 'Anonymous' }}</span>
             <span class="post-status" [class]="getStatusClass(post.postStatus)">
               {{ post.postStatus }}
             </span>
@@ -33,9 +34,9 @@ import { AuthService } from '../../services/auth.service';
         <h1 class="post-title">{{ post.title }}</h1>
 
         <!-- Cover Image -->
-        <div class="cover-image" *ngIf="post.images && post.images.length > 0">
+        <div class="cover-image" *ngIf="getCoverImage()">
           <img 
-            [src]="getImageUrl(post.images[0])"
+            [src]="getImageUrl(getCoverImage()!)"
             [alt]="post.title"
             class="post-cover-image"
             (error)="onImageError($event)"
@@ -45,17 +46,29 @@ import { AuthService } from '../../services/auth.service';
         <!-- Post Content -->
         <div class="post-text" [innerHTML]="getProcessedContent()"></div>
 
-        <!-- Likes Section -->
+        <!-- Post Actions -->
         <div class="post-actions">
-          <button 
-            class="like-button"
-            (click)="toggleLike()"
-            [class.liked]="isLiked"
-            [disabled]="!isAuthenticated"
-          >
-            <span class="like-icon">♥</span>
-            <span class="like-count">{{ getActiveLikesCount() }} Likes</span>
-          </button>
+          <div class="action-buttons">
+            <button 
+              class="like-button"
+              (click)="toggleLike()"
+              [class.liked]="isLiked"
+              [disabled]="!isAuthenticated"
+            >
+              <span class="like-icon">♥</span>
+              <span class="like-count">{{ getActiveLikesCount() }} Likes</span>
+            </button>
+            
+            <!-- Edit Button - Only show for post owner -->
+            <button 
+              *ngIf="isPostOwner"
+              class="edit-button"
+              (click)="editPost()"
+            >
+              <span class="edit-icon">✏️</span>
+              <span>Edit Post</span>
+            </button>
+          </div>
         </div>
 
         <hr class="divider">
@@ -68,9 +81,9 @@ import { AuthService } from '../../services/auth.service';
           <div *ngIf="isAuthenticated" class="comment-form-container">
             <div class="current-user">
               <div class="user-avatar">
-                {{ authService.getCurrentUser()?.username?.charAt(0) || 'U' }}
+                {{ currentUser?.username?.charAt(0) || 'U' }}
               </div>
-              <span class="user-name">{{ authService.getCurrentUser()?.username }}</span>
+              <span class="user-name">{{ currentUser?.username }}</span>
             </div>
             <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
               <div class="form-group">
@@ -130,10 +143,13 @@ export class PostComponent implements OnInit {
   commentForm: FormGroup;
   isAuthenticated = false;
   isLiked = false;
+  isPostOwner = false;
   private currentUserId: string | null = null;
+  currentUser: User | null = null;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private postService: PostService,
     private commentService: CommentService,
     public authService: AuthService,
@@ -148,6 +164,9 @@ export class PostComponent implements OnInit {
   ngOnInit() {
     this.isAuthenticated = this.authService.isAuthenticated();
     this.currentUserId = this.authService.getCurrentUserId();
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUser = user;
+    });
     
     const postId = this.route.snapshot.paramMap.get('id');
     if (postId) {
@@ -158,8 +177,11 @@ export class PostComponent implements OnInit {
   loadPost(postId: string) {
     this.postService.getPostById(postId).subscribe({
       next: (post) => {
+        console.log('Loaded post:', post);
+        console.log('Post images:', post.images);
         this.post = post;
         this.checkIfLiked();
+        this.checkIfPostOwner();
       },
       error: (error) => {
         console.error('Error loading post:', error);
@@ -167,8 +189,35 @@ export class PostComponent implements OnInit {
     });
   }
 
-  getImageUrl(image: { content: any }): string {
+  editPost() {
+    if (this.post) {
+      this.router.navigate(['/posts', this.post.id, 'edit']);
+    }
+  }
+
+  private checkIfPostOwner() {
+    if (!this.post || !this.currentUserId) {
+      this.isPostOwner = false;
+      return;
+    }
+    
+    // Check if current user is the post owner
+    this.isPostOwner = this.post.user?.id === this.currentUserId;
+  }
+
+  getCoverImage(): { content: any, name?: string } | null {
+    if (!this.post?.images || this.post.images.length === 0) {
+      return null;
+    }
+    return this.post.images.find(img => img.name === 'cover-image.jpg') || null;
+  }
+
+  getImageUrl(image: { content: any, name?: string }): string {
+    console.log('Getting URL for image:', { name: image.name, type: typeof image.content });
     const dataUrl = this.convertImageToDataUrl(image);
+    if (!dataUrl) {
+      console.warn('Failed to convert image to data URL:', image);
+    }
     return dataUrl || 'https://via.placeholder.com/800x400?text=No+Image';
   }
 
@@ -177,42 +226,61 @@ export class PostComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustHtml('');
     }
   
-    const contentImages = this.post.images || [];
+    console.log('Processing content:', this.post.content);
+    console.log('Available images:', this.post.images);
   
-    const processed = this.post.content.replace(
-      /<img[^>]*src="\[IMAGE_PLACEHOLDER:image_\d+_(\d+)\]"[^>]*>/g,
-      (match, indexStr) => {
-        const imageIndex = parseInt(indexStr, 10);
+    let processedContent = this.post.content;
+    const contentImages = (this.post.images || []).filter(img => img.name !== 'cover-image.jpg');
   
-        if (isNaN(imageIndex) || imageIndex < 0 || imageIndex >= contentImages.length) {
-          console.warn(`Invalid image index: ${imageIndex}, available images: ${contentImages.length}`);
-          return `<div class="missing-image" style="color: red; font-style: italic;">Image not found (index: ${imageIndex})</div>`;
-        }
-  
-        const image = contentImages[imageIndex];
-        const imageUrl = this.getImageUrl(image); 
-  
-        // Extract any existing style attributes to preserve them
-        const existingStyleMatch = match.match(/style="([^"]*)"/);
-        const existingStyle = existingStyleMatch ? existingStyleMatch[1] : '';
-  
-        // Merge or append additional inline styles
-        const mergedStyle = `${existingStyle}; max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;`;
-  
-        // Extract other attributes (optional width/height)
-        const otherAttributes = match.match(/(width|height)="[^"]*"/g)?.join(' ') ?? '';
-  
-        return `<img src="${imageUrl}" style="${mergedStyle}" ${otherAttributes} class="content-image" loading="lazy">`;
+    // Clean up CKEditor's output
+    processedContent = processedContent
+      // Remove figure tags with malformed image URLs
+      .replace(/<figure[^>]*>.*?<img[^>]*src="<img[^>]*>"[^>]*>.*?<\/figure>/g, '')
+      // Remove any remaining width/height attributes
+      .replace(/\s(width|height)=["']\d+["']/g, '')
+      // Remove style attributes containing aspect-ratio
+      .replace(/\sstyle="[^"]*aspect-ratio[^"]*"/g, '')
+      // Clean up any empty style attributes
+      .replace(/\sstyle=""/g, '')
+      // Clean up any double spaces
+      .replace(/\s{2,}/g, ' ');
+
+    // Replace our image placeholders with actual images
+    contentImages.forEach((image, index) => {
+      const imageName = image.name || `content-image-${index + 1}.jpg`;
+      const placeholder = `[IMAGE:${imageName}]`;
+      
+      console.log('Processing image:', { 
+        name: imageName, 
+        placeholder,
+        hasContent: !!image.content,
+        placeholderExists: processedContent.includes(placeholder)
+      });
+      
+      if (processedContent.includes(placeholder)) {
+        const imageUrl = this.getImageUrl(image);
+        processedContent = processedContent.replace(
+          placeholder,
+          `<figure class="image">
+            <img src="${imageUrl}" 
+                 style="max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;" 
+                 class="content-image" 
+                 alt="Post content image ${index + 1}" 
+                 loading="lazy">
+          </figure>`
+        );
       }
-    );
+    });
   
-    return this.sanitizer.bypassSecurityTrustHtml(processed);
+    console.log('Final processed content:', processedContent);
+    return this.sanitizer.bypassSecurityTrustHtml(processedContent);
   }
   
 
   private convertImageToDataUrl(image: { content: any }): string | null {
     try {
       if (!image || !image.content) {
+        console.warn('No image content provided');
         return null;
       }
 
@@ -258,6 +326,7 @@ export class PostComponent implements OnInit {
         return URL.createObjectURL(image.content);
       }
 
+      console.warn('Unsupported image content type:', typeof image.content);
       return null;
       
     } catch (error) {
@@ -347,7 +416,7 @@ export class PostComponent implements OnInit {
                 postId: this.post.id,
                 userId: this.currentUserId,
                 isLiked: true,
-                user: this.authService.getCurrentUser() || undefined
+                user: this.currentUser || undefined
               });
             }
           }

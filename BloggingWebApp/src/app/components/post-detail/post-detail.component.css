@@ -271,6 +271,13 @@
   border-top: 1px solid #e5e7eb;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .like-button {
   background: none;
   border: 2px solid #e5e7eb;
@@ -304,6 +311,32 @@
 }
 
 .like-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.edit-button {
+  background: none;
+  border: 2px solid #3b82f6;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #3b82f6;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.edit-button:hover {
+  background-color: #3b82f6;
+  color: white;
+  transform: scale(1.02);
+}
+
+.edit-icon {
   font-size: 1.25rem;
   line-height: 1;
 }

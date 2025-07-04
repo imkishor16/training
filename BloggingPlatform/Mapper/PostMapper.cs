@@ -32,7 +32,7 @@ public class PostProfile : Profile
 
         // Map User to BasicUserDto
         CreateMap<User, BasicUserDto>()
-            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Name));
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username));
 
         // Map Comment to BasicCommentDto
         CreateMap<Comment, BasicCommentDto>()

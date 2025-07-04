@@ -20,7 +20,7 @@ namespace BloggingPlatform.Models
         [Required]
         public string Content { get; set; }
 
-        public string PostStatus { get; set; } = "Approved";
+        public string PostStatus { get; set; } = "Published"; //Published, Draft, Archived
         public bool IsDeleted { get; set; } = false;
 
         public User User { get; set; }

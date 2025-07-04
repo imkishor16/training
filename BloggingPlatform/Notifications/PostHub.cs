@@ -1,56 +1,56 @@
-using Microsoft.AspNetCore.SignalR;
+    using Microsoft.AspNetCore.SignalR;
 
-using BloggingPlatform.Dto.Comment;
-using Microsoft.Extensions.Logging;
-using BloggingPlatform.Models.DTOs;
+    using BloggingPlatform.Dto.Comment;
+    using Microsoft.Extensions.Logging;
+    using BloggingPlatform.Models.DTOs;
 
-namespace BloggingPlatform.Hubs
-{
-    public class PostHub : Hub
+    namespace BloggingPlatform.Hubs
     {
-        private readonly ILogger<PostHub> _logger;
-
-        public PostHub(ILogger<PostHub> logger)
+        public class PostHub : Hub
         {
-            _logger = logger;
-        }
+            private readonly ILogger<PostHub> _logger;
 
-        public async Task BroadcastNewPost(CreatePostDto post)
-        {
-            try
+            public PostHub(ILogger<PostHub> logger)
             {
-                await Clients.All.SendAsync("ReceiveNewPost", post);
+                _logger = logger;
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error broadcasting new post");
-                throw;
-            }
-        }
 
-        public async Task BroadcastNewComment(CreateCommentDto comment)
-        {
-            try
+            public async Task BroadcastNewPost(CreatePostDto post)
             {
-                await Clients.All.SendAsync("ReceiveNewComment", comment);
+                try
+                {
+                    await Clients.All.SendAsync("ReceiveNewPost", post);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error broadcasting new post");
+                    throw;
+                }
             }
-            catch (Exception ex)
+
+            public async Task BroadcastNewComment(CreateCommentDto comment)
             {
-                _logger.LogError(ex, "Error broadcasting new comment");
-                throw;
+                try
+                {
+                    await Clients.All.SendAsync("ReceiveNewComment", comment);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error broadcasting new comment");
+                    throw;
+                }
             }
-        }
 
-        public override async Task OnConnectedAsync()
-        {
-            _logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
-            await base.OnConnectedAsync();
-        }
+            public override async Task OnConnectedAsync()
+            {
+                _logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
+                await base.OnConnectedAsync();
+            }
 
-        public override async Task OnDisconnectedAsync(Exception? exception)
-        {
-            _logger.LogInformation("Client disconnected: {ConnectionId}", Context.ConnectionId);
-            await base.OnDisconnectedAsync(exception);
+            public override async Task OnDisconnectedAsync(Exception? exception)
+            {
+                _logger.LogInformation("Client disconnected: {ConnectionId}", Context.ConnectionId);
+                await base.OnDisconnectedAsync(exception);
+            }
         }
     }
-}

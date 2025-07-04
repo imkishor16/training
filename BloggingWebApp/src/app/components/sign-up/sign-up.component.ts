@@ -80,8 +80,22 @@ import { AuthService } from '../../services/auth.service';
           <div class="error-message" *ngIf="signUpForm.get('confirmPassword')?.touched && signUpForm.get('confirmPassword')?.errors?.['required']">
             Please confirm your password
           </div>
-          <div class="error-message" *ngIf="signUpForm.get('confirmPassword')?.touched && signUpForm.errors?.['mismatch']">
+          <div class="error-message" *ngIf="signUpForm.errors?.['mismatch']">
             Passwords do not match
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="adminSecret">Admin Secret (Optional)</label>
+          <input 
+            class="form-input"
+            id="adminSecret" 
+            type="password"
+            formControlName="adminSecret"
+            placeholder="Enter admin secret to get admin privileges"
+          />
+          <div class="form-hint">
+            Leave empty for regular user account
           </div>
         </div>
 
@@ -119,7 +133,8 @@ export class SignUpComponent {
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      adminSecret: ['']
     }, {
       validators: this.passwordMatchValidator
     });
@@ -136,7 +151,14 @@ export class SignUpComponent {
       this.isLoading = true;
       this.errorMessage = '';
       
-      const { confirmPassword, ...signUpData } = this.signUpForm.value;
+      const { confirmPassword, adminSecret, ...signUpData } = this.signUpForm.value;
+      
+      // Check if admin secret is provided and correct
+      if (adminSecret) {
+        signUpData.role = 'Admin';
+        signUpData.adminSecret = adminSecret;
+      }
+      
       this.authService.signUp(signUpData).subscribe({
         next: () => {
           this.isLoading = false;

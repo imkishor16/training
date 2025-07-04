@@ -3,7 +3,16 @@ export interface User {
   username: string;
   email: string;
   name?: string;
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
   role: UserRole;
+  status?: string;
+  isSuspended?: boolean;
+  suspensionReason?: string;
+  suspendedUntil?: string;
+  createdAt?: string;
+  lastLoginAt?: string;
 }
 
 export type UserRole = 'Admin' | 'User';
@@ -21,7 +30,8 @@ export interface SignInRequest {
 
 export interface AuthResponse {
   token: string;
-  user: User;
+  refreshToken: string;
+  email: string;
 }
 
 export interface LoginRequest {

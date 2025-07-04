@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace bloggingplatform.Migrations
 {
     [DbContext(typeof(BloggingPlatformContext))]
-    [Migration("20250625183915_addedLike")]
-    partial class addedLike
+    [Migration("20250702173614_nameToUsername")]
+    partial class nameToUsername
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -197,10 +197,6 @@ namespace bloggingplatform.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -219,6 +215,10 @@ namespace bloggingplatform.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SuspensionReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

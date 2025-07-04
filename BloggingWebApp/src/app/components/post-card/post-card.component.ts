@@ -5,6 +5,7 @@ import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
 import { Post } from '../../models/post.model';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/auth.model';
 
 interface PostImage {
   content: Blob | Uint8Array | string;
@@ -32,10 +33,10 @@ interface PostImage {
       <div class="post-card-content">
         <div class="post-card-author">
           <div class="author-avatar">
-            {{ post.user?.username?.charAt(0) || 'U' }}
+            {{ post.user?.name?.charAt(0) || 'U' }}
           </div>
           <div class="author-info">
-            <span class="author-name">{{ post.user?.username || 'Anonymous' }}</span>
+            <span class="author-name">{{ post.user?.name || 'Anonymous' }}</span>
             <span class="post-status" [class]="getStatusClass(post.postStatus)">
               {{ post.postStatus }}
             </span>
@@ -78,7 +79,7 @@ export class PostCardComponent {
   isAuthenticated = false;
   hasValidImage = false;
   private currentUserId: string | null = null;
-
+  currentUser: User | null = null;
   constructor(
     private sanitizer: DomSanitizer,
     private postService: PostService,
@@ -89,8 +90,16 @@ export class PostCardComponent {
   ngOnInit() {
     this.isAuthenticated = this.authService.isAuthenticated();
     this.currentUserId = this.authService.getCurrentUserId();
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUser = user;
+    });
     this.checkIfLiked();
     this.checkIfHasValidImage();
+    console.log('PostCard initialized:', { 
+      postId: this.post.id,
+      images: this.post.images?.length,
+      hasValidImage: this.hasValidImage
+    });
   }
 
   ngOnChanges() {
@@ -99,17 +108,37 @@ export class PostCardComponent {
 
   checkIfHasValidImage(): void {
     if (this.post.images && this.post.images.length > 0) {
-      const image = this.post.images[0] as PostImage;
-      this.hasValidImage = !!image.content;
+      // Find the cover image
+      const coverImage = this.post.images.find(img => img.name === 'cover-image.jpg');
+      if (coverImage) {
+        console.log('Found cover image:', { name: coverImage.name, hasContent: !!coverImage.content });
+        this.hasValidImage = !!coverImage.content;
+      } else {
+        // Fallback to first image if no cover image is found
+        const firstImage = this.post.images[0] as PostImage;
+        console.log('No cover image found, using first image:', { hasContent: !!firstImage.content });
+        this.hasValidImage = !!firstImage.content;
+      }
     } else {
+      console.log('No images found for post:', this.post.id);
       this.hasValidImage = false;
     }
   }
 
   getPostImage(): SafeUrl | string {
     if (this.post.images && this.post.images.length > 0) {
-      const image = this.post.images[0] as PostImage;
+      // Try to find cover image first
+      const coverImage = this.post.images.find(img => img.name === 'cover-image.jpg');
+      const image = coverImage || this.post.images[0] as PostImage;
       
+      console.log('Getting post image:', { 
+        name: image.name,
+        type: typeof image.content,
+        isBlob: image.content instanceof Blob,
+        isUint8Array: image.content instanceof Uint8Array,
+        isString: typeof image.content === 'string'
+      });
+
       if (image.content instanceof Blob) {
         return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(image.content));
       } else if (image.content instanceof Uint8Array) {
@@ -188,7 +217,7 @@ export class PostCardComponent {
                 postId: this.post.id,
                 userId: this.currentUserId,
                 isLiked: true,
-                user: this.authService.getCurrentUser() || undefined
+                user: this.currentUser || undefined
               });
             }
           }
@@ -223,31 +252,21 @@ export class PostCardComponent {
 
     let processedContent = this.post.content;
     
-    // Replace image placeholders with actual images
-    if (this.post.images) {
-      // Create a map of images excluding the cover image
-      const contentImages = this.post.images.slice(1); // Skip cover image
-      let currentImageIndex = 0;
-      
-      // Replace all placeholders with actual images
-      processedContent = processedContent.replace(
-        /\[IMAGE_PLACEHOLDER:image_[0-9_]+\]/g,
-        (match) => {
-          if (currentImageIndex < contentImages.length) {
-            const image = contentImages[currentImageIndex];
-            const imageUrl = this.getImageUrl(image);
-            currentImageIndex++;
-            return `<img src="${imageUrl}" alt="Post image ${currentImageIndex}" class="content-image">`;
-          }
-          return ''; // If no more images, remove the placeholder
-        }
-      );
-    }
+    // Remove image placeholders from the content
+    processedContent = processedContent.replace(
+      /\[IMAGE:[\w-]+\.jpg\]/g,
+      ''
+    );
 
-    // Create a preview by truncating the HTML content
+    // Convert HTML to plain text
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = processedContent;
     let textContent = tempDiv.textContent || tempDiv.innerText;
+    
+    // Clean up extra whitespace and line breaks
+    textContent = textContent.replace(/\s+/g, ' ').trim();
+    
+    // Create a preview by truncating the text content
     textContent = textContent.substring(0, 200) + (textContent.length > 200 ? '...' : '');
 
     return this.sanitizer.bypassSecurityTrustHtml(textContent);

@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CreatePostDto, Post, UpdatePostDto, CustomFile } from '../../models/post.model';
 import { PostService } from '../../services/post.service';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
@@ -19,8 +20,8 @@ class UploadAdapter {
       this.loader.file.then((file: CustomFile) => {
         reader.onload = () => {
           const imageUrl = reader.result as string;
-          // Generate a unique name for this image
-          const imageName = `image_${Date.now()}_${this.component.getNextImageCounter()}`;
+          // Use the original file name as the placeholder
+          const imageName = file.name || `content-image-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.jpg`;
           // Store the image info
           this.component.addContentImage({
             file,
@@ -83,8 +84,14 @@ interface PostPreview {
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Loading post...</p>
+      </div>
+
       <!-- Editor Form -->
-      <form [formGroup]="postForm" class="editor-form" *ngIf="!isPreviewMode">
+      <form [formGroup]="postForm" class="editor-form" *ngIf="!isPreviewMode && !isLoading">
         <!-- Title Input -->
         <div class="form-group">
           <label for="title" class="form-label">Title</label>
@@ -172,7 +179,7 @@ interface PostPreview {
       </form>
 
       <!-- Preview Mode -->
-      <div class="preview-container" *ngIf="isPreviewMode">
+      <div class="preview-container" *ngIf="isPreviewMode && !isLoading">
         <div class="preview-content">
           <h1 class="preview-title">{{ postForm.get('title')?.value }}</h1>
           
@@ -199,17 +206,21 @@ interface PostPreview {
 })
 export class PostEditorComponent implements OnInit {
   @Input() post?: Post;
-  @ViewChild('editor') editor!: ElementRef;
+  @ViewChild('editor') editorElement!: ElementRef;
+  private editor: any;
 
   public Editor = ClassicEditor;
   postForm: FormGroup;
   isPreviewMode = false;
   isDragging = false;
   isSaving = false;
+  isLoading = false;
   coverImagePreview: string | null = null;
   isEditMode = false;
-  private imageCounter = 0;
   private contentImages: ContentImage[] = [];
+  private originalContentImages: ContentImage[] = []; // Track original images for edit mode
+  private pendingContent: string | null = null;
+  private coverImageFile: File | null = null; // Track cover image file
 
   editorConfig = {
     toolbar: {
@@ -268,7 +279,7 @@ export class PostEditorComponent implements OnInit {
           label: '50%'
         }
       ],
-      resizeUnit: '%'
+      resizeUnit: '%' as const
     },
     table: {
       contentToolbar: [
@@ -284,7 +295,9 @@ export class PostEditorComponent implements OnInit {
     private fb: FormBuilder,
     private postService: PostService,
     private sanitizer: DomSanitizer,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -294,17 +307,128 @@ export class PostEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.post) {
+    // Check if we're in edit mode by looking for post ID in route
+    const postId = this.route.snapshot.paramMap.get('id');
+    
+    if (postId) {
       this.isEditMode = true;
-      this.postForm.patchValue({
-        title: this.post.title,
-        content: this.post.content,
-        status: this.post.postStatus
-      });
+      this.loadPostForEditing(postId);
+    } else if (this.post) {
+      // If post is passed as input (for backward compatibility)
+      this.isEditMode = true;
+      this.loadPostFromInput();
+    }
+  }
 
-      if (this.post.images?.[0]) {
-        this.coverImagePreview = this.post.images[0].content as unknown as string;
+  private loadPostForEditing(postId: string) {
+    this.isLoading = true;
+    this.postService.getPostById(postId).subscribe({
+      next: (post) => {
+        // Check if current user is the post owner
+        const currentUserId = this.authService.getCurrentUserId();
+        if (post.user?.id !== currentUserId) {
+          // User is not the owner, redirect to post detail
+          this.router.navigate(['/posts', postId]);
+          return;
+        }
+        
+        this.loadPostData(post);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading post:', error);
+        // Redirect to posts list on error
+        this.router.navigate(['/posts']);
       }
+    });
+  }
+
+  private loadPostFromInput() {
+    if (this.post) {
+      this.loadPostData(this.post);
+    }
+  }
+
+  private loadPostData(post: Post) {
+    console.log('Loading post data:', post);
+    console.log('Post images:', post.images);
+    
+    // Store the post for edit mode
+    this.post = post;
+    
+    // Clear existing arrays
+    this.contentImages = [];
+    this.originalContentImages = [];
+    
+    // For editing, we process the content to replace placeholders with actual image URLs
+    let processedContent = post.content;
+    let foundCoverImage = false;
+    
+    // Handle cover image if it exists
+    if (post.images && post.images.length > 0) {
+      post.images.forEach((image) => {
+        const imageName = image.name || '';
+        console.log('Processing image in loadPostData:', { 
+          name: imageName, 
+          hasContent: !!image.content,
+          isCoverImage: imageName === 'cover-image.jpg'
+        });
+        
+        // Handle cover image
+        if (imageName === 'cover-image.jpg' && !foundCoverImage) {
+          console.log('Setting cover image:', image);
+          this.coverImagePreview = this.getImageUrl(image);
+          foundCoverImage = true;
+        }
+        
+        // Handle content images - replace placeholders with actual image URLs for display
+        if (imageName !== 'cover-image.jpg') {
+          if (processedContent.includes(imageName)) {
+            console.log('Replacing placeholder in loadPostData:', { imageName });
+            
+            // Replace placeholder with actual image URL for display
+            processedContent = processedContent.replace(
+              new RegExp(imageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+              `<img src="${this.getImageUrl(image)}" alt="Post image">`
+            );
+            
+            // Add to both arrays for tracking
+            const contentImage: ContentImage = {
+              file: this.createFileFromImage(image, imageName),
+              imageName: imageName,
+              imageUrl: this.getImageUrl(image)
+            };
+            
+            this.contentImages.push(contentImage);
+            this.originalContentImages.push(contentImage);
+          }
+        }
+      });
+    }
+    
+    console.log('Loading content for editing:', {
+      contentLength: processedContent.length,
+      hasCoverImage: foundCoverImage,
+      contentImagesCount: this.contentImages.length,
+      originalContent: post.content,
+      processedContent: processedContent.substring(0, 200) + '...'
+    });
+    
+    // Load the processed content with actual image URLs for display
+    this.postForm.patchValue({
+      title: post.title,
+      content: processedContent,
+      status: post.postStatus
+    });
+    
+    // Manually set editor content if editor is ready
+    if (this.editor) {
+      console.log('Manually setting editor content:', processedContent.substring(0, 100) + '...');
+      this.editor.setData(processedContent);
+    } else {
+      console.log('Editor not ready yet, will set content when ready');
+      // Set a flag to update content when editor is ready
+      this.pendingContent = processedContent;
     }
   }
 
@@ -312,9 +436,59 @@ export class PostEditorComponent implements OnInit {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
       return new UploadAdapter(loader, this);
     };
+
+    // Store editor reference for manual content setting
+    this.editor = editor;
+
+    // Set pending content if any
+    if (this.pendingContent) {
+      console.log('Setting pending content in editor:', this.pendingContent.substring(0, 100) + '...');
+      editor.setData(this.pendingContent);
+      this.pendingContent = null;
+    }
+
+    // Listen to content changes to track removed images
+    editor.model.document.on('change:data', () => {
+      const content = editor.getData();
+      console.log('Editor content changed:', content);
+      
+      // Clean up removed images from contentImages array
+      this.contentImages = this.contentImages.filter(imageInfo => {
+        const isImageStillInContent = content.includes(imageInfo.imageUrl);
+        if (!isImageStillInContent) {
+          console.log('Image removed from content:', imageInfo.imageName);
+        }
+        return isImageStillInContent;
+      });
+    });
+  }
+
+  private createFileFromImage(image: any, imageName: string): CustomFile {
+    // Create a File object from the image data for tracking purposes
+    try {
+      if (image.content instanceof Blob) {
+        return new File([image.content], imageName, { type: image.content.type });
+      } else if (typeof image.content === 'string') {
+        // Convert base64 to blob
+        const byteCharacters = atob(image.content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        return new File([blob], imageName, { type: 'image/jpeg' });
+      }
+    } catch (error) {
+      console.error('Error creating file from image:', error);
+    }
+    
+    // Fallback to empty file
+    return new File([], imageName, { type: 'image/jpeg' });
   }
 
   get sanitizedContent(): SafeHtml {
+    // Content already contains actual image URLs, no need to process
     return this.sanitizer.bypassSecurityTrustHtml(this.postForm.get('content')?.value || '');
   }
 
@@ -348,6 +522,9 @@ export class PostEditorComponent implements OnInit {
       return;
     }
 
+    // Store the original file
+    this.coverImageFile = file;
+
     const reader = new FileReader();
     reader.onload = () => {
       this.coverImagePreview = reader.result as string;
@@ -356,11 +533,62 @@ export class PostEditorComponent implements OnInit {
   }
 
   removeCoverImage() {
+    console.log('Removing cover image');
     this.coverImagePreview = null;
+    this.coverImageFile = null;
   }
 
   togglePreview() {
     this.isPreviewMode = !this.isPreviewMode;
+  }
+
+  private base64ToFile(base64String: string, filename: string): File {
+    try {
+      // Check if the string is a data URL
+      if (base64String.startsWith('data:')) {
+        // Extract the actual base64 part and mime type
+        const matches = base64String.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) {
+          throw new Error('Invalid data URL format');
+        }
+        const mimeType = matches[1];
+        const base64Data = matches[2];
+        
+        try {
+          // Try to decode the base64 data
+          const binaryString = atob(base64Data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          return new File([bytes], filename, { type: mimeType });
+        } catch (e) {
+          console.error('Error decoding base64 data:', e);
+          throw new Error('Invalid base64 data');
+        }
+      } else {
+        // If it's not a data URL, try to handle it as raw base64
+        try {
+          // Add padding if necessary
+          const base64Data = base64String.replace(/^data:/, '').replace(/[^A-Za-z0-9+/]/g, '');
+          const paddedBase64 = base64Data + '==='.slice((base64Data.length + 3) % 4);
+          
+          const binaryString = atob(paddedBase64);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          return new File([bytes], filename, { type: 'image/jpeg' });
+        } catch (e) {
+          console.error('Error handling raw base64:', e);
+          throw new Error('Invalid base64 string'); 
+        }
+      }
+    } catch (error) {
+      console.error('Error in base64ToFile:', error);
+      // Return a placeholder image file if conversion fails
+      return new File([new Uint8Array(0)], filename, { type: 'image/jpeg' });
+    }
   }
 
   savePost() {
@@ -369,24 +597,70 @@ export class PostEditorComponent implements OnInit {
     this.isSaving = true;
     const formData = new FormData();
     
-    // Get the current content and replace image URLs with placeholders
+    // Get the current content and convert image URLs to placeholders
     let content = this.postForm.get('content')?.value || '';
+    
+    // Clean up the content
+    content = content
+      // Remove any remaining ">" characters after image tags
+      .replace(/<img[^>]*>\s*"+\s*/g, '<img$&>')
+      // Clean up any double spaces
+      .replace(/\s{2,}/g, ' ')
+      // Clean up empty paragraphs
+      .replace(/<p>\s*<\/p>/g, '')
+      .trim();
+
+    console.log('Starting savePost with content:', content);
     const images: File[] = [];
 
-    // Add cover image as the first image if it exists
-    if (this.coverImagePreview) {
-      const coverImageFile = this.base64ToFile(this.coverImagePreview, 'cover_image.jpg');
-      images.push(coverImageFile);
+    // Add cover image as the first image ONLY if it was explicitly added via cover image upload
+    if (this.coverImagePreview && this.coverImageFile) {
+      try {
+        console.log('Processing cover image:', this.coverImageFile.name);
+        // Create a new file with the correct name "cover-image.jpg"
+        const coverImageFile = new File([this.coverImageFile], 'cover-image.jpg', { 
+          type: this.coverImageFile.type 
+        });
+        console.log('Cover image file created:', coverImageFile);
+        if (coverImageFile.size > 0) {
+          images.push(coverImageFile);
+          console.log('Added cover image to images array');
+        }
+      } catch (error) {
+        console.error('Error processing cover image:', error);
+      }
     }
 
-    // Replace image URLs with placeholders and collect images in order
-    this.contentImages.forEach(imageInfo => {
-      content = content.replace(
-        imageInfo.imageUrl,
-        `[IMAGE_PLACEHOLDER:${imageInfo.imageName}]`
-      );
-      images.push(imageInfo.file);
+    // Convert image URLs to placeholders and collect images
+    this.contentImages.forEach((imageInfo) => {
+      try {
+        console.log('Processing content image:', { imageName: imageInfo.imageName });
+        
+        // Replace image URL with placeholder in content
+        // Handle both <img> tags and <figure><img> structures
+        const imgTagRegex = new RegExp(`<img[^>]*src="${imageInfo.imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>`, 'g');
+        const figureImgRegex = new RegExp(`<figure[^>]*>\\s*<img[^>]*src="${imageInfo.imageUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>\\s*</figure>`, 'g');
+        
+        // First try to replace <figure><img> structure
+        if (content.match(figureImgRegex)) {
+          content = content.replace(figureImgRegex, imageInfo.imageName);
+        } else {
+          // Then try to replace just <img> tag
+          content = content.replace(imgTagRegex, imageInfo.imageName);
+        }
+        
+        if (imageInfo.file instanceof File) {
+          // Keep the original file name
+          images.push(imageInfo.file);
+          console.log('Added content image to images array:', imageInfo.imageName);
+        }
+      } catch (error) {
+        console.error('Error processing content image:', error);
+      }
     });
+
+    console.log('Final content with placeholders:', content);
+    console.log('Total images to upload:', images.length);
 
     // Add form fields with null checks
     const title = this.postForm.get('title')?.value || '';
@@ -400,7 +674,10 @@ export class PostEditorComponent implements OnInit {
 
     // Add each image to FormData with array notation
     images.forEach((image, index) => {
-      formData.append(`Images`, image); // Changed to match C# model property name
+      if (image instanceof File && image.size > 0) {
+        console.log('Appending image to FormData:', { name: image.name, size: image.size });
+        formData.append('Images', image);
+      }
     });
 
     try {
@@ -432,39 +709,35 @@ export class PostEditorComponent implements OnInit {
   }
 
   private handlePostSuccess(response: Post) {
+    console.log('Post saved successfully:', response);
+    console.log('Images in response:', response.images);
+
     // Replace image placeholders with actual images from response
     if (response.images && response.images.length > 0) {
       let content = response.content;
       response.images.forEach((image, index) => {
-        if (index === 0 && this.coverImagePreview) {
-          // Skip cover image
+        const imageName = image.name || `content-image-${index}.jpg`;
+        console.log('Processing response image:', { name: imageName, hasContent: !!image.content });
+        
+        if (imageName === 'cover-image.jpg') {
+          console.log('Skipping cover image in content replacement');
           return;
         }
-        // Find placeholder for this image and replace it
-        const placeholder = content.match(/\[IMAGE_PLACEHOLDER:image_[0-9_]+\]/)?.[0];
-        if (placeholder && image.content) {
+
+        if (image.content) {
+          console.log('Replacing placeholder:', imageName);
           content = content.replace(
-            placeholder, 
+            imageName, 
             `<img src="${this.getImageUrl(image)}" alt="Post image ${index + 1}">`
           );
         }
       });
       response.content = content;
     }
-    this.isSaving = false;
-    // Handle success (e.g., navigate to post detail)
-  }
 
-  private base64ToFile(base64String: string, filename: string): File {
-    const arr = base64String.split(',');
-    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
+    this.isSaving = false;
+    // Navigate to the post detail page
+    this.router.navigate(['/posts', response.id]);
   }
 
   private getImageUrl(image: any): string {
@@ -491,13 +764,9 @@ export class PostEditorComponent implements OnInit {
     return '';
   }
 
-  // Public method to get next image counter
-  getNextImageCounter(): number {
-    return this.imageCounter++;
-  }
-
   // Public method to add content image
   addContentImage(image: ContentImage) {
+    console.log('Adding content image:', image.imageName);
     this.contentImages.push(image);
   }
 } 

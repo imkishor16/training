@@ -14,8 +14,18 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      
+      {
+        path: ':id',
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+      },
+      {
+        path: ':id/edit',
+        loadComponent: () => import('./pages/profile/edit-profile.component').then(m => m.EditProfileComponent)
+      }
+    ]
   },
   {
     path: 'posts',
@@ -27,11 +37,25 @@ export const routes: Routes = [
       },
       {
         path: 'new',
-        loadComponent: () => import('./pages/create-post/create-post.component').then(m => m.CreatePostComponent)
+        loadComponent: () => import('./components/post-editor/post-editor.component').then(m => m.PostEditorComponent)
       },
       {
         path: ':id',
         loadComponent: () => import('./components/post-detail/post-detail.component').then(m => m.PostComponent)
+      },
+      {
+        path: ':id/edit',
+        loadComponent: () => import('./components/post-editor/post-editor.component').then(m => m.PostEditorComponent)
+      }
+    ]
+  },
+  {
+    path: 'notifications',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'posts',
+        loadComponent: () => import('./pages/notifications/notifications.component').then(m => m.NotificationsComponent)
       }
     ]
   },
@@ -51,6 +75,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'posts'
   }
 ];

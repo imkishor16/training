@@ -194,10 +194,6 @@ namespace bloggingplatform.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -216,6 +212,10 @@ namespace bloggingplatform.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SuspensionReason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
