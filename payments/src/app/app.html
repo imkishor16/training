@@ -1,0 +1,59 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<div class="app-container">
+  <header class="app-header">
+    <h1>UPI Payment Simulator</h1>
+    <p>Test UPI payments using Razorpay's test environment</p>
+  </header>
+  
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<style>
+  .app-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 1rem;
+  }
+
+  .app-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: white;
+  }
+
+  .app-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .app-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .app-main {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .app-header h1 {
+      font-size: 2rem;
+    }
+    
+    .app-header p {
+      font-size: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,60 @@
+<div class="test-upi-info">
+  <strong>Test UPI IDs:</strong>
+  <ul>
+    <li>For <b>success</b>: <code>success&#64;razorpay</code></li>
+    <li>For <b>failure</b>: <code>failure&#64;razorpay</code></li>
+  </ul>
+  <div class="test-upi-warning">
+    <b>Note:</b> In test mode, cancelling the payment will also result in a successful payment. Use live mode to test real cancellation.
+  </div>
+</div>
+
+<form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="payment-form">
+  <div class="form-group">
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" formControlName="amount" min="1" required />
+    <div class="error" *ngIf="f['amount'].touched && f['amount'].invalid">
+      <span *ngIf="f['amount'].errors?.['required']">Amount is required.</span>
+      <span *ngIf="f['amount'].errors?.['min']">Amount must be greater than 0.</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="name">Customer Name</label>
+    <input id="name" type="text" formControlName="name" required />
+    <div class="error" *ngIf="f['name'].touched && f['name'].invalid">
+      <span *ngIf="f['name'].errors?.['required']">Name is required.</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email" required />
+    <div class="error" *ngIf="f['email'].touched && f['email'].invalid">
+      <span *ngIf="f['email'].errors?.['required']">Email is required.</span>
+      <span *ngIf="f['email'].errors?.['email']">Enter a valid email.</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="contact">Contact Number</label>
+    <input id="contact" type="tel" formControlName="contact" maxlength="10" required />
+    <div class="error" *ngIf="f['contact'].touched && f['contact'].invalid">
+      <span *ngIf="f['contact'].errors?.['required']">Contact number is required.</span>
+      <span *ngIf="f['contact'].errors?.['pattern']">Enter a valid 10-digit number.</span>
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="loading">{{ loading ? 'Processing...' : 'Pay with UPI' }}</button>
+</form>
+
+<div *ngIf="paymentResult as result" class="payment-result" [ngClass]="{'success': result?.success, 'failure': !result?.success}">
+  <div *ngIf="result?.success">
+    <strong>Payment Successful!</strong>
+    <div>Payment ID: {{ result?.paymentId }}</div>
+  </div>
+  <div *ngIf="!result?.success">
+    <strong>Payment Failed or Cancelled.</strong>
+    <div>{{ result?.message }}</div>
+  </div>
+</div>
