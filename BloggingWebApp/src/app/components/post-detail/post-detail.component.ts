@@ -21,9 +21,9 @@ import { User } from '../../models/auth.model';
       <article class="post-content">
         <!-- Author Info -->
         <div class="post-author">
-          <div class="author-avatar">{{ post.user?.name?.charAt(0) || 'U' }}</div>
+          <div class="author-avatar">{{ getUserDisplayName()?.charAt(0) || 'U' }}</div>
           <div class="author-info">
-            <span class="author-name">{{ post.user?.name || 'Anonymous' }}</span>
+            <span class="author-name">{{ getUserDisplayName() }}</span>
             <span class="post-status" [class]="getStatusClass(post.postStatus)">
               {{ post.postStatus }}
             </span>
@@ -81,9 +81,9 @@ import { User } from '../../models/auth.model';
           <div *ngIf="isAuthenticated" class="comment-form-container">
             <div class="current-user">
               <div class="user-avatar">
-                {{ currentUser?.username?.charAt(0) || 'U' }}
+                {{ getCurrentUserDisplayName()?.charAt(0) || 'U' }}
               </div>
-              <span class="user-name">{{ currentUser?.username }}</span>
+              <span class="user-name">{{ getCurrentUserDisplayName() }}</span>
             </div>
             <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
               <div class="form-group">
@@ -116,10 +116,10 @@ import { User } from '../../models/auth.model';
             <div *ngFor="let comment of post.comments" class="comment">
               <div class="comment-header">
                 <div class="comment-avatar">
-                  {{ comment.user?.username?.charAt(0) || 'U' }}
+                  {{ getCommentAuthorName(comment)?.charAt(0) || 'U' }}
                 </div>
                 <div class="comment-meta">
-                  <span class="comment-author">{{ comment.user?.username || 'Anonymous' }}</span>
+                  <span class="comment-author">{{ getCommentAuthorName(comment) }}</span>
                   <span class="comment-date" *ngIf="comment.createdAt">
                     {{ comment.createdAt | date:'medium' }}
                   </span>
@@ -245,32 +245,44 @@ export class PostComponent implements OnInit {
       // Clean up any double spaces
       .replace(/\s{2,}/g, ' ');
 
-    // Replace our image placeholders with actual images
-    contentImages.forEach((image, index) => {
-      const imageName = image.name || `content-image-${index + 1}.jpg`;
-      const placeholder = `[IMAGE:${imageName}]`;
+    // Replace image placeholders with actual images
+    // Look for [IMAGE:filename] pattern in content
+    const imagePlaceholderRegex = /\[IMAGE:([^\]]+)\]/g;
+    let match;
+    let processedImages = new Set<string>(); // Track processed images to avoid duplicates
+    
+    while ((match = imagePlaceholderRegex.exec(processedContent)) !== null) {
+      const fullPlaceholder = match[0]; // [IMAGE:filename]
+      const imageName = match[1]; // filename
       
-      console.log('Processing image:', { 
-        name: imageName, 
-        placeholder,
-        hasContent: !!image.content,
-        placeholderExists: processedContent.includes(placeholder)
-      });
+      console.log('Found image placeholder:', { fullPlaceholder, imageName });
       
-      if (processedContent.includes(placeholder)) {
+      // Find the corresponding image in the images array
+      const image = contentImages.find(img => img.name === imageName);
+      
+      if (image && image.content && !processedImages.has(imageName)) {
+        console.log('Replacing placeholder with image:', { imageName, hasContent: !!image.content });
+        
         const imageUrl = this.getImageUrl(image);
-        processedContent = processedContent.replace(
-          placeholder,
-          `<figure class="image">
-            <img src="${imageUrl}" 
-                 style="max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;" 
-                 class="content-image" 
-                 alt="Post content image ${index + 1}" 
-                 loading="lazy">
-          </figure>`
+        const imageHtml = `<figure class="image">
+          <img src="${imageUrl}" 
+               style="max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;" 
+               class="content-image" 
+               alt="Post content image" 
+               loading="lazy">
+        </figure>`;
+        
+        // Replace the placeholder with the image HTML
+        processedContent = processedContent.replace(fullPlaceholder, imageHtml);
+        processedImages.add(imageName);
+      } else {
+        console.warn('Image not found for placeholder:', imageName);
+        // Replace with a placeholder image or remove the placeholder
+        processedContent = processedContent.replace(fullPlaceholder, 
+          '<div style="padding: 2rem; text-align: center; background: #f5f5f5; border-radius: 8px; color: #666;">Image not available</div>'
         );
       }
-    });
+    }
   
     console.log('Final processed content:', processedContent);
     return this.sanitizer.bypassSecurityTrustHtml(processedContent);
@@ -440,5 +452,17 @@ export class PostComponent implements OnInit {
     }
 
     this.isLiked = this.post.likes?.some(like => like.userId === this.currentUserId && like.isLiked) || false;
+  }
+
+  getUserDisplayName(): string | undefined {
+    return this.post?.user?.name || this.post?.user?.username;
+  }
+
+  getCommentAuthorName(comment: Comment): string | undefined {
+    return comment.user?.name || comment.user?.username;
+  }
+
+  getCurrentUserDisplayName(): string | undefined {
+    return this.currentUser?.name || this.currentUser?.username;
   }
 }

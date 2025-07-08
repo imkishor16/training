@@ -15,20 +15,20 @@ namespace BloggingPlatform.Repositories
         public override async Task<User> Get(Guid userId)
         {
             return await _Context.Users
-                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted && !u.IsSuspended);
+                .FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
         }
 
         public override async Task<IEnumerable<User>> GetAll()
         {
             return await _Context.Users
-                .Where(u => !u.IsDeleted && !u.IsSuspended)
+                .Where(u => !u.IsDeleted)
                 .ToListAsync();
         }
 
         public async Task<User> GetByEmail(string email)
         {
             return await _Context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted && !u.IsSuspended);
+                .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
         }
     }
 }

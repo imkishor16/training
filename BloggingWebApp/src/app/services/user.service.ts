@@ -44,38 +44,64 @@ export class UserService {
   }
 
   updateUser(userId: string, updateData: UpdateUserRequest): Observable<User> {
+    console.log('Updating user:', userId, 'with data:', updateData);
+
     return this.http
-      .put<User>(API_ENDPOINTS.UPDATE_USER(userId), updateData)
+      .put<User>(API_ENDPOINTS.UPDATE_USER(userId), updateData, {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 
   deleteUser(userId: string): Observable<void> {
     return this.http
-      .delete<void>(API_ENDPOINTS.DELETE_USER(userId))
+      .delete<void>(API_ENDPOINTS.DELETE_USER(userId), {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 
   getAllUsers(): Observable<User[]> {
     return this.http
-      .get<User[]>(API_ENDPOINTS.GET_ALL_USERS)
+      .get<User[]>(API_ENDPOINTS.GET_ALL_USERS, {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 
   createUser(userData: CreateUserRequest): Observable<User> {
     return this.http
-      .post<User>(API_ENDPOINTS.CREATE_USER, userData)
+      .post<User>(API_ENDPOINTS.CREATE_USER, userData, {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 
   getPostsByUser(userId: string): Observable<any[]> {
     return this.http
-      .get<any[]>(API_ENDPOINTS.GET_POST_BY_USER(userId))
+      .get<any[]>(API_ENDPOINTS.GET_POST_BY_USER(userId), {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 
   getAllUsersFiltered(): Observable<User[]> {
     return this.http
-      .get<User[]>(API_ENDPOINTS.GET_ALL_USERS_FILTERED)
+      .get<User[]>(API_ENDPOINTS.GET_ALL_USERS_FILTERED, {
+        headers: {
+          Authorization: `Bearer ${this.authService.getToken() ?? ''}`
+        }
+      })
       .pipe(catchError(this.handleError));
   }
 

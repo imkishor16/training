@@ -16,6 +16,7 @@ export const API_ENDPOINTS = {
   LOGIN: `${getApiUrl()}/v1/auth/login`,
   SIGNUP: `${getApiUrl()}/v1/Users`,
   LOGOUT: `${getApiUrl()}/v1/auth/logout`,
+  REFRESH_TOKEN: `${getApiUrl()}/v1/auth/refresh`,
   PROFILE: `${getApiUrl()}/v1/profile`,
   DASHBOARD: `${getApiUrl()}/v1/dashboard`,
 

@@ -383,12 +383,13 @@ export class PostEditorComponent implements OnInit {
         
         // Handle content images - replace placeholders with actual image URLs for display
         if (imageName !== 'cover-image.jpg') {
-          if (processedContent.includes(imageName)) {
-            console.log('Replacing placeholder in loadPostData:', { imageName });
+          const placeholder = `[IMAGE:${imageName}]`;
+          if (processedContent.includes(placeholder)) {
+            console.log('Replacing placeholder in loadPostData:', { imageName, placeholder });
             
             // Replace placeholder with actual image URL for display
             processedContent = processedContent.replace(
-              new RegExp(imageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+              new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
               `<img src="${this.getImageUrl(image)}" alt="Post image">`
             );
             
@@ -454,7 +455,11 @@ export class PostEditorComponent implements OnInit {
       
       // Clean up removed images from contentImages array
       this.contentImages = this.contentImages.filter(imageInfo => {
-        const isImageStillInContent = content.includes(imageInfo.imageUrl);
+        // Check if the image URL is still in content OR if the placeholder is still there
+        const isImageUrlInContent = content.includes(imageInfo.imageUrl);
+        const isPlaceholderInContent = content.includes(`[IMAGE:${imageInfo.imageName}]`);
+        const isImageStillInContent = isImageUrlInContent || isPlaceholderInContent;
+        
         if (!isImageStillInContent) {
           console.log('Image removed from content:', imageInfo.imageName);
         }
@@ -469,14 +474,41 @@ export class PostEditorComponent implements OnInit {
       if (image.content instanceof Blob) {
         return new File([image.content], imageName, { type: image.content.type });
       } else if (typeof image.content === 'string') {
-        // Convert base64 to blob
-        const byteCharacters = atob(image.content);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        // Handle data URLs
+        if (image.content.startsWith('data:image/')) {
+          const matches = image.content.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+          if (matches && matches.length === 3) {
+            const mimeType = matches[1];
+            const base64Data = matches[2];
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: mimeType });
+            return new File([blob], imageName, { type: mimeType });
+          }
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        
+        // Handle raw base64 strings
+        try {
+          const byteCharacters = atob(image.content);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'image/jpeg' });
+          return new File([blob], imageName, { type: 'image/jpeg' });
+        } catch (e) {
+          console.warn('Failed to decode base64 string:', e);
+        }
+      } else if (image.content instanceof Uint8Array) {
+        const blob = new Blob([image.content], { type: 'image/jpeg' });
+        return new File([blob], imageName, { type: 'image/jpeg' });
+      } else if (image.content instanceof ArrayBuffer) {
+        const blob = new Blob([image.content], { type: 'image/jpeg' });
         return new File([blob], imageName, { type: 'image/jpeg' });
       }
     } catch (error) {
@@ -629,6 +661,16 @@ export class PostEditorComponent implements OnInit {
       } catch (error) {
         console.error('Error processing cover image:', error);
       }
+    } else if (this.isEditMode && this.post?.images) {
+      // In edit mode, if no new cover image was uploaded, include the original cover image
+      const originalCoverImage = this.post.images.find(img => img.name === 'cover-image.jpg');
+      if (originalCoverImage) {
+        console.log('Including original cover image in edit mode');
+        const coverFile = this.createFileFromImage(originalCoverImage, 'cover-image.jpg');
+        if (coverFile instanceof File && coverFile.size > 0) {
+          images.push(coverFile);
+        }
+      }
     }
 
     // Convert image URLs to placeholders and collect images
@@ -643,10 +685,10 @@ export class PostEditorComponent implements OnInit {
         
         // First try to replace <figure><img> structure
         if (content.match(figureImgRegex)) {
-          content = content.replace(figureImgRegex, imageInfo.imageName);
+          content = content.replace(figureImgRegex, `[IMAGE:${imageInfo.imageName}]`);
         } else {
           // Then try to replace just <img> tag
-          content = content.replace(imgTagRegex, imageInfo.imageName);
+          content = content.replace(imgTagRegex, `[IMAGE:${imageInfo.imageName}]`);
         }
         
         if (imageInfo.file instanceof File) {
@@ -658,6 +700,30 @@ export class PostEditorComponent implements OnInit {
         console.error('Error processing content image:', error);
       }
     });
+
+    // In edit mode, include all original images that are still referenced in content
+    if (this.isEditMode && this.post?.images) {
+      const originalContentImages = this.post.images.filter(img => img.name !== 'cover-image.jpg');
+      
+      originalContentImages.forEach((originalImage) => {
+        const imageName = originalImage.name || '';
+        const placeholder = `[IMAGE:${imageName}]`;
+        
+        // Check if this original image is still referenced in the content
+        if (content.includes(placeholder)) {
+          console.log('Including original image in edit mode:', imageName);
+          const originalFile = this.createFileFromImage(originalImage, imageName);
+          if (originalFile instanceof File && originalFile.size > 0) {
+            // Check if we already have this image from contentImages (new uploads)
+            const alreadyIncluded = images.some(img => img.name === imageName);
+            if (!alreadyIncluded) {
+              images.push(originalFile);
+              console.log('Added original image to images array:', imageName);
+            }
+          }
+        }
+      });
+    }
 
     console.log('Final content with placeholders:', content);
     console.log('Total images to upload:', images.length);
@@ -725,9 +791,10 @@ export class PostEditorComponent implements OnInit {
         }
 
         if (image.content) {
-          console.log('Replacing placeholder:', imageName);
+          const placeholder = `[IMAGE:${imageName}]`;
+          console.log('Replacing placeholder:', placeholder);
           content = content.replace(
-            imageName, 
+            placeholder, 
             `<img src="${this.getImageUrl(image)}" alt="Post image ${index + 1}">`
           );
         }

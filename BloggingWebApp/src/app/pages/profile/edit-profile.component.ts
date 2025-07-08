@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -70,7 +70,7 @@ import { User, UserRole } from '../../models/auth.model';
             <!-- Form Section -->
             <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
               <!-- Basic Info Section -->
-              <div class="form-section">
+              <div class="form-section" *ngIf="isEditingOwnProfile">
                 <h3>Basic Information</h3>
                 <div class="form-row">
                   <div class="form-group">
@@ -106,61 +106,25 @@ import { User, UserRole } from '../../models/auth.model';
                 </div>
               </div>
 
-              <!-- Admin Section - Only for Admin users -->
-              <div class="form-section" *ngIf="isAdmin">
-                <h3>Admin Controls</h3>
-                
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="role">Role</label>
-                    <p-dropdown 
-                      id="role"
-                      formControlName="role"
-                      [options]="roleOptions"
-                      placeholder="Select role"
-                      class="w-full"
-                    ></p-dropdown>
-                    <small 
-                      *ngIf="profileForm.get('role')?.invalid && profileForm.get('role')?.touched"
-                      class="p-error"
-                    >
-                      Role is required
-                    </small>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="status">Status</label>
-                    <input 
-                      id="status"
-                      type="text" 
-                      pInputText 
-                      formControlName="status"
-                      placeholder="Enter status"
-                      class="w-full"
-                    />
-                    <small 
-                      *ngIf="profileForm.get('status')?.invalid && profileForm.get('status')?.touched"
-                      class="p-error"
-                    >
-                      Status is required
-                    </small>
-                  </div>
-                </div>
-
+              <!-- Suspension Section: Only for admin editing another user -->
+              <div class="form-section" *ngIf="isAdmin && !isEditingOwnProfile">
+                <h3>Suspension Controls</h3>
                 <div class="form-row">
                   <div class="form-group">
                     <label for="isSuspended">Suspended</label>
                     <div class="checkbox-container">
-                      <p-checkbox 
-                        id="isSuspended"
-                        formControlName="isSuspended"
-                        [binary]="true"
-                      ></p-checkbox>
-                      <span class="checkbox-label">User is suspended</span>
+                      <label class="checkbox-label">
+                        <input 
+                          type="checkbox" 
+                          formControlName="isSuspended"
+                          style="margin-right: 8px;"
+                        />
+                        {{ getSuspensionLabel() }}
+                      </label>
                     </div>
                   </div>
 
-                  <div class="form-group" *ngIf="profileForm.get('isSuspended')?.value">
+                  <div class="form-group" *ngIf="isSuspendedChecked()">
                     <label for="suspendedUntil">Suspended Until</label>
                     <p-calendar 
                       id="suspendedUntil"
@@ -173,7 +137,7 @@ import { User, UserRole } from '../../models/auth.model';
                   </div>
                 </div>
 
-                <div class="form-group" *ngIf="profileForm.get('isSuspended')?.value">
+                <div class="form-group" *ngIf="isSuspendedChecked()">
                   <label for="suspensionReason">Suspension Reason</label>
                   <textarea 
                     id="suspensionReason"
@@ -192,7 +156,7 @@ import { User, UserRole } from '../../models/auth.model';
               </div>
 
               <!-- User Info Display - For non-admin users -->
-              <div class="form-section" *ngIf="!isAdmin">
+              <div class="form-section" *ngIf="!isAdmin && !isEditingOwnProfile">
                 <h3>Account Information</h3>
                 <div class="info-display">
                   <div class="info-row">
@@ -242,8 +206,6 @@ import { User, UserRole } from '../../models/auth.model';
                   [disabled]="!isFormValid() || isLoading"
                   styleClass="save-button"
                 ></p-button>
-                
-
               </div>
             </form>
           </div>
@@ -384,6 +346,16 @@ import { User, UserRole } from '../../models/auth.model';
     .checkbox-label {
       font-size: 0.875rem;
       color: var(--text-color);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
     }
 
     .info-display {
@@ -500,6 +472,7 @@ export class EditProfileComponent implements OnInit {
   profileForm: FormGroup;
   isLoading = false;
   isAdmin = false;
+  isEditingOwnProfile = false;
 
   roleOptions = [
     { label: 'User', value: 'User' },
@@ -511,7 +484,9 @@ export class EditProfileComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.profileForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -520,13 +495,29 @@ export class EditProfileComponent implements OnInit {
       status: ['', [Validators.required]],
       isSuspended: [false],
       suspendedUntil: [null],
-      suspensionReason: ['', [Validators.required]]
+      suspensionReason: ['']  // Remove required validator, will be handled conditionally
     });
   }
 
   ngOnInit() {
-    this.loadUserData();
+    this.route.paramMap.subscribe(params => {
+      const userId = params.get('id');
+      if (userId) {
+        this.loadUserData(userId);
+      } else {
+        // If no userId in route, redirect to current user's edit profile
+        const currentUserId = this.authService.getCurrentUserId();
+        if (currentUserId) {
+          this.router.navigate(['/profile', currentUserId, 'edit']);
+        }
+      }
+    });
     this.checkUserRole();
+
+    // Subscribe to form value changes to trigger change detection
+    this.profileForm.valueChanges.subscribe(values => {
+      console.log('Form values changed:', values);
+    });
   }
 
   private checkUserRole() {
@@ -534,45 +525,54 @@ export class EditProfileComponent implements OnInit {
     this.isAdmin = userRole === 'Admin';
   }
 
-  private loadUserData() {
-    const userId = this.authService.getCurrentUserId();
-    if (!userId) {
-      // Fallback to local user data if no userId
-      this.authService.getCurrentUser().subscribe(user => {
-        this.user = user;
-      });
-      this.populateForm();
+  private checkIfEditingOwnProfile() {
+    const currentUserId = this.authService.getCurrentUserId();
+    const routeUserId = this.route.snapshot.paramMap.get('id');
+    this.isEditingOwnProfile = currentUserId === routeUserId;
+  }
+
+    private loadUserData(userId?: string) {
+    const targetUserId = userId || this.authService.getCurrentUserId();
+    if (!targetUserId) {
+      console.error('No user ID found');
       return;
     }
 
-    this.userService.getUserById(userId).subscribe({
+    this.userService.getUserById(targetUserId).subscribe({
       next: (userData) => {
         this.user = userData;
+        this.checkIfEditingOwnProfile();
         this.populateForm();
-        // Update local storage with fresh user data
-        localStorage.setItem('user', JSON.stringify(userData));
       },
       error: (error) => {
-        // Fallback to local user data on error
-        this.authService.getCurrentUser().subscribe(user => {
-          this.user = user;
+        console.error('Error loading user data:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load user data. Please try again.'
         });
-        this.populateForm();
       }
     });
   }
 
   private populateForm() {
     if (this.user) {
+      console.log('Populating form with user data:', this.user);
+      const isSuspended = this.user.isSuspended === true; // Explicitly convert to boolean
+      console.log('isSuspended value:', isSuspended, 'type:', typeof isSuspended);
+      
       this.profileForm.patchValue({
         username: this.user.username || '',
         email: this.user.email || '',
         role: this.user.role || 'User',
         status: this.user.status || '',
-        isSuspended: this.user.isSuspended || false,
+        isSuspended: isSuspended,
         suspendedUntil: this.user.suspendedUntil ? new Date(this.user.suspendedUntil) : null,
         suspensionReason: this.user.suspensionReason || ''
       });
+      console.log('Form values after patch:', this.profileForm.value);
+      // Force change detection
+      this.cdr.detectChanges();
     }
   }
 
@@ -580,40 +580,44 @@ export class EditProfileComponent implements OnInit {
     if (this.isFormValid() && this.user) {
       this.isLoading = true;
       const formData = this.profileForm.value;
-      const userId = this.authService.getCurrentUserId();
+      const userId = this.user.id;
       
       if (!userId) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'User ID not found. Please log in again.'
+          detail: 'User ID not found. Please try again.'
         });
         this.isLoading = false;
         return;
       }
 
-      // Build update data based on user role and current values
+      // Build complete user payload for PUT operation
       const updateData: any = {
-        username: formData.username,
-        email: this.profileForm.get('email')?.value || this.user?.email
+        id: this.user.id,
+        email: this.user.email,
+        username: this.user.username,
+        role: this.user.role,
+        status: this.user.status,
+        isSuspended: this.user.isSuspended,
+        suspensionReason: this.user.suspensionReason,
+        suspendedUntil: this.user.suspendedUntil,
+        createdAt: this.user.createdAt,
+        lastLoginAt: this.user.lastLoginAt
       };
 
-      // For admin users, include admin fields with proper defaults
-      if (this.isAdmin) {
-        updateData.role = formData.role || this.user?.role || 'User';
-        updateData.status = formData.status || this.user?.status || 'Active';
-        updateData.password = ''; // Empty password for updates
+      // Update only the allowed fields based on user role and permissions
+      if (this.isAdmin && !this.isEditingOwnProfile) {
+        // Admin editing another user: only suspension fields
         updateData.isSuspended = formData.isSuspended || false;
         updateData.suspendedUntil = formData.suspendedUntil ? formData.suspendedUntil.toISOString() : null;
         updateData.suspensionReason = formData.suspensionReason || (formData.isSuspended ? 'Suspended by admin' : '');
+      } else if (this.isEditingOwnProfile) {
+        // Editing own profile: only username
+        updateData.username = formData.username;
       } else {
-        // For regular users, only send basic fields with current values
-        updateData.role = this.user?.role || 'User';
-        updateData.status = this.user?.status || 'Active';
-        updateData.password = ''; // Empty password for updates
-        updateData.isSuspended = this.user?.isSuspended || false;
-        updateData.suspendedUntil = this.user?.suspendedUntil || null;
-        updateData.suspensionReason = this.user?.suspensionReason || '';
+        // Regular user: only username
+        updateData.username = formData.username;
       }
 
       this.userService.updateUser(userId, updateData).subscribe({
@@ -627,7 +631,11 @@ export class EditProfileComponent implements OnInit {
           this.loadUserData();
           
           setTimeout(() => {
-            this.router.navigate(['/profile']);
+            if (this.user?.id) {
+              this.router.navigate(['/profile', this.user.id]);
+            } else {
+              this.router.navigate(['/profile']);
+            }
           }, 1500);
         },
         error: (error) => {
@@ -644,10 +652,12 @@ export class EditProfileComponent implements OnInit {
     }
   }
 
-
-
   onCancel() {
-    this.router.navigate(['/profile']);
+    if (this.user?.id) {
+      this.router.navigate(['/profile', this.user.id]);
+    } else {
+      this.router.navigate(['/profile']);
+    }
   }
 
   isFormValid(): boolean {
@@ -660,19 +670,21 @@ export class EditProfileComponent implements OnInit {
       return false;
     }
     
-    // For admin users, validate admin fields
-    if (this.isAdmin) {
-      const roleValid = this.profileForm.get('role')?.valid || false;
-      const statusValid = this.profileForm.get('status')?.valid || false;
+    // For admin users editing another user's profile, validate suspension fields
+    if (this.isAdmin && !this.isEditingOwnProfile) {
       const isSuspended = this.profileForm.get('isSuspended')?.value;
-      const suspensionReasonValid = isSuspended ? 
-        (this.profileForm.get('suspensionReason')?.valid || false) : true;
+      const suspensionReason = this.profileForm.get('suspensionReason')?.value;
       
-      return usernameValid && roleValid && statusValid && suspensionReasonValid;
+      // If suspended, suspension reason is required
+      if (isSuspended && (!suspensionReason || suspensionReason.trim() === '')) {
+        return false;
+      }
+      
+      return usernameValid;
     }
     
-    // For regular users, only validate username
-    return true;
+    // For regular users or admin editing own profile, only validate username
+    return usernameValid;
   }
 
   private markFormGroupTouched() {
@@ -680,5 +692,17 @@ export class EditProfileComponent implements OnInit {
       const control = this.profileForm.get(key);
       control?.markAsTouched();
     });
+  }
+
+  getSuspensionLabel(): string {
+    const isSuspended = this.profileForm.get('isSuspended')?.value;
+    console.log('getSuspensionLabel called, isSuspended:', isSuspended);
+    return isSuspended ? 'User is suspended' : 'User is not suspended';
+  }
+
+  isSuspendedChecked(): boolean {
+    const isSuspended = this.profileForm.get('isSuspended')?.value;
+    console.log('isSuspendedChecked called, isSuspended:', isSuspended);
+    return isSuspended === true;
   }
 } 

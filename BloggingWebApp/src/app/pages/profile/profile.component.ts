@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
@@ -66,7 +66,7 @@ import { Subscription } from 'rxjs';
                 icon="pi pi-user-edit"
                 [text]="true"
                 styleClass="p-button-secondary"
-                routerLink="/profile//{{user?.id}}/edit"
+                routerLink="/profile/{{user?.id}}/edit"
               ></p-button>
             </div>
           </div>
@@ -557,16 +557,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private postService: PostService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
-      const userId = params.get('userId');
+      const userId = params.get('id');
       if (userId) {
         this.loadUserData(userId);
+        this.loadUserPosts(userId);
       } else {
-        this.loadUserData();
+        // If no userId in route, redirect to current user's profile
+        const currentUserId = this.authService.getCurrentUserId();
+        if (currentUserId) {
+          this.router.navigate(['/profile', currentUserId]);
+        }
       }
     });
     
@@ -574,9 +580,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const savedTabIndex = localStorage.getItem('profileActiveTab');
     if (savedTabIndex !== null) {
       this.activeTabIndex = parseInt(savedTabIndex, 10);
-      this.loadTabContent(this.activeTabIndex);
-    } else {
-      this.loadUserPosts();
     }
 
     // Subscribe to post updates
@@ -600,10 +603,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private loadUserData(userId?: string) {
     const targetUserId = userId || this.authService.getCurrentUserId();
     if (!targetUserId) {
-      // Fallback to local user data if no userId
-        this.authService.getCurrentUser().subscribe(user => {
-        this.user = user;
-      });
+      this.isLoadingUser = false;
       return;
     }
 
@@ -612,16 +612,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
       next: (userData) => {
         this.user = userData;
         this.isLoadingUser = false;
-        // Update local storage with fresh user data only if it's the current user
-        if (!userId) {
-          localStorage.setItem('user', JSON.stringify(userData));
-        }
       },
       error: (error) => {
-        // Fallback to local user data on error
-        this.authService.getCurrentUser().subscribe(user => {
-          this.user = user;
-        });
+        console.error('Error loading user data:', error);
         this.isLoadingUser = false;
       }
     });
@@ -640,9 +633,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private loadTabContent(tabIndex: number) {
+    const userId = this.route.snapshot.paramMap.get('id');
     switch (tabIndex) {
       case 0:
-        this.loadUserPosts();
+        this.loadUserPosts(userId || undefined);
         break;
       case 1:
         this.loadLikedPosts();
@@ -658,37 +652,27 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.likedPosts = this.likedPosts.filter(post => post.id !== postId);
   }
 
-  private async loadUserPosts() {
-    const userId = this.route.snapshot.paramMap.get('userId');
-    if (!userId) {
-      // Load current user's posts
-      if (!this.authService.getCurrentUserId()) return;
+  private async loadUserPosts(userId?: string) {
+    const targetUserId = userId || this.route.snapshot.paramMap.get('id');
+    if (!targetUserId) {
+      this.isLoadingUserPosts = false;
+      return;
+    }
 
-      try {
-        this.isLoadingUserPosts = true;
-        this.userPosts = await this.postService.getUserPosts();
-      } catch (error) {
-        // Handle error silently
-      } finally {
-        this.isLoadingUserPosts = false;
-      }
-    } else {
-      // Load specific user's posts
-      try {
-        this.isLoadingUserPosts = true;
-        this.userService.getPostsByUser(userId).subscribe({
-          next: (posts) => {
-            this.userPosts = posts;
-            this.isLoadingUserPosts = false;
-          },
-          error: (error) => {
-            console.error('Error loading user posts:', error);
-            this.isLoadingUserPosts = false;
-          }
-        });
-      } catch (error) {
-        this.isLoadingUserPosts = false;
-      }
+    try {
+      this.isLoadingUserPosts = true;
+      this.userService.getPostsByUser(targetUserId).subscribe({
+        next: (posts) => {
+          this.userPosts = posts;
+          this.isLoadingUserPosts = false;
+        },
+        error: (error) => {
+          console.error('Error loading user posts:', error);
+          this.isLoadingUserPosts = false;
+        }
+      });
+    } catch (error) {
+      this.isLoadingUserPosts = false;
     }
   }
 

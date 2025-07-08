@@ -120,28 +120,27 @@ namespace BloggingPlatform.Controllers.v1
                 if (!Guid.TryParse(idClaim, out Guid currentUserId))
                     return Unauthorized("Invalid user identity.");
 
-                // Only allow Admins or the user themselves
+            // Only allow Admins or the user themselves
+                Console.WriteLine("role");
+                Console.WriteLine(role);
                 if (role != "Admin" && currentUserId != userId)
-                    return Forbid();
+                return Forbid();
 
-                var user = await _userService.Get(currentUserId);
+                var user = await _userService.Get(userId);
                 if (user == null|| user.IsDeleted)
                     return NotFound("User not found.");
 
                 _mapper.Map(dto, user);
 
-                if (!string.IsNullOrEmpty(dto.Password))
-                    user.PasswordHash =  _passwordHasher.HashPassword(dto.Password);
-                    if (role != "Admin")
-                        {
-                            dto.Role = user.Role;
-                            dto.IsSuspended = user.IsSuspended;
-                            dto.SuspensionReason = user.SuspensionReason;
-                            dto.SuspendedUntil = user.SuspendedUntil;
-                        }
+                if (role != "Admin")
+                    {
+                        dto.Role = user.Role;
+                        dto.IsSuspended = user.IsSuspended;
+                        dto.SuspensionReason = user.SuspensionReason;
+                        dto.SuspendedUntil = user.SuspendedUntil;
+                    }
 
-
-                var updated = await _userService.UpdateUser(currentUserId, user );
+                var updated = await _userService.UpdateUser(userId, user );
                 return Ok(updated);
         }
         [Authorize]

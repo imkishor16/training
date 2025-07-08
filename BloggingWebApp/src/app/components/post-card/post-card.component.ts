@@ -33,10 +33,10 @@ interface PostImage {
       <div class="post-card-content">
         <div class="post-card-author">
           <div class="author-avatar">
-            {{ post.user?.name?.charAt(0) || 'U' }}
+            {{ getUserDisplayName()?.charAt(0) || 'U' }}
           </div>
           <div class="author-info">
-            <span class="author-name">{{ post.user?.name || 'Anonymous' }}</span>
+            <span class="author-name">{{ getUserDisplayName() }}</span>
             <span class="post-status" [class]="getStatusClass(post.postStatus)">
               {{ post.postStatus }}
             </span>
@@ -300,5 +300,16 @@ export class PostCardComponent {
       }
     }
     return '';
-  } 
+  }
+
+  getUserDisplayName(): string | undefined {
+    if (this.post.user) {
+      if (this.post.user.name) {
+        return this.post.user.name;
+      } else if (this.post.user.username) {
+        return this.post.user.username;
+      }
+    }
+    return undefined;
+  }
 } 

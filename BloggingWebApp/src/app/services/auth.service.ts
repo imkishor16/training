@@ -75,12 +75,43 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    console.log('Getting token from localStorage:', !!token);
+    return token;
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 
   setToken(token: string): void {
     localStorage.setItem('token', token);
     this.authState.next(true);
+  }
+
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    console.log('Attempting to refresh token');
+    return this.http.post<AuthResponse>(API_ENDPOINTS.REFRESH_TOKEN, {
+      refreshToken: refreshToken
+    }).pipe(
+      tap(response => {
+        console.log('Token refresh successful');
+        this.handleAuthResponse(response);
+      }),
+      catchError(error => {
+        console.error('Token refresh failed:', error);
+        // Clear tokens on refresh failure
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        this.authState.next(false);
+        return this.handleError(error);
+      })
+    );
   }
 
   getUserIdFromToken(): string | null {
@@ -148,6 +179,25 @@ export class AuthService {
     }
   }
 
+  isTokenExpiringSoon(minutesBeforeExpiry: number = 5): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    try {
+      const decodedToken = jwtDecode<JwtPayload>(token);
+      const currentTime = Date.now() / 1000;
+      const expiryTime = decodedToken.exp || 0;
+      const timeUntilExpiry = expiryTime - currentTime;
+      const minutesUntilExpiry = timeUntilExpiry / 60;
+      
+      console.log(`Token expires in ${minutesUntilExpiry.toFixed(2)} minutes`);
+      return minutesUntilExpiry <= minutesBeforeExpiry;
+    } catch (error) {
+      console.error('Error checking token expiry:', error);
+      return false;
+    }
+  }
+
   isLoggedIn(): boolean {
     return this.isAuthenticated();
   }
@@ -162,7 +212,7 @@ export class AuthService {
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('API Error:', error);
-    const appError = createAppError(error);
+    const appError = createAppError(error); 
     return throwError(() => appError);
   }
 }
