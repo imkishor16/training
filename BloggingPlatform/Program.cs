@@ -63,6 +63,8 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
+builder.Services.AddSingleton<FileStorageService>();
+
 //Add CORS
 builder.Services.AddCors(options =>
 {
