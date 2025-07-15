@@ -19,6 +19,8 @@ using System.Text;
 using BloggingPlatform.Filters;
 using BloggingPlatform.Middleware;
 using System.Threading.RateLimiting;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
