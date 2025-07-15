@@ -21,18 +21,19 @@ using BloggingPlatform.Middleware;
 using System.Threading.RateLimiting;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using BloggingPlatform.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var kvUri = builder.Configuration["AzureBlob:KeyVaultUrl"];
 
-var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
-KeyVaultSecret secret = client.GetSecret("DefaultConnectionString");
-string connectionString = secret.Value;
+// var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+// KeyVaultSecret secret = client.GetSecret("DefaultConnectionString");
+// string connectionString = secret.Value;
 //dbcontext
 builder.Services.AddDbContext<BloggingPlatformContext>(opts =>
-    // opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-    opts.UseNpgsql(connectionString)
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    // opts.UseNpgsql(connectionString)
 );
 // Controllers + JSON
 builder.Services.AddControllers(options =>
@@ -142,6 +143,7 @@ builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(PostProfile));
 builder.Services.AddAutoMapper(typeof(CommentProfile));
 builder.Services.AddAutoMapper(typeof(LikeProfile));
+builder.Services.AddAutoMapper(typeof(NotificationMapper));
 
 
 //repositories
@@ -151,6 +153,7 @@ builder.Services.AddScoped<IRepository<Guid, Post>, PostRepository>();
 builder.Services.AddScoped<IRepository<Guid, Image>, ImageRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRepository<Guid, Like>, LikeRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 
@@ -160,6 +163,7 @@ builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserValidationService, UserValidationService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

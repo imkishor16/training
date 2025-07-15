@@ -18,6 +18,8 @@ namespace BloggingPlatform.Contexts
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotifications> UserNotifications { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -116,6 +118,38 @@ namespace BloggingPlatform.Contexts
                 modelBuilder.Entity<RefreshToken>()
                 .HasIndex(r => r.Token)
                 .IsUnique();
+
+            // NOTIFICATION
+            modelBuilder.Entity<Notification>()
+                .HasKey(n => n.Id);
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.EntityName)
+                .IsRequired();
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.EntityId)
+                .IsRequired();
+
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.Content)
+                .IsRequired();
+
+            // USER NOTIFICATIONS
+            modelBuilder.Entity<UserNotifications>()
+                .HasKey(un => un.Id);
+
+            modelBuilder.Entity<UserNotifications>()
+                .HasOne(un => un.User)
+                .WithMany(u => u.UserNotifications)
+                .HasForeignKey(un => un.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserNotifications>()
+                .HasOne(un => un.Notification)
+                .WithMany(n => n.NotificationUsers)
+                .HasForeignKey(un => un.NotificationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }
