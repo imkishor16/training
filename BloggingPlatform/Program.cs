@@ -21,9 +21,16 @@ using BloggingPlatform.Middleware;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var kvUri = builder.Configuration["AzureBlob:KeyVaultUrl"];
+
+var client = new SecretClient(new Uri(kvUri), new DefaultAzureCredential());
+KeyVaultSecret secret = client.GetSecret("DefaultConnectionString");
+string connectionString = secret.Value;
 //dbcontext
 builder.Services.AddDbContext<BloggingPlatformContext>(opts =>
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    // opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    opts.UseNpgsql(connectionString)
 );
 // Controllers + JSON
 builder.Services.AddControllers(options =>
