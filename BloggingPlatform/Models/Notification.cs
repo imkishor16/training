@@ -8,10 +8,10 @@ namespace BloggingPlatform.Models
         public int Id { get; set; }
         
         [Required]
-        public string EntityName { get; set; }
+        public string EntityName { get; set; } 
         
         [Required]
-        public int EntityId { get; set; }
+        public Guid EntityId { get; set; }
         
         [Required]
         public string Content { get; set; }

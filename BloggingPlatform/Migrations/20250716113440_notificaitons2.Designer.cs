@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace bloggingplatform.Migrations
 {
     [DbContext(typeof(BloggingPlatformContext))]
-    [Migration("20250715181505_AddNotificationTables")]
-    partial class AddNotificationTables
+    [Migration("20250716113440_notificaitons2")]
+    partial class notificaitons2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,8 +129,8 @@ namespace bloggingplatform.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EntityId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("EntityName")
                         .IsRequired()
@@ -255,11 +255,9 @@ namespace bloggingplatform.Migrations
 
             modelBuilder.Entity("BloggingPlatform.Models.UserNotifications", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean");

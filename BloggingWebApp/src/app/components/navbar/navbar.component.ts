@@ -5,7 +5,6 @@ import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
-import { SignalRService } from '../../services/signalr.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -65,7 +64,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private signalRService: SignalRService,
     private router: Router
   ) {}
 
@@ -82,17 +80,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.currentRoute = event.url;
     });
 
-    // Subscribe to notification count
-    this.signalRService.unreadCount$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(count => {
-        this.unreadCount = count;
-      });
-
-    // Start SignalR connection if authenticated
-    if (this.isAuthenticated) {
-      this.signalRService.startConnection();
-    }
   }
 
   ngOnDestroy() {

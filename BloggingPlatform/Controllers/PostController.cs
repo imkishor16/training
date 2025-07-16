@@ -7,6 +7,7 @@ using System.Security.Claims;
 using BloggingPlatform.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
+using BloggingPlatform.Dto.Notification;
 
 namespace BloggingPlatform.Controllers.v1
 {
@@ -18,14 +19,16 @@ public class PostController : ControllerBase
     private readonly IPostService _postService;
     private readonly IMapper _mapper;
     private readonly IImageService _imageService;
-private readonly IHubContext<PostHub> _hubContext;
+    private readonly IHubContext<PostHub> _hubContext;
+    private readonly INotificationService _notificationService;
 
-        public PostController(IPostService postService, IMapper mapper, IImageService imageService, IHubContext<PostHub> hubContext)
+        public PostController(IPostService postService, IMapper mapper, IImageService imageService, IHubContext<PostHub> hubContext, INotificationService notificationService)
         {
             _postService = postService;
             _mapper = mapper;
             _imageService = imageService;
             _hubContext = hubContext;
+            _notificationService = notificationService;
         }
     [Authorize]
     [HttpPost]

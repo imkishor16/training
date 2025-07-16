@@ -1,16 +1,33 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace bloggingplatform.Migrations
 {
     /// <inheritdoc />
-    public partial class nameToUsername : Migration
+    public partial class notificaitons2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    EntityName = table.Column<string>(type: "text", nullable: false),
+                    EntityId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "RefreshTokens",
                 columns: table => new
@@ -64,6 +81,33 @@ namespace bloggingplatform.Migrations
                     table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Posts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserNotifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    NotificationId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserNotifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserNotifications_Notifications_NotificationId",
+                        column: x => x.NotificationId,
+                        principalTable: "Notifications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserNotifications_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -182,6 +226,16 @@ namespace bloggingplatform.Migrations
                 table: "RefreshTokens",
                 column: "Token",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserNotifications_NotificationId",
+                table: "UserNotifications",
+                column: "NotificationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserNotifications_UserId",
+                table: "UserNotifications",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -200,7 +254,13 @@ namespace bloggingplatform.Migrations
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
+                name: "UserNotifications");
+
+            migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Users");

@@ -170,4 +170,4 @@ D:\training\BloggingPlatform\bin\Debug\net9.0\System.IO.Hashing.dll
 D:\training\BloggingPlatform\bin\Debug\net9.0\System.Memory.Data.dll
 D:\training\BloggingPlatform\bin\Debug\net9.0\System.Security.Cryptography.ProtectedData.dll
 D:\training\BloggingPlatform\bin\Debug\net9.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-D:\training\BloggingPlatform\obj\Debug\net9.0\Blogging.91C12D71.Up2Date
+D:\training\BloggingPlatform\obj\Debug\net9.0\blogging.6CF37532.Up2Date

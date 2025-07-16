@@ -89,7 +89,7 @@ namespace BloggingPlatform.Services
             return await _notificationRepository.GetUnreadNotificationCountAsync(userId);
         }
 
-        public async Task<bool> CreateNotificationForUsersAsync(string entityName, int entityId, string content, List<Guid> userIds)
+        public async Task<bool> CreateNotificationForUsersAsync(string entityName, Guid entityId, string content, List<Guid> userIds)
         {
             if (!userIds.Any())
                 return false;

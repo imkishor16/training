@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { SignalRService, Notification } from '../../services/signalr.service';
+import { NotificationService, NotificationResponseDto } from '../../services/notification.service';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
+import { NotificationsCardComponent } from '../../components/notifications-card/notifications-card.component';
 import { Post } from '../../models/post.model';
 import { CreatePostDto } from '../../models/post.model';
 
@@ -13,7 +14,8 @@ import { CreatePostDto } from '../../models/post.model';
   imports: [
     CommonModule,
     RouterModule,
-    PostCardComponent
+    PostCardComponent,
+    NotificationsCardComponent
   ],
   template: `
     <div class="notifications-container">
@@ -27,13 +29,13 @@ import { CreatePostDto } from '../../models/post.model';
           >
             Mark All as Read
           </button>
-          <button 
-            *ngIf="notifications.length > 0"
-            (click)="clearNotifications()" 
-            class="action-button danger"
-          >
-            Clear All
-          </button>
+                  <button 
+          *ngIf="notifications.length > 0"
+          (click)="clearNotifications()" 
+          class="action-button danger"
+        >
+          Clear All
+        </button>
         </div>
       </div>
 
@@ -52,13 +54,13 @@ import { CreatePostDto } from '../../models/post.model';
         >
           Unread ({{ unreadCount }})
         </button>
-        <button 
+        <!-- <button 
           [class.active]="activeTab === 'posts'"
           (click)="setActiveTab('posts')"
           class="tab-button"
         >
           Posts ({{ postNotifications.length }})
-        </button>
+        </button> -->
       </div>
 
       <div *ngIf="isLoading" class="loading-container">
@@ -67,8 +69,30 @@ import { CreatePostDto } from '../../models/post.model';
       </div>
 
       <div *ngIf="!isLoading" class="notifications-content">
-        <!-- Notifications List View -->
-        <div *ngIf="activeTab !== 'posts'" class="notifications-list">
+        <!-- No Notifications Message -->
+        <div *ngIf="notifications.length === 0" class="no-notifications">
+          <div class="no-notifications-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          <h3>No notifications yet</h3>
+          <p>You're all caught up! When you receive notifications, they'll appear here.</p>
+        </div>
+
+        <!-- All Tab - Notifications List View -->
+        <div *ngIf="notifications.length > 0 && activeTab === 'all'" class="notifications-list">
+          <app-notifications-card 
+            *ngFor="let notification of filteredNotifications" 
+            [notification]="notification"
+            (markAsRead)="markAsRead($event)"
+            (deleteNotification)="handleDeleteNotification($event)"
+          ></app-notifications-card>
+        </div>
+
+        <!-- Unread Tab - Notifications List View -->
+        <div *ngIf="notifications.length > 0 && activeTab === 'unread'" class="notifications-list">
           <div 
             *ngFor="let notification of filteredNotifications" 
             class="notification-item"
@@ -76,32 +100,39 @@ import { CreatePostDto } from '../../models/post.model';
             (click)="markAsRead(notification.id)"
           >
             <div class="notification-icon">
-              <svg *ngIf="notification.type === 'post'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg *ngIf="notification.entityName === 'Post'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14,2 14,8 20,8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10,9 9,9 8,9"></polyline>
               </svg>
-              <svg *ngIf="notification.type === 'comment'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <svg *ngIf="notification.entityName === 'User'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
             <div class="notification-content">
-              <div class="notification-title">{{ notification.title }}</div>
-              <div class="notification-message">{{ notification.message }}</div>
-              <div class="notification-time">{{ getTimeAgo(notification.timestamp) }}</div>
+              <div class="notification-message">{{ notification.content }}</div>
+              <div class="notification-time">{{ getTimeAgo(notification.createdAt) }}</div>
             </div>
             <div *ngIf="!notification.isRead" class="unread-indicator"></div>
+            <button 
+              class="delete-button"
+              (click)="deleteNotification(notification.id, $event)"
+              title="Delete notification"
+            >
+              ✕
+            </button>
           </div>
 
           <div *ngIf="filteredNotifications.length === 0" class="no-notifications">
-            <p>No {{ activeTab === 'unread' ? 'unread' : '' }} notifications found.</p>
+            <p>No unread notifications found.</p>
           </div>
         </div>
 
         <!-- Posts Grid View -->
-        <div *ngIf="activeTab === 'posts'" class="posts-grid">
+        <div *ngIf="notifications.length > 0 && activeTab === 'posts'" class="posts-grid">
           <ng-container *ngIf="convertedPosts.length > 0; else noPosts">
             <app-post-card 
               *ngFor="let post of convertedPosts" 
@@ -264,8 +295,9 @@ import { CreatePostDto } from '../../models/post.model';
     }
 
     .notification-time {
-      color: #adb5bd;
-      font-size: 12px;
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-top: 5px;
     }
 
     .unread-indicator {
@@ -277,10 +309,51 @@ import { CreatePostDto } from '../../models/post.model';
       margin-top: 5px;
     }
 
+    .delete-button {
+      background: none;
+      border: none;
+      color: #6c757d;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      margin-left: auto;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .delete-button:hover {
+      background-color: #f8f9fa;
+      color: #dc3545;
+    }
+
     .no-notifications {
       text-align: center;
-      padding: 40px;
+      padding: 60px 40px;
       color: #6c757d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    .no-notifications-icon {
+      margin-bottom: 20px;
+      color: #dee2e6;
+    }
+
+    .no-notifications h3 {
+      margin: 0 0 10px 0;
+      color: #495057;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .no-notifications p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+      max-width: 400px;
     }
 
     .posts-grid {
@@ -300,17 +373,17 @@ import { CreatePostDto } from '../../models/post.model';
   `]
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
-  notifications: Notification[] = [];
+  notifications: NotificationResponseDto[] = [];
   unreadCount = 0;
   activeTab: 'all' | 'unread' | 'posts' = 'all';
   isLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private signalRService: SignalRService) {}
+  constructor( private notificationService: NotificationService) {}
 
   ngOnInit() {
     this.loadNotifications();
-    this.setupSignalRConnection();
+    this.loadUnreadCount();
   }
 
   ngOnDestroy() {
@@ -318,58 +391,69 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private async setupSignalRConnection() {
-    await this.signalRService.startConnection();
-  }
-
   private loadNotifications() {
     this.isLoading = true;
     
-    this.signalRService.notifications$
+    this.notificationService.getNotifications()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(notifications => {
-        this.notifications = notifications;
-        this.isLoading = false;
-      });
-
-    this.signalRService.unreadCount$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(count => {
-        this.unreadCount = count;
+      .subscribe({
+        next: (response: NotificationResponseDto[]) => {
+          console.log('Notifications loaded:', response);
+          console.log('Response type:', typeof response);
+          console.log('Response is array:', Array.isArray(response));
+          console.log('Response length:', response?.length);
+          this.notifications = response || [];
+          console.log('Component notifications after assignment:', this.notifications);
+          console.log('Component notifications length:', this.notifications.length);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading notifications:', error);
+          this.notifications = [];
+          this.isLoading = false;
+        }
       });
   }
 
-  get filteredNotifications(): Notification[] {
+  private loadUnreadCount() {
+    this.notificationService.getUnreadCount()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.unreadCount = response.unreadCount;
+        },
+        error: (error) => {
+          console.error('Error loading unread count:', error);
+        }
+      });
+  }
+
+  get filteredNotifications(): NotificationResponseDto[] {
+    if (!this.notifications) {
+      return [];
+    }
     switch (this.activeTab) {
       case 'unread':
         return this.notifications.filter(n => !n.isRead);
+      case 'all':
+        return this.notifications;
       case 'posts':
-        return this.notifications.filter(n => n.type === 'post');
+        return this.notifications.filter(n => n.entityName === 'Post');
       default:
         return this.notifications;
     }
   }
 
-  get postNotifications(): Notification[] {
-    return this.notifications.filter(n => n.type === 'post');
+  get postNotifications(): NotificationResponseDto[] {
+    if (!this.notifications) {
+      return [];
+    }
+    return this.notifications.filter(n => n.entityName === 'Post');
   }
 
   get convertedPosts(): Post[] {
-    return this.postNotifications
-      .filter(n => n.type === 'post')
-      .map(notification => {
-        const postData = notification.data as CreatePostDto;
-        return {
-          id: notification.id,
-          title: postData.title || '',
-          content: postData.content || '',
-          postStatus: postData.postStatus || 'Published',
-          isDeleted: false,
-          createdAt: notification.timestamp,
-          userId: '', 
-          images: []
-        } as Post;
-      });
+    // This is a placeholder - you'll need to fetch actual post data based on entityId
+    return [];
   }
 
   get hasUnreadNotifications(): boolean {
@@ -377,24 +461,91 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   }
 
   setActiveTab(tab: 'all' | 'unread' | 'posts') {
+    console.log('Switching to tab:', tab);
     this.activeTab = tab;
+    console.log('Filtered notifications count:', this.filteredNotifications.length);
   }
 
-  markAsRead(notificationId: string) {
-    this.signalRService.markAsRead(notificationId);
+  markAsRead(notificationId: number) {
+    this.notificationService.markNotificationAsRead(notificationId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedNotification) => {
+          // Update the notification in the local array
+          const index = this.notifications.findIndex(n => n.id === notificationId);
+          if (index !== -1) {
+            this.notifications[index] = updatedNotification;
+          }
+          // Reload unread count
+          this.loadUnreadCount();
+        },
+        error: (error) => {
+          console.error('Error marking notification as read:', error);
+        }
+      });
   }
 
   markAllAsRead() {
-    this.signalRService.markAllAsRead();
+    this.notificationService.markAllNotificationsAsRead()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          // Mark all notifications as read in the local array
+          this.notifications = this.notifications.map(n => ({ ...n, isRead: true }));
+          this.unreadCount = 0;
+        },
+        error: (error) => {
+          console.error('Error marking all notifications as read:', error);
+        }
+      });
   }
 
   clearNotifications() {
     if (confirm('Are you sure you want to clear all notifications?')) {
-      this.signalRService.clearNotifications();
+      // This would need to be implemented in the backend
+      console.log('Clear notifications functionality not implemented');
     }
   }
 
-  getTimeAgo(date: Date): string {
+  handleDeleteNotification(notificationId: number) {
+    if (confirm('Are you sure you want to delete this notification?')) {
+      this.notificationService.deleteNotification(notificationId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            // Remove the notification from the local array
+            this.notifications = this.notifications.filter(n => n.id !== notificationId);
+            // Reload unread count
+            this.loadUnreadCount();
+          },
+          error: (error) => {
+            console.error('Error deleting notification:', error);
+          }
+        });
+    }
+  }
+
+  deleteNotification(notificationId: number, event: Event) {
+    event.stopPropagation();
+    if (confirm('Are you sure you want to delete this notification?')) {
+      this.notificationService.deleteNotification(notificationId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            // Remove the notification from the local array
+            this.notifications = this.notifications.filter(n => n.id !== notificationId);
+            // Reload unread count
+            this.loadUnreadCount();
+          },
+          error: (error) => {
+            console.error('Error deleting notification:', error);
+          }
+        });
+    }
+  }
+
+  getTimeAgo(dateString: string): string {
+    const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 

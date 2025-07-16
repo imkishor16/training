@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace bloggingplatform.Migrations
 {
     [DbContext(typeof(BloggingPlatformContext))]
-    [Migration("20250702173614_nameToUsername")]
-    partial class nameToUsername
+    [Migration("20250716113553_notificaitons")]
+    partial class notificaitons
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,6 +112,33 @@ namespace bloggingplatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("BloggingPlatform.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("BloggingPlatform.Models.Post", b =>
@@ -226,6 +253,33 @@ namespace bloggingplatform.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BloggingPlatform.Models.UserNotifications", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotificationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserNotifications");
+                });
+
             modelBuilder.Entity("BloggingPlatform.Models.Comment", b =>
                 {
                     b.HasOne("BloggingPlatform.Models.Post", "Post")
@@ -286,6 +340,30 @@ namespace bloggingplatform.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BloggingPlatform.Models.UserNotifications", b =>
+                {
+                    b.HasOne("BloggingPlatform.Models.Notification", "Notification")
+                        .WithMany("NotificationUsers")
+                        .HasForeignKey("NotificationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BloggingPlatform.Models.User", "User")
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Notification");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BloggingPlatform.Models.Notification", b =>
+                {
+                    b.Navigation("NotificationUsers");
+                });
+
             modelBuilder.Entity("BloggingPlatform.Models.Post", b =>
                 {
                     b.Navigation("Comments");
@@ -302,6 +380,8 @@ namespace bloggingplatform.Migrations
                     b.Navigation("Likes");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("UserNotifications");
                 });
 #pragma warning restore 612, 618
         }

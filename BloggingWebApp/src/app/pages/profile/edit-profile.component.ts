@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -132,6 +132,7 @@ import { User, UserRole } from '../../models/auth.model';
                       [showIcon]="true"
                       dateFormat="dd/mm/yy"
                       placeholder="Select date"
+                      [minDate]="getMinDate()"
                       class="w-full"
                     ></p-calendar>
                   </div>
@@ -151,6 +152,15 @@ import { User, UserRole } from '../../models/auth.model';
                     class="p-error"
                   >
                     Suspension reason is required when user is suspended
+                  </small>
+                </div>
+
+                <div class="form-group" *ngIf="isSuspendedChecked()">
+                  <small 
+                    *ngIf="profileForm.get('suspendedUntil')?.errors?.['futureDate'] && profileForm.get('suspendedUntil')?.touched"
+                    class="p-error"
+                  >
+                    Suspension date must be in the future
                   </small>
                 </div>
               </div>
@@ -518,6 +528,23 @@ export class EditProfileComponent implements OnInit {
     this.profileForm.valueChanges.subscribe(values => {
       console.log('Form values changed:', values);
     });
+
+    // Add validation for suspension fields
+    this.profileForm.get('isSuspended')?.valueChanges.subscribe(isSuspended => {
+      const suspendedUntilControl = this.profileForm.get('suspendedUntil');
+      const suspensionReasonControl = this.profileForm.get('suspensionReason');
+      
+      if (isSuspended) {
+        suspendedUntilControl?.setValidators([this.futureDateValidator.bind(this)]);
+        suspensionReasonControl?.setValidators([Validators.required]);
+      } else {
+        suspendedUntilControl?.clearValidators();
+        suspensionReasonControl?.clearValidators();
+      }
+      
+      suspendedUntilControl?.updateValueAndValidity();
+      suspensionReasonControl?.updateValueAndValidity();
+    });
   }
 
   private checkUserRole() {
@@ -704,5 +731,27 @@ export class EditProfileComponent implements OnInit {
     const isSuspended = this.profileForm.get('isSuspended')?.value;
     console.log('isSuspendedChecked called, isSuspended:', isSuspended);
     return isSuspended === true;
+  }
+
+  getMinDate(): Date {
+    // Get current date and add 1 day to ensure it's in the future
+    const now = new Date();
+    now.setDate(now.getDate() + 1);
+    return now;
+  }
+
+  private futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null; // Let required validator handle empty values
+    }
+    
+    const selectedDate = new Date(control.value);
+    const now = new Date();
+    
+    if (selectedDate <= now) {
+      return { futureDate: { value: control.value } };
+    }
+    
+    return null;
   }
 } 

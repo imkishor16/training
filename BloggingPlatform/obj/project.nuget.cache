@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UM7LCXMTfYQ=",
+  "dgSpecHash": "EEucnuGFg4A=",
   "success": true,
-  "projectFilePath": "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj",
+  "projectFilePath": "D:\\training\\BloggingPlatform\\bloggingplatform.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\imkis\\.nuget\\packages\\anglesharp\\0.17.1\\anglesharp.0.17.1.nupkg.sha512",
     "C:\\Users\\imkis\\.nuget\\packages\\anglesharp.css\\0.17.0\\anglesharp.css.0.17.0.nupkg.sha512",

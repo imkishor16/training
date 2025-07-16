@@ -12,6 +12,6 @@ namespace BloggingPlatform.Interfaces
         Task<bool> MarkAllNotificationsAsReadAsync(Guid userId);
         Task<bool> DeleteNotificationAsync(int notificationId, Guid userId);
         Task<int> GetUnreadNotificationCountAsync(Guid userId);
-        Task<bool> CreateNotificationForUsersAsync(string entityName, int entityId, string content, List<Guid> userIds);
+        Task<bool> CreateNotificationForUsersAsync(string entityName, Guid entityId, string content, List<Guid> userIds);
     }
 } 

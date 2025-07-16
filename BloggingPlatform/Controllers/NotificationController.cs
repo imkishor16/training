@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using BloggingPlatform.Dto.Notification;
 using BloggingPlatform.Interfaces;
 using System.Security.Claims;
+using BloggingPlatform.Models.DTOs;
 
-namespace BloggingPlatform.Controllers
+namespace BloggingPlatform.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     [Authorize]
     public class NotificationController : ControllerBase
     {
@@ -19,7 +21,7 @@ namespace BloggingPlatform.Controllers
         }
 
         [HttpPost]
-        [Autho rize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateNotification([FromBody] CreateNotificationDto createNotificationDto)
         {
             try

@@ -9,6 +9,7 @@ using BloggingPlatform.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using BloggingPlatform.Dto.Post;
+using BloggingPlatform.Dto.Notification;
 
 namespace BloggingPlatform.Services
 {
@@ -23,10 +24,11 @@ namespace BloggingPlatform.Services
         private readonly IRepository<Guid, User> _userRepository;
         private readonly IUserValidationService _userValidationService;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public PostService(IRepository<Guid, Post> postRepo, IRepository<Guid, Comment> commentRepository
         , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository, IRepository<Guid, Like> likeRepository,
-IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService, IMapper mapper)
+IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService, IMapper mapper, INotificationService notificationService)
         {
             _postRepository = postRepo;
             _commentRepository = commentRepository;
@@ -37,6 +39,7 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             _userRepository = userRepository;
             _userValidationService = userValidationService;
             _mapper = mapper;
+            _notificationService = notificationService;
         }
 
         public async Task<Post> AddPost(Post post, Guid userId)
@@ -45,6 +48,15 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             post.UserId = userId;
             await _userValidationService.ValidateUser(post.UserId);
             var created = await _postRepository.Add(post);
+            
+            // Get all users to send notifications to
+            var allUsers = await _userRepository.GetAll();
+            var userIds = allUsers.Select(u => u.Id).ToList();
+            
+            // Create notification for all users
+            var content = $"New post '{post.Title}' has been published by {allUsers.FirstOrDefault(u => u.Id == userId)?.Username ?? "Unknown User"}";
+            await _notificationService.CreateNotificationForUsersAsync("Post", post.Id, content, userIds);
+            
             return created;
         }
 

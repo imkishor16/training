@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { User } from '../../models/auth.model';
 import { UserService } from '../../services/user.service';
 
@@ -66,6 +66,12 @@ import { UserService } from '../../services/user.service';
               placeholder="Enter reason for suspension"
               rows="3"
             ></textarea>
+            <small 
+              *ngIf="editForm.get('suspensionReason')?.invalid && editForm.get('suspensionReason')?.touched"
+              class="error-message"
+            >
+              Suspension reason is required when user is suspended
+            </small>
           </div>
 
           <div class="form-group" *ngIf="editForm.get('isSuspended')?.value">
@@ -74,7 +80,14 @@ import { UserService } from '../../services/user.service';
               type="datetime-local" 
               class="form-input"
               formControlName="suspendedUntil"
+              [min]="getMinDateTime()"
             >
+            <small 
+              *ngIf="editForm.get('suspendedUntil')?.errors?.['futureDate'] && editForm.get('suspendedUntil')?.touched"
+              class="error-message"
+            >
+              Suspension date must be in the future
+            </small>
           </div>
 
           <div class="modal-actions">
@@ -236,9 +249,16 @@ import { UserService } from '../../services/user.service';
     .btn-secondary:hover {
       background: #545b62;
     }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
   `]
 })
-export class EditUserModalComponent {
+export class EditUserModalComponent implements OnInit {
   @Input() user: User | null = null;
   @Output() userUpdated = new EventEmitter<User>();
   @Output() modalClosed = new EventEmitter<void>();
@@ -254,6 +274,23 @@ export class EditUserModalComponent {
       isSuspended: [false],
       suspensionReason: [''],
       suspendedUntil: ['']
+    });
+
+    // Add validation for suspension fields
+    this.editForm.get('isSuspended')?.valueChanges.subscribe(isSuspended => {
+      const suspendedUntilControl = this.editForm.get('suspendedUntil');
+      const suspensionReasonControl = this.editForm.get('suspensionReason');
+      
+      if (isSuspended) {
+        suspendedUntilControl?.setValidators([this.futureDateValidator.bind(this)]);
+        suspensionReasonControl?.setValidators([Validators.required]);
+      } else {
+        suspendedUntilControl?.clearValidators();
+        suspensionReasonControl?.clearValidators();
+      }
+      
+      suspendedUntilControl?.updateValueAndValidity();
+      suspensionReasonControl?.updateValueAndValidity();
     });
   }
 
@@ -272,15 +309,52 @@ export class EditUserModalComponent {
     return date.toISOString().slice(0, 16);
   }
 
+  getMinDateTime(): string {
+    // Get current date and time, add 1 minute to ensure it's in the future
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 1);
+    return now.toISOString().slice(0, 16);
+  }
+
+  private futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null; // Let required validator handle empty values
+    }
+    
+    const selectedDate = new Date(control.value);
+    const now = new Date();
+    
+    if (selectedDate <= now) {
+      return { futureDate: { value: control.value } };
+    }
+    
+    return null;
+  }
+
   onSubmit() {
     if (this.editForm.valid && this.user) {
       this.isSubmitting = true;
       
-      const updateData = {
-        isSuspended: this.editForm.get('isSuspended')?.value,
-        suspensionReason: this.editForm.get('suspensionReason')?.value,
-        suspendedUntil: this.editForm.get('suspendedUntil')?.value
+      // Build complete user payload for PUT operation
+      const updateData: any = {
+        id: this.user.id,
+        email: this.user.email,
+        username: this.user.username,
+        role: this.user.role,
+        status: this.user.status,
+        isSuspended: this.user.isSuspended,
+        suspensionReason: this.user.suspensionReason,
+        suspendedUntil: this.user.suspendedUntil,
+        createdAt: this.user.createdAt,
+        lastLoginAt: this.user.lastLoginAt
       };
+
+      // Update only the suspension-related fields
+      updateData.isSuspended = this.editForm.get('isSuspended')?.value || false;
+      updateData.suspendedUntil = this.editForm.get('suspendedUntil')?.value ? 
+        new Date(this.editForm.get('suspendedUntil')?.value).toISOString() : null;
+      updateData.suspensionReason = this.editForm.get('suspensionReason')?.value || 
+        (this.editForm.get('isSuspended')?.value ? 'Suspended by admin' : '');
 
       this.userService.updateUser(this.user.id, updateData).subscribe({
         next: (updatedUser) => {

@@ -1,15 +1,10 @@
 const API_CONFIG = {
   BASE_URL: 'http://localhost:5147/api',
   VERSION: 'v1',
-  SIGNALR_HUB: 'http://localhost:5147/postHub',
 };
 
 export const getApiUrl = (): string => {
   return API_CONFIG.BASE_URL;
-};
-
-export const getSignalRHubUrl = (): string => {
-  return API_CONFIG.SIGNALR_HUB;
 };
 
 export const API_ENDPOINTS = {
@@ -50,6 +45,15 @@ export const API_ENDPOINTS = {
   DELETE_USER: (id: string) => `${getApiUrl()}/v1/Users/delete/${id}`,
   GET_POST_BY_USER: (userId: string) => `${getApiUrl()}/v1/Users/getPostByUser/${userId}`,
   GET_ALL_USERS_FILTERED: `${getApiUrl()}/v1/Users/getAll/filtered`,
+
+  //notifications
+  GET_NOTIFICATIONS: (page: number, pageSize: number) => `${getApiUrl()}/v1/notification?page=${page}&pageSize=${pageSize}`,
+  GET_NOTIFICATION_BY_ID: (id: number) => `${getApiUrl()}/v1/notification/${id}`,
+  MARK_NOTIFICATION_READ: (id: number) => `${getApiUrl()}/v1/notification/${id}/read`,
+  MARK_ALL_NOTIFICATIONS_READ: `${getApiUrl()}/v1/notification/read-all`,
+  DELETE_NOTIFICATION: (id: number) => `${getApiUrl()}/v1/notification/${id}`,
+  GET_UNREAD_COUNT: `${getApiUrl()}/v1/notification/unread-count`,
+  CREATE_NOTIFICATION: `${getApiUrl()}/v1/notification`,
 };
 
 export default API_CONFIG; 

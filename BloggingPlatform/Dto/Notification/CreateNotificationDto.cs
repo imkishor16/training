@@ -8,7 +8,7 @@ namespace BloggingPlatform.Dto.Notification
         public string EntityName { get; set; }
         
         [Required]
-        public int EntityId { get; set; }
+        public Guid EntityId { get; set; }
         
         [Required]
         public string Content { get; set; }
