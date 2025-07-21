@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "t2SKpeO502LH+TUiBl09PkPzfYCVdEAb9BSYwhDlYkc=",
+  "Source": "VideoBackend",
+  "BasePath": "_content/VideoBackend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

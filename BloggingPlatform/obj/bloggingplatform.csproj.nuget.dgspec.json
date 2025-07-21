@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "D:\\training\\BloggingPlatform\\bloggingplatform.csproj": {}
+    "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj": {}
   },
   "projects": {
-    "D:\\training\\BloggingPlatform\\bloggingplatform.csproj": {
+    "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\training\\BloggingPlatform\\bloggingplatform.csproj",
-        "projectName": "bloggingplatform",
-        "projectPath": "D:\\training\\BloggingPlatform\\bloggingplatform.csproj",
+        "projectUniqueName": "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj",
+        "projectName": "BloggingPlatform",
+        "projectPath": "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj",
         "packagesPath": "C:\\Users\\imkis\\.nuget\\packages\\",
         "outputPath": "D:\\training\\BloggingPlatform\\obj\\",
         "projectStyle": "PackageReference",

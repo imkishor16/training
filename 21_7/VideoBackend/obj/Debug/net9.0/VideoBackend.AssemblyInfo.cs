@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VideoBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4e212902eaa9a1870d07b77bd1dee43f0b08f5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cffcd299af923dfd339e7e1aa0b58ccdc9d948f0")]
 [assembly: System.Reflection.AssemblyProductAttribute("VideoBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VideoBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

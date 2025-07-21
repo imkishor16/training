@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/presidio/Desktop/training/21_7/VideoBackend/VideoBackend.csproj": {}
+    "D:\\training\\21_7\\VideoBackend\\VideoBackend.csproj": {}
   },
   "projects": {
-    "/Users/presidio/Desktop/training/21_7/VideoBackend/VideoBackend.csproj": {
+    "D:\\training\\21_7\\VideoBackend\\VideoBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/presidio/Desktop/training/21_7/VideoBackend/VideoBackend.csproj",
+        "projectUniqueName": "D:\\training\\21_7\\VideoBackend\\VideoBackend.csproj",
         "projectName": "VideoBackend",
-        "projectPath": "/Users/presidio/Desktop/training/21_7/VideoBackend/VideoBackend.csproj",
-        "packagesPath": "/Users/presidio/.nuget/packages/",
-        "outputPath": "/Users/presidio/Desktop/training/21_7/VideoBackend/obj/",
+        "projectPath": "D:\\training\\21_7\\VideoBackend\\VideoBackend.csproj",
+        "packagesPath": "C:\\Users\\imkis\\.nuget\\packages\\",
+        "outputPath": "D:\\training\\21_7\\VideoBackend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/presidio/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\imkis\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,15 +38,45 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Azure.Storage.Blobs": {
+              "target": "Package",
+              "version": "[12.18.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.3, )"
             }
           },
           "imports": [
@@ -68,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
