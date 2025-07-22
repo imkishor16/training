@@ -37,5 +37,16 @@ public class PostProfile : Profile
         // Map Comment to BasicCommentDto
         CreateMap<Comment, BasicCommentDto>()
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+
+        // Map Post to PostResponseAdminDto
+        CreateMap<Post, PostResponseAdminDto>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
+            .ForMember(dest => dest.Reports, opt => opt.MapFrom(src => src.Reports))
+            .ForMember(dest => dest.ReportCount, opt => opt.MapFrom(src => src.Reports.Count()))
+            .ForMember(dest => dest.PostStatus, opt => opt.MapFrom(src => src.PostStatus.ToString()));
+
+        // Map Report to BasicReportDto
+        CreateMap<Report, BasicReportDto>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
     }
 }

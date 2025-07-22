@@ -42,7 +42,11 @@ builder.Services.AddControllers(options =>
 
 })
 
-    .AddJsonOptions(opt => opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 //https
 builder.Services.AddHttpContextAccessor();
 
@@ -145,6 +149,8 @@ builder.Services.AddAutoMapper(typeof(CommentProfile));
 builder.Services.AddAutoMapper(typeof(LikeProfile));
 builder.Services.AddAutoMapper(typeof(NotificationMapper));
 
+builder.Services.AddAutoMapper(typeof(ReportProfile));
+
 
 //repositories
 builder.Services.AddScoped<IRepository<Guid, User>, UserRepository>();
@@ -156,6 +162,7 @@ builder.Services.AddScoped<IRepository<Guid, Like>, LikeRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<UserRepository>();
 
+builder.Services.AddScoped<IRepository<Guid, Report>, ReportRepository>();
 
 //services
 builder.Services.AddScoped<IUserService, UserService>();
@@ -170,7 +177,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<RefreshTokenService>();
 
-
+builder.Services.AddScoped<IReportService, ReportService>();
 
 //ratelimiting
 builder.Services.AddRateLimiter(options =>

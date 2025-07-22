@@ -10,7 +10,8 @@ import {
   Image,
   Like,
   UpdatePostDto,
-  CreatePostDto
+  CreatePostDto,
+  ReportedPost
 } from '../models/post.model';
 import { API_ENDPOINTS } from './api';
 import { createAppError } from '../models/error.model';
@@ -66,6 +67,16 @@ export class PostService {
       );
   }
 
+  // reported posts
+  getReportedPost(): Observable<ReportedPost[]>{
+    return this.http
+      .get<ReportedPost[]>(API_ENDPOINTS.GET_ALL_REPORTED_POSTS, this.getAuthHeaders())
+      .pipe(
+        tap(response => console.log('getReportedPosts response:', response)),
+        catchError(this.handleError)
+      );
+  }
+
   getPostById(id: string): Observable<PostResponse> {
     return this.http
       .get<PostResponse>(API_ENDPOINTS.GET_POST_BY_ID(id), this.getAuthHeaders())
@@ -99,7 +110,13 @@ export class PostService {
 
   deletePost(postId: string): Observable<Post> {
     const updateData: UpdatePostDto = { postStatus: 'Deleted' };
-    return this.updatePost(postId, updateData);
+    this.updatePost(postId, updateData);
+    return this.http
+      .delete<Post>(API_ENDPOINTS.DELETE_POST(postId))
+      .pipe(
+        tap(response => console.log('deletedPost response:', response)),
+        catchError(this.handleError)
+      );
   }
 
   getPostComments(postId: string): Observable<Comment[]> {
@@ -179,7 +196,7 @@ export class PostService {
   async getUserPosts(): Promise<Post[]> {
     const currentUserId = this.authService.getCurrentUserId();
     if (!currentUserId) return [];
-    
+
     console.log('Getting posts for user:', currentUserId);
     return firstValueFrom(
       this.http.get<Post[]>(API_ENDPOINTS.GET_USER_POSTS(currentUserId), this.getAuthHeaders())
@@ -193,7 +210,7 @@ export class PostService {
   async getLikedPosts(): Promise<Post[]> {
     const currentUserId = this.authService.getCurrentUserId();
     if (!currentUserId) return [];
-    
+
     console.log('Getting liked posts for user:', currentUserId);
     return firstValueFrom(
       this.http.get<Post[]>(API_ENDPOINTS.GET_USER_LIKED_POSTS(currentUserId), this.getAuthHeaders())
@@ -207,7 +224,7 @@ export class PostService {
   async getCommentedPosts(): Promise<Post[]> {
     const currentUserId = this.authService.getCurrentUserId();
     if (!currentUserId) return [];
-    
+
     console.log('Getting commented posts for user:', currentUserId);
     return firstValueFrom(
       this.http.get<Post[]>(API_ENDPOINTS.GET_USER_COMMENTED_POSTS(currentUserId), this.getAuthHeaders())

@@ -29,6 +29,8 @@ export const API_ENDPOINTS = {
   UPDATE_POST: (id: string) => `${getApiUrl()}/v1/posts/${id}`,
   DELETE_POST: (id: string) => `${getApiUrl()}/v1/posts/${id}`,
 
+  GET_ALL_REPORTED_POSTS: `${getApiUrl()}/v1/posts/reported`,
+
   //comments
   GET_COMMENTS_FILTER: `${getApiUrl()}/v1/comments/filter`,
   GET_COMMENT_BY_ID: (id: string) => `${getApiUrl()}/v1/comments/${id}`,
@@ -36,6 +38,11 @@ export const API_ENDPOINTS = {
   ADD_COMMENT: `${getApiUrl()}/v1/comments`,
   UPDATE_COMMENT: (commentId: string) => `${getApiUrl()}/v1/comments/${commentId}`,
   DELETE_COMMENT: (commentId: string) => `${getApiUrl()}/v1/comments/${commentId}`,
+
+  //report
+  ADD_REPORT: `${getApiUrl()}/v1/reports`,
+  GET_REPORT_STATUS: `${getApiUrl()}/v1/reports/Isreport`,
+  GET_REPORTS_BY_ID: `${getApiUrl()}/v1/reports/filter`,
 
   //user
   GET_ALL_USERS: `${getApiUrl()}/v1/Users/getAll`,
@@ -56,4 +63,4 @@ export const API_ENDPOINTS = {
   CREATE_NOTIFICATION: `${getApiUrl()}/v1/notification`,
 };
 
-export default API_CONFIG; 
+export default API_CONFIG;

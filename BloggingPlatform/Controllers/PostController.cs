@@ -11,16 +11,16 @@ using BloggingPlatform.Dto.Notification;
 
 namespace BloggingPlatform.Controllers.v1
 {
-[ApiController]
-[Route("api/v{version:apiVersion}/posts")]
-[ApiVersion("1.0")]
-public class PostController : ControllerBase
-{
-    private readonly IPostService _postService;
-    private readonly IMapper _mapper;
-    private readonly IImageService _imageService;
-    private readonly IHubContext<PostHub> _hubContext;
-    private readonly INotificationService _notificationService;
+    [ApiController]
+    [Route("api/v{version:apiVersion}/posts")]
+    [ApiVersion("1.0")]
+    public class PostController : ControllerBase
+    {
+        private readonly IPostService _postService;
+        private readonly IMapper _mapper;
+        private readonly IImageService _imageService;
+        private readonly IHubContext<PostHub> _hubContext;
+        private readonly INotificationService _notificationService;
 
         public PostController(IPostService postService, IMapper mapper, IImageService imageService, IHubContext<PostHub> hubContext, INotificationService notificationService)
         {
@@ -30,71 +30,71 @@ public class PostController : ControllerBase
             _hubContext = hubContext;
             _notificationService = notificationService;
         }
-    [Authorize]
-    [HttpPost]
-    public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
-    {
-        try
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto dto)
         {
-            Console.WriteLine($"dto { dto} " );
-            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            try
+            {
+                Console.WriteLine($"dto {dto} ");
+                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
                 Console.WriteLine($"{idClaim},{role},{dto.UserId}");
-            if (!Guid.TryParse(idClaim, out Guid currentUserId))
-                return Unauthorized("Invalid user identity.");
+                if (!Guid.TryParse(idClaim, out Guid currentUserId))
+                    return Unauthorized("Invalid user identity.");
 
 
-            if (role != "Admin" && currentUserId != dto.UserId)
-                return Forbid();
+                if (role != "Admin" && currentUserId != dto.UserId)
+                    return Forbid();
 
 
-            await _hubContext.Clients.All.SendAsync("ReceivePost",dto);
+                await _hubContext.Clients.All.SendAsync("ReceivePost", dto);
 
-            var post = _mapper.Map<Post>(dto);
-            var created = await _postService.AddPost(post, dto.UserId);
-            post.Images = await _imageService.SaveImagesAsync(dto.Images, created.Id, dto.UserId);
+                var post = _mapper.Map<Post>(dto);
+                var created = await _postService.AddPost(post, dto.UserId);
+                post.Images = await _imageService.SaveImagesAsync(dto.Images, created.Id, dto.UserId);
 
 
-            return CreatedAtAction(nameof(GetPostById), new { version = "1.0", id = created.Id }, created);
+                return CreatedAtAction(nameof(GetPostById), new { version = "1.0", id = created.Id }, created);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetPostById(Guid id)
-    {
-        try
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPostById(Guid id)
         {
-            var post = await _postService.GetPostByID(id);
-            var images = await _postService.GetImagesByPostId(post.Id);
-            post.Images = images.ToList();
-            var likes = await _postService.GetLikesByPostId(post.Id);
-            post.Likes = likes.ToList();
-            if (post == null || post.IsDeleted)
+            try
+            {
+                var post = await _postService.GetPostByID(id);
+                var images = await _postService.GetImagesByPostId(post.Id);
+                post.Images = images.ToList();
+                var likes = await _postService.GetLikesByPostId(post.Id);
+                post.Likes = likes.ToList();
+                if (post == null || post.IsDeleted)
                     return NotFound("Post not found");
 
-            return Ok(post);
+                return Ok(post);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
+        [HttpGet]
+        public async Task<IActionResult> GetAllPosts()
         {
-            return BadRequest(new { message = ex.Message });
+            var posts = await _postService.GetAllPosts();
+            return Ok(posts);
         }
-    }
-    [HttpGet]
-    public async Task<IActionResult> GetAllPosts()
-    {
-        var posts = await _postService.GetAllPosts();
-        return Ok(posts);
-    }
-    [Authorize]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePost(Guid id, [FromForm] UpdatePostDto dto)
-    {
-        try
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePost(Guid id, [FromForm] UpdatePostDto dto)
         {
+            try
+            {
                 var post = await _postService.GetPostByID(id);
                 if (post == null || post.IsDeleted)
                     return NotFound("Post not found");
@@ -109,29 +109,29 @@ public class PostController : ControllerBase
                 if (role != "Admin" && currentUserId != post.UserId)
                     return Forbid();
 
-            var updatedPost = _mapper.Map<Post>(dto);
-            updatedPost.Id = id;
+                var updatedPost = _mapper.Map<Post>(dto);
+                updatedPost.Id = id;
 
-            var result = await _postService.UpdatePost(id, post.UserId, updatedPost, dto.Images);
-            if (result == null)
-                return NotFound($"Post with ID {id} not found");
+                var result = await _postService.UpdatePost(id, post.UserId, updatedPost, dto.Images);
+                if (result == null)
+                    return NotFound($"Post with ID {id} not found");
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePost(Guid id)
         {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-    [Authorize]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePost(Guid id)
-    {
-        try
-        {
-            var post = await _postService.GetPostByID(id);
-            if (post == null || post.IsDeleted)
-                return NotFound("Post already deleted");
+            try
+            {
+                var post = await _postService.GetPostByID(id);
+                if (post == null || post.IsDeleted)
+                    return NotFound("Post already deleted");
 
                 var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var role = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -139,134 +139,148 @@ public class PostController : ControllerBase
                 if (!Guid.TryParse(idClaim, out Guid currentUserId))
                     return Unauthorized("Invalid user identity.");
 
-            var result = await _postService.DeletePost(id, post.UserId);
-            return Ok(result);
+                // Admin or Author delete logic - nithish
+                if (currentUserId != post.UserId && !role.Equals("Admin"))
+                {
+                    return Unauthorized("Don't have permission to delete");
+                }
+
+                var result = await _postService.DeletePost(id, post.UserId,currentUserId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
+
+        [HttpGet("{id}/comments")]
+        public async Task<IActionResult> GetCommentsByPost(Guid id)
         {
-            return BadRequest(new { message = ex.Message });
+            try
+            {
+                var postExists = await _postService.GetPostByID(id);
+                if (postExists == null || postExists.IsDeleted)
+                    return NotFound("No such post in the database");
+
+                var comments = await _postService.GetCommentSByPost(id);
+                if (!comments.Any())
+                    return NotFound("No comments in the database");
+
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-    }
 
-    [HttpGet("{id}/comments")]
-    public async Task<IActionResult> GetCommentsByPost(Guid id)
-    {
-        try
+        [HttpGet("{id}/images")]
+        public async Task<IActionResult> GetImagesByPost(Guid id)
         {
-            var postExists = await _postService.GetPostByID(id);
-            if (postExists == null|| postExists.IsDeleted)
-                return NotFound("No such post in the database");
+            try
+            {
+                var postExists = await _postService.GetPostByID(id);
+                if (postExists == null || postExists.IsDeleted)
+                    return NotFound("No such post in the database");
 
-            var comments = await _postService.GetCommentSByPost(id);
-            if (!comments.Any())
-                return NotFound("No comments in the database");
-
-            return Ok(comments);
+                var images = await _postService.GetImagesByPostId(id);
+                return Ok(images);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetFilteredPosts([FromQuery] PostQueryDto query)
         {
-            return BadRequest(new { message = ex.Message });
+            try
+            {
+                var posts = await _postService.GetFilteredPosts(
+                    query.UserId, query.Status, query.SearchTerm,
+                    query.SortOrder, query.PageNumber, query.PageSize);
+
+                if (!posts.Any())
+                    return NotFound("No posts found.");
+
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-    }
 
-    [HttpGet("{id}/images")]
-    public async Task<IActionResult> GetImagesByPost(Guid id)
-    {
-        try
+        [HttpGet("{id}/likes")]
+        public async Task<IActionResult> GetLikesByPostId(Guid id)
         {
-            var postExists = await _postService.GetPostByID(id);
-            if (postExists == null||postExists.IsDeleted)
-                return NotFound("No such post in the database");
-
-            var images = await _postService.GetImagesByPostId(id);
-            return Ok(images);
+            try
+            {
+                var likes = await _postService.GetLikesByPostId(id);
+                return Ok(likes);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-        catch (Exception ex)
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPostsByUserId(Guid userId)
         {
-            return BadRequest(new { message = ex.Message });
+            try
+            {
+                var posts = await _postService.GetPostsByUserId(userId);
+                if (!posts.Any())
+                    return NotFound("No posts found for this user.");
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-    }
 
-    [HttpGet("filter")]
-    public async Task<IActionResult> GetFilteredPosts([FromQuery] PostQueryDto query)
-    {
-        try
+        [HttpGet("user/{userId}/liked")]
+        public async Task<IActionResult> GetUserLikedPosts(Guid userId)
         {
-            var posts = await _postService.GetFilteredPosts(
-                query.UserId, query.Status, query.SearchTerm,
-                query.SortOrder, query.PageNumber, query.PageSize);
+            try
+            {
+                var posts = await _postService.GetUserLikedPosts(userId);
+                if (!posts.Any())
+                    return NotFound("No liked posts found for this user.");
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-            if (!posts.Any())
-                return NotFound("No posts found.");
+        [HttpGet("user/{userId}/commented")]
+        public async Task<IActionResult> GetUserCommentedPosts(Guid userId)
+        {
+            try
+            {
+                var posts = await _postService.GetUserCommentedPosts(userId);
+                if (!posts.Any())
+                    return NotFound("No commented posts found for this user.");
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
+        // 
+        [HttpGet("reported")]
+        public async Task<IActionResult> GetAllReportedPosts()
+        {
+            var posts = await _postService.GetAllReportedPosts();
             return Ok(posts);
         }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpGet("{id}/likes")]
-    public async Task<IActionResult> GetLikesByPostId(Guid id)
-    {
-        try
-        {
-            var likes = await _postService.GetLikesByPostId(id);
-            return Ok(likes);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetPostsByUserId(Guid userId)
-    {
-        try
-        {
-            var posts = await _postService.GetPostsByUserId(userId);
-            if (!posts.Any())
-                return NotFound("No posts found for this user.");
-            return Ok(posts);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpGet("user/{userId}/liked")]
-    public async Task<IActionResult> GetUserLikedPosts(Guid userId)
-    {
-        try
-        {
-            var posts = await _postService.GetUserLikedPosts(userId);
-            if (!posts.Any())
-                return NotFound("No liked posts found for this user.");
-            return Ok(posts);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpGet("user/{userId}/commented")]
-    public async Task<IActionResult> GetUserCommentedPosts(Guid userId)
-    {
-        try
-        {
-            var posts = await _postService.GetUserCommentedPosts(userId);
-            if (!posts.Any())
-                return NotFound("No commented posts found for this user.");
-            return Ok(posts);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
 }
 }
