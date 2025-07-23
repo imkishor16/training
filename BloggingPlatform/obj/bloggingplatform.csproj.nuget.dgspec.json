@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj": {}
+    "/Users/presidio/Library/CloudStorage/OneDrive-PresidioNetworkSolutions/Documents/kishore_blogging/training/BloggingPlatform/bloggingplatform.csproj": {}
   },
   "projects": {
-    "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj": {
+    "/Users/presidio/Library/CloudStorage/OneDrive-PresidioNetworkSolutions/Documents/kishore_blogging/training/BloggingPlatform/bloggingplatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj",
-        "projectName": "BloggingPlatform",
-        "projectPath": "D:\\training\\BloggingPlatform\\BloggingPlatform.csproj",
-        "packagesPath": "C:\\Users\\imkis\\.nuget\\packages\\",
-        "outputPath": "D:\\training\\BloggingPlatform\\obj\\",
+        "projectUniqueName": "/Users/presidio/Library/CloudStorage/OneDrive-PresidioNetworkSolutions/Documents/kishore_blogging/training/BloggingPlatform/bloggingplatform.csproj",
+        "projectName": "bloggingplatform",
+        "projectPath": "/Users/presidio/Library/CloudStorage/OneDrive-PresidioNetworkSolutions/Documents/kishore_blogging/training/BloggingPlatform/bloggingplatform.csproj",
+        "packagesPath": "/Users/presidio/.nuget/packages/",
+        "outputPath": "/Users/presidio/Library/CloudStorage/OneDrive-PresidioNetworkSolutions/Documents/kishore_blogging/training/BloggingPlatform/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\imkis\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/presidio/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
@@ -150,7 +150,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -16,7 +16,7 @@ export const routes: Routes = [
     path: 'profile',
     canActivate: [authGuard],
     children: [
-      
+
       {
         path: ':id',
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
@@ -47,6 +47,20 @@ export const routes: Routes = [
         path: ':id/edit',
         loadComponent: () => import('./components/post-editor/post-editor.component').then(m => m.PostEditorComponent)
       }
+    ]
+  },
+  {
+    path: 'reportedblogs',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/reportedblogs/reportedblogs.component').then(m => m.ReportedBlogsComponent)
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./components/reportedPost-detail/reported-post-detail.component').then(m => m.ReportedPostComponent)
+      },
     ]
   },
   {

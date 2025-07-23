@@ -30,6 +30,7 @@ namespace BloggingPlatform.Repositories
                 .Include(p => p.Images.Where(i => !i.IsDeleted))
                 .Include(p => p.Comments.Where(c => !c.IsDeleted))
                 .Include(p => p.Likes)
+                .Include(p => p.Reports)
                 .ToListAsync();
 
             return posts;
@@ -67,5 +68,7 @@ namespace BloggingPlatform.Repositories
                 .Include(p => p.Likes)
                 .ToListAsync();
         }
+
+
     }
 }

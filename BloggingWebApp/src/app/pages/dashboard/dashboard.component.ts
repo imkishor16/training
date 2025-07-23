@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { PostService } from '../../services/post.service';
-import { UserService } from '../../services/user.service'; 
-import { Post } from '../../models/post.model';
+import { UserService } from '../../services/user.service';
+import { Post, ReportedPost } from '../../models/post.model';
 import { User } from '../../models/auth.model';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { EditUserModalComponent } from '../../components/edit-user-modal/edit-user-modal.component';
@@ -37,9 +37,9 @@ import { EditUserModalComponent } from '../../components/edit-user-modal/edit-us
       <section class="dashboard-actions">
         <button (click)="createNewPost()" class="action-button">Create New Post</button>
         <a routerLink="/profile/{{userId}}" class="action-button secondary">View Profile</a>
-        <button 
+        <button
           *ngIf="isAdmin"
-          (click)="toggleUsersList()" 
+          (click)="toggleUsersList()"
           class="action-button admin-button"
         >
           {{ showUsersList ? 'Hide Users' : 'View All Users' }}
@@ -59,18 +59,18 @@ import { EditUserModalComponent } from '../../components/edit-user-modal/edit-us
       <!-- Admin Users Table -->
       <section class="users-section" *ngIf="isAdmin && showUsersList">
         <h2>User Management</h2>
-        
+
         <!-- Users Grid View -->
         <div class="view-toggle">
-          <button 
-            class="toggle-btn" 
+          <button
+            class="toggle-btn"
             [class.active]="!showTableView"
             (click)="showTableView = false"
           >
             Grid View
           </button>
-          <button 
-            class="toggle-btn" 
+          <button
+            class="toggle-btn"
             [class.active]="showTableView"
             (click)="showTableView = true"
           >
@@ -80,8 +80,8 @@ import { EditUserModalComponent } from '../../components/edit-user-modal/edit-us
 
         <!-- Grid View -->
         <div class="users-grid" *ngIf="!showTableView && !isLoadingUsers">
-          <div 
-            *ngFor="let user of allUsers" 
+          <div
+            *ngFor="let user of allUsers"
             class="user-card"
             (click)="viewUserProfile(user.id)"
           >
@@ -126,13 +126,13 @@ import { EditUserModalComponent } from '../../components/edit-user-modal/edit-us
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button 
+                    <button
                       class="btn btn-view"
                       (click)="viewUserProfile(user.id)"
                     >
                       View
                     </button>
-                    <button 
+                    <button
                       class="btn btn-edit"
                       (click)="openEditModal(user)"
                     >
@@ -154,8 +154,8 @@ import { EditUserModalComponent } from '../../components/edit-user-modal/edit-us
       <section class="recent-posts" *ngIf="userPosts.length > 0">
         <h2>Your Recent Posts</h2>
         <div class="posts-grid">
-          <app-post-card 
-            *ngFor="let post of userPosts" 
+          <app-post-card
+            *ngFor="let post of userPosts"
             [post]="post"
           ></app-post-card>
         </div>
@@ -530,6 +530,10 @@ export class DashboardComponent implements OnInit {
   showSuspensionAlert: boolean = false;
   suspensionReason: string = '';
   suspendedUntil: Date | null = null;
+
+  // showReportedBlogs: boolean = false;
+  // allReportedBlogs: ReportedPost[] = [];
+
   constructor(
     private authService: AuthService,
     private postService: PostService,
@@ -586,6 +590,26 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+
+  // Loading Reported blogs
+  // toggleReportedBlogsList(){
+  //   this.showReportedBlogs = !this.showReportedBlogs;
+  //   if (this.showReportedBlogs && this.allReportedBlogs.length === 0) {
+  //     this.loadAllReportedBlogs();
+  //   }
+  // }
+
+  // private loadAllReportedBlogs(){
+  //   this.postService.getReportedPost().subscribe({
+  //     next:(res)=>{
+  //       this.allReportedBlogs = res;
+  //       console.log(this.allReportedBlogs);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading blogs:', error);
+  //     }
+  //   })
+  // }
 
   viewUserProfile(userId: string) {
     this.router.navigate(['/profile', userId]);
@@ -646,4 +670,4 @@ export class DashboardComponent implements OnInit {
   closeSuspensionAlert() {
     this.showSuspensionAlert = false;
   }
-} 
+}

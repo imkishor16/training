@@ -26,9 +26,10 @@ namespace BloggingPlatform.Services
         private readonly IMapper _mapper;
         private readonly INotificationService _notificationService;
 
+        private readonly IReportService _reportService;
         public PostService(IRepository<Guid, Post> postRepo, IRepository<Guid, Comment> commentRepository
         , IRepository<Guid, Image> imagerepository, IRepository<Guid, User> userRepository, IRepository<Guid, Like> likeRepository,
-IImageService imageService, BloggingPlatformContext context,IUserValidationService userValidationService, IMapper mapper, INotificationService notificationService)
+IImageService imageService, BloggingPlatformContext context, IUserValidationService userValidationService, IMapper mapper, INotificationService notificationService, IReportService reportService)
         {
             _postRepository = postRepo;
             _commentRepository = commentRepository;
@@ -40,6 +41,8 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             _userValidationService = userValidationService;
             _mapper = mapper;
             _notificationService = notificationService;
+
+            _reportService = reportService;
         }
 
         public async Task<Post> AddPost(Post post, Guid userId)
@@ -48,15 +51,15 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             post.UserId = userId;
             await _userValidationService.ValidateUser(post.UserId);
             var created = await _postRepository.Add(post);
-            
+
             // Get all users to send notifications to
             var allUsers = await _userRepository.GetAll();
             var userIds = allUsers.Select(u => u.Id).ToList();
-            
+
             // Create notification for all users
             var content = $"New post '{post.Title}' has been published by {allUsers.FirstOrDefault(u => u.Id == userId)?.Username ?? "Unknown User"}";
             await _notificationService.CreateNotificationForUsersAsync("Post", post.Id, content, userIds);
-            
+
             return created;
         }
 
@@ -74,12 +77,12 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             if (!string.IsNullOrWhiteSpace(updatedPost.Content))
                 old.Content = updatedPost.Content;
 
-            
+
             if (!string.IsNullOrWhiteSpace(updatedPost.PostStatus))
                 old.PostStatus = updatedPost.PostStatus;
 
 
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
             // Update images only if provided
             if (newImages != null && newImages.Count > 0)
@@ -90,7 +93,7 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             return old;
         }
 
-        public async Task<Post> DeletePost(Guid id, Guid userId)
+        public async Task<Post> DeletePost(Guid id, Guid userId, Guid RemoverUserId)
         {
             await _userValidationService.ValidateUser(userId);
 
@@ -106,6 +109,14 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             await _imageService.DeleteImagesByPostIdAsync(id, userId);
 
             await _postRepository.Update(id, post);
+
+            // sending userId in list of user id to send for author // Future add for all admins too
+            List<Guid> userid = [userId];
+            var removerName = (await _userRepository.Get(RemoverUserId)).Username;
+
+            // Create notification for all users
+            var content = $"'{post.Title}' post has been deleted by {removerName ?? "Unknown User"}";
+            await _notificationService.CreateNotificationForUsersAsync("Post", post.Id, content, userid);
 
             return post;
         }
@@ -208,7 +219,7 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
                 throw new Exception("Post not found");
 
             var postDto = _mapper.Map<PostResponseDto>(post);
-            
+
             if (currentUserId.HasValue)
             {
                 postDto.UserHasLiked = post.Likes?.Any(l => l.UserId == currentUserId && l.IsLiked) ?? false;
@@ -232,6 +243,17 @@ IImageService imageService, BloggingPlatformContext context,IUserValidationServi
             }
 
             return postDtos;
+        }
+        
+        // Admin Reported posts
+        public async Task<IEnumerable<PostResponseAdminDto>> GetAllReportedPosts()
+        {
+            var posts = await _postRepository.GetAll();
+            var postDtos = _mapper.Map<IEnumerable<PostResponseAdminDto>>(posts);
+
+            var reportedPosts = postDtos.Where(rp => rp.ReportCount > 0);
+
+            return reportedPosts;
         }
     }
 }

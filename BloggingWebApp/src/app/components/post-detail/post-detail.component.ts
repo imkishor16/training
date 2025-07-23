@@ -4,10 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl, SafeHtml } from '@angular/platform-browser';
 import { Post, Comment } from '../../models/post.model';
+import { CreateReportDto, Report} from '../../models/report.model';
 import { PostService } from '../../services/post.service';
 import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/auth.model';
+import { ReportService } from '../../services/report.service';
 
 @Component({
   selector: 'app-post',
@@ -35,7 +37,7 @@ import { User } from '../../models/auth.model';
 
         <!-- Cover Image -->
         <div class="cover-image" *ngIf="getCoverImage()">
-          <img 
+          <img
             [src]="getImageUrl(getCoverImage()!)"
             [alt]="post.title"
             class="post-cover-image"
@@ -49,7 +51,7 @@ import { User } from '../../models/auth.model';
         <!-- Post Actions -->
         <div class="post-actions">
           <div class="action-buttons">
-            <button 
+            <button
               class="like-button"
               (click)="toggleLike()"
               [class.liked]="isLiked"
@@ -58,9 +60,20 @@ import { User } from '../../models/auth.model';
               <span class="like-icon">♥</span>
               <span class="like-count">{{ getActiveLikesCount() }} Likes</span>
             </button>
-            
+            <!-- Report Button -->
+             <button
+              *ngIf="!isPostOwner"
+              class="report-button"
+              (click)="toggleReportForm()"
+              [disabled]="!isAuthenticated || isReported"
+            >
+              <span class="report-icon">🚩</span>
+              <span class="report-text">
+                {{ isReported ? 'Reported' : 'Report' }}
+              </span>
+            </button>
             <!-- Edit Button - Only show for post owner -->
-            <button 
+            <button
               *ngIf="isPostOwner"
               class="edit-button"
               (click)="editPost()"
@@ -68,6 +81,57 @@ import { User } from '../../models/auth.model';
               <span class="edit-icon">✏️</span>
               <span>Edit Post</span>
             </button>
+          </div>
+        </div>
+
+        <div *ngIf="isAuthenticated && !isReported && showReportForm" class="report-backdrop">
+          <div class="report-form-container">
+          <form [formGroup]="reportForm" (ngSubmit)="submitReport()">
+            <div class="form-group">
+              <!-- Reason Dropdown -->
+              <select
+                class="report-select"
+                formControlName="category"
+                [class.error]="reportForm.get('category')?.invalid && reportForm.get('category')?.touched"
+              >
+                <option value="" disabled selected>Select report reason</option>
+                <option value="InappropriateContent">Inappropriate Content</option>
+                <option value="Harassment">Harassment</option>
+                <option value="Spam">Spam</option>
+                <option value="FakeNews">Fake News</option>
+                <option value="HateSpeech">Hate Speech</option>
+                <option value="Technical">Technical</option>
+                <option value="Other">Other</option>
+              </select>
+              <div class="error-message" *ngIf="reportForm.get('category')?.invalid && reportForm.get('category')?.touched">
+                Please select a reason
+              </div>
+
+              <!-- Comment Input -->
+              <textarea
+                class="report-comment"
+                formControlName="content"
+                placeholder="Write your report comment..."
+                rows="3"
+                [class.error]="reportForm.get('content')?.invalid && reportForm.get('content')?.touched"
+              ></textarea>
+              <div class="error-message" *ngIf="reportForm.get('content')?.invalid && reportForm.get('content')?.touched">
+                Please enter a comment
+              </div>
+
+              <div class="input-group">
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="submit-button"
+                  [disabled]="!reportForm.valid || reportForm.pristine"
+                >
+                  Submit Report
+                </button>
+                <button class="submit-button" (click)="toggleReportForm()">Close</button>
+              </div>
+            </div>
+          </form>
           </div>
         </div>
 
@@ -87,21 +151,21 @@ import { User } from '../../models/auth.model';
             </div>
             <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
               <div class="form-group">
-                <textarea 
+                <textarea
                   class="comment-input"
                   formControlName="content"
                   placeholder="Write a comment..."
                   rows="3"
                   [class.error]="commentForm.get('content')?.invalid && commentForm.get('content')?.touched"
                 ></textarea>
-                <div 
-                  class="error-message" 
+                <div
+                  class="error-message"
                   *ngIf="commentForm.get('content')?.invalid && commentForm.get('content')?.touched"
                 >
                   Please enter a comment
                 </div>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   class="submit-button"
                   [disabled]="!commentForm.valid || commentForm.pristine"
                 >
@@ -127,7 +191,7 @@ import { User } from '../../models/auth.model';
               </div>
               <p class="comment-content">{{ comment.content }}</p>
             </div>
-            
+
             <div *ngIf="!post.comments?.length" class="no-comments">
               No comments yet. Be the first to comment!
             </div>
@@ -147,17 +211,26 @@ export class PostComponent implements OnInit {
   private currentUserId: string | null = null;
   currentUser: User | null = null;
 
+  reportForm: FormGroup;
+  showReportForm = false;
+  isReported = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private postService: PostService,
     private commentService: CommentService,
+    private reportService: ReportService,
     public authService: AuthService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer
   ) {
     this.commentForm = this.fb.group({
       content: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]]
+    });
+    this.reportForm = this.fb.group({
+      content: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1000)]],
+      category: ['', [Validators.required]]
     });
   }
 
@@ -167,7 +240,7 @@ export class PostComponent implements OnInit {
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
     });
-    
+
     const postId = this.route.snapshot.paramMap.get('id');
     if (postId) {
       this.loadPost(postId);
@@ -182,6 +255,7 @@ export class PostComponent implements OnInit {
         this.post = post;
         this.checkIfLiked();
         this.checkIfPostOwner();
+        this.checkIfReported();
       },
       error: (error) => {
         console.error('Error loading post:', error);
@@ -200,7 +274,7 @@ export class PostComponent implements OnInit {
       this.isPostOwner = false;
       return;
     }
-    
+
     // Check if current user is the post owner
     this.isPostOwner = this.post.user?.id === this.currentUserId;
   }
@@ -225,13 +299,13 @@ export class PostComponent implements OnInit {
     if (!this.post?.content) {
       return this.sanitizer.bypassSecurityTrustHtml('');
     }
-  
+
     console.log('Processing content:', this.post.content);
     console.log('Available images:', this.post.images);
-  
+
     let processedContent = this.post.content;
     const contentImages = (this.post.images || []).filter(img => img.name !== 'cover-image.jpg');
-  
+
     // Clean up CKEditor's output
     processedContent = processedContent
       // Remove figure tags with malformed image URLs
@@ -250,44 +324,44 @@ export class PostComponent implements OnInit {
     const imagePlaceholderRegex = /\[IMAGE:([^\]]+)\]/g;
     let match;
     let processedImages = new Set<string>(); // Track processed images to avoid duplicates
-    
+
     while ((match = imagePlaceholderRegex.exec(processedContent)) !== null) {
       const fullPlaceholder = match[0]; // [IMAGE:filename]
       const imageName = match[1]; // filename
-      
+
       console.log('Found image placeholder:', { fullPlaceholder, imageName });
-      
+
       // Find the corresponding image in the images array
       const image = contentImages.find(img => img.name === imageName);
-      
+
       if (image && image.content && !processedImages.has(imageName)) {
         console.log('Replacing placeholder with image:', { imageName, hasContent: !!image.content });
-        
+
         const imageUrl = this.getImageUrl(image);
         const imageHtml = `<figure class="image">
-          <img src="${imageUrl}" 
-               style="max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;" 
-               class="content-image" 
-               alt="Post content image" 
+          <img src="${imageUrl}"
+               style="max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px;"
+               class="content-image"
+               alt="Post content image"
                loading="lazy">
         </figure>`;
-        
+
         // Replace the placeholder with the image HTML
         processedContent = processedContent.replace(fullPlaceholder, imageHtml);
         processedImages.add(imageName);
       } else {
         console.warn('Image not found for placeholder:', imageName);
         // Replace with a placeholder image or remove the placeholder
-        processedContent = processedContent.replace(fullPlaceholder, 
+        processedContent = processedContent.replace(fullPlaceholder,
           '<div style="padding: 2rem; text-align: center; background: #f5f5f5; border-radius: 8px; color: #666;">Image not available</div>'
         );
       }
     }
-  
+
     console.log('Final processed content:', processedContent);
     return this.sanitizer.bypassSecurityTrustHtml(processedContent);
   }
-  
+
 
   private convertImageToDataUrl(image: { content: any }): string | null {
     try {
@@ -302,12 +376,12 @@ export class PostComponent implements OnInit {
         if (image.content.startsWith('data:image/')) {
           return image.content;
         }
-        
+
         // Try to handle base64 string
         if (this.isBase64String(image.content)) {
           return `data:image/jpeg;base64,${image.content}`;
         }
-        
+
         // Try to decode base64 if it's not properly formatted
         try {
           const decoded = atob(image.content);
@@ -322,25 +396,25 @@ export class PostComponent implements OnInit {
           return null;
         }
       }
-      
+
       if (image.content instanceof Uint8Array) {
         const base64 = btoa(String.fromCharCode(...image.content));
         return `data:image/jpeg;base64,${base64}`;
       }
-      
+
       if (image.content instanceof ArrayBuffer) {
         const bytes = new Uint8Array(image.content);
         const base64 = btoa(String.fromCharCode(...bytes));
         return `data:image/jpeg;base64,${base64}`;
       }
-      
+
       if (image.content instanceof Blob) {
         return URL.createObjectURL(image.content);
       }
 
       console.warn('Unsupported image content type:', typeof image.content);
       return null;
-      
+
     } catch (error) {
       console.error('Error converting image to data URL:', error);
       return null;
@@ -392,6 +466,57 @@ export class PostComponent implements OnInit {
         console.error('Error creating comment:', error);
       }
     });
+  }
+
+  // Report part
+  submitReport(){
+    if (!this.post || !this.reportForm.valid) return;
+
+    const report: Partial<CreateReportDto> = {
+      content: this.reportForm.value.content,
+      category: this.reportForm.value.category,
+      userId: this.authService.getCurrentUserId() ?? '',
+      postId: this.post.id
+    };
+
+    this.reportService.addReport(report).subscribe({
+      next: (res) => {
+        this.reportForm.reset();
+        this.toggleReportForm();
+        this.checkIfReported();
+      },
+      error: (error) => {
+        console.error('Error creating report:', error);
+      }
+    });
+  }
+
+  toggleReportForm() {
+    this.showReportForm = !this.showReportForm;
+    // if (this.showReportForm) {
+    //   this.reportForm.reset();
+    // }
+  }
+
+  checkIfReported(){
+    if (!this.post || !this.isAuthenticated || !this.currentUserId) {
+      this.isLiked = false;
+      return;
+    }
+
+    this.reportService.reportStatus(this.post.id).subscribe({
+      next:(res:any)=>{
+        if(res.isExists){
+          this.isReported = true;
+        }
+        else{
+          this.isReported = false;
+        }
+      },
+      error:(err)=>{
+        console.error('Error status report:', err);
+      }
+    })
   }
 
   toggleLike() {

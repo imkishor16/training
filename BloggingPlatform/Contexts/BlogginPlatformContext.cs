@@ -21,7 +21,7 @@ namespace BloggingPlatform.Contexts
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserNotifications> UserNotifications { get; set; }
 
-
+        public DbSet<Report> Reports { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // USER
@@ -97,6 +97,19 @@ namespace BloggingPlatform.Contexts
             modelBuilder.Entity<Comment>()
                 .Property(c => c.UserId)
                 .IsRequired();
+
+            // REPORT
+            modelBuilder.Entity<Report>()
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<Report>()
+                .Property(r => r.UserId)
+                .IsRequired();
+                
+            modelBuilder.Entity<Report>()
+                .Property(r => r.Category)
+                .HasConversion<string>();
+
 
             // LIKE
             modelBuilder.Entity<Like>()

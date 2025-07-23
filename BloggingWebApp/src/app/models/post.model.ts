@@ -1,5 +1,5 @@
 import { User } from './auth.model';
-
+import { Report } from './report.model';
 export interface Comment {
   id: string;
   postId: string;
@@ -43,6 +43,7 @@ export interface Post {
   comments?: Comment[];
   images?: Image[];
   likes?: Like[];
+  reports?: Report[]; // report
 }
 
 export interface RefreshToken {
@@ -80,3 +81,16 @@ export type PostResponse = Post;
 export interface CustomFile extends File {
   imageName?: string;
 }
+
+export interface ReportedPost {
+  id: string;
+  title: string;
+  content: string;
+  postStatus: string;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: User;
+  reports?: Report[];
+  reportCount?: number;
+}
+

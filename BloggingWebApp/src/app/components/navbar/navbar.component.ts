@@ -21,25 +21,29 @@ import { Subject } from 'rxjs';
     <nav class="navbar">
       <div class="nav-container">
         <a routerLink="/" class="nav-brand">BloggingApp</a>
-        
+
         <div class="nav-links">
           <ng-container *ngIf="!isAuthenticated">
-            <a routerLink="/auth/sign-in" 
-               class="nav-link" 
+            <a routerLink="/auth/sign-in"
+               class="nav-link"
                [class.active]="currentRoute === '/auth/sign-in'">Sign In</a>
-            <a routerLink="/auth/sign-up" 
+            <a routerLink="/auth/sign-up"
                class="nav-button"
                [class.active]="currentRoute === '/auth/sign-up'">Sign Up</a>
           </ng-container>
-          
+
           <ng-container *ngIf="isAuthenticated">
-            <a routerLink="/" 
+            <a routerLink="/"
                class="nav-link"
-               [class.active]="currentRoute === '/'">Dashboard</a>  
-            <a routerLink="/posts" 
+               [class.active]="currentRoute === '/'">Dashboard</a>
+            <a routerLink="/posts"
                class="nav-link"
                [class.active]="currentRoute.startsWith('/posts')">Posts</a>
-            <a routerLink="/notifications/posts" 
+            <a routerLink="/reportedblogs"
+               class="nav-link"
+               *ngIf="isAdmin"
+               [class.active]="currentRoute.startsWith('/reportedblogs')">Reported Blogs</a>
+            <a routerLink="/notifications/posts"
                class="nav-link notification-link"
                [class.active]="currentRoute.startsWith('/notifications')">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -60,6 +64,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   currentRoute = '';
   unreadCount = 0;
+  isAdmin = false;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -70,7 +75,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Subscribe to auth state changes
     this.authService.isAuthenticated$.subscribe(
-      (isAuth: boolean) => this.isAuthenticated = isAuth
+      (isAuth: boolean) => {
+        this.isAuthenticated = isAuth;
+        // Check if user is admin
+        const userRole = this.authService.getCurrentUserRole();
+        this.isAdmin = userRole === 'Admin';
+      }
     );
 
     // Track current route for active state
